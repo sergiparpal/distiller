@@ -1,0 +1,80 @@
+[checks]
+# Exact invocations that count as a full run of each check. No globs:
+# "pytest*" also matches "pytest --version", which is a route to a
+# false VERIFIED. A command that does not match exactly is not a check,
+# and the claim lands as UNSUPPORTED — the safe direction.
+#
+# None yet. distiller holds a design document and no code, so nothing run
+# here is a check, and a claim that tests pass lands as UNSUPPORTED, which is
+# the true answer while there is no suite. When there is one, add its exact
+# invocations here, its globs under [checks.scope] and the words reports use
+# for it under [checks.aliases]: the loader refuses a check without a scope
+# and an alias that names no check.
+
+[checks.scope]
+# which files each check covers, for the freshness rule
+
+[checks.aliases]
+# The words a report actually uses for a check, mapped to the check it means.
+# Matching is case-insensitive.
+
+[tiers]
+# used in phase 1 to decide which actions are consequential enough
+# that not mentioning them is worth reporting
+#
+# The Markdown is the work here, not its documentation, so it is not LOW: an
+# edit to it that the report never mentions is listed, not just counted.
+# git clean and git reset --hard are HUMAN beside rm -rf because they delete
+# work that has not been committed, and here that can be all of it.
+HUMAN   = ["Bash(git push*)", "Bash(*rm -rf*)", "Bash(git clean*)",
+           "Bash(git reset --hard*)"]
+LOW     = []
+default = "REVIEW"
+
+[extractor]
+# OpenRouter's Anthropic-shaped endpoint. The address and the header are
+# configuration, so that no ANTHROPIC_-named variable decides where a report
+# is sent. Both x-api-key and bearer were verified to work there.
+base_url         = "https://openrouter.ai/api/v1"
+auth             = "x-api-key"
+key_env          = "OPENROUTER_API_KEY"
+model            = "deepseek/deepseek-v4.1-flash"
+# Exactly one provider, fallbacks off: 22 of them serve this model, and a
+# recall figure measured across a shifting set of them means nothing. Morph is
+# the only one found that honours enable_thinking below; the two that declare
+# fp8 ignore it and spend 30-45s reasoning. Its own quantization is undeclared,
+# which is the price of the switch working.
+provider         = "morph"
+answer_shape     = "json_schema"
+# A deadline, not a socket timeout, and it has to fit inside the turn budget
+# below. glm's tail does not fit: its slowest measured answer took 49.8s.
+timeout_s        = 12
+max_report_chars = 20000
+
+[extractor.parameters]
+# What this route takes, sent as written; a parameter a model refuses leaves
+# the router with no endpoint at all, so the set belongs to the route.
+temperature = 0
+
+# This model reasons by default, and the reasoning parameter does not stop it:
+# the switch is the provider's own chat template. Accepted is not honoured, so
+# it was checked against the reply, which now carries no thinking block at all.
+[extractor.parameters.extra_body.chat_template_kwargs]
+enable_thinking = false
+
+[budget]
+# The pipeline's own wall clock: longer than the extractor's deadline above,
+# which the loader checks, and shorter than the Stop hook's timeout in
+# hooks/hooks.json, which is when the harness kills the process. The pipeline
+# reports running out of time; a killed hook reports nothing at all.
+turn_timeout_s = 15
+
+[log]
+max_command_chars = 2000
+
+[gate]
+enabled = false   # phase 2 flips this. Present from the start: the loader
+                  # rejects unknown keys, so adding it later is a migration
+
+[corpus]
+capture = true
