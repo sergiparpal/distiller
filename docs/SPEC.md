@@ -36,8 +36,9 @@ Run as a CI step after a pull request's full pytest run, the tool works out whic
 - Supersedes: none.
 
 Inputs for one run:
+- the run's head commit H, in a checkout with history;
+- the base branch the pull request targets, as a branch name or as a commit; B is the commit it stands for. The merge-base is the merge-base of B and H, and the diff is `merge-base..H`, the pull request's own change. Neither is computed against M: whenever M is H or one of its ancestors, the merge-base of M and H is M itself, so the check below would reject nothing, not even coverage recorded at H, and the diff would take in the base branch's changes after M;
 - the per-test coverage, recorded on the base branch at a commit M as a coverage.py data file with test contexts (pytest-cov `--cov-context=test`), and M itself. M must be the merge-base or one of its ancestors;
-- the run's head commit H, in a checkout with history. The diff is `merge-base..H`, the pull request's own change;
 - the full run's JUnit XML and, optionally, the JUnit XML of re-running only the tests that failed in it (the rerun file);
 - the repository's floor configuration, if it has one.
 
@@ -46,11 +47,13 @@ Terms:
 - A test's row is the set of repository files with at least one line recorded during that test's setup, call or teardown.
 - A column is a file in at least one row. A file whose lines were all recorded outside any test (at import, during collection) is import-only and in no row. A changed path that is neither a column nor import-only has no column.
 - An unmeasured test is a test in the run with no row: new, renamed, not measured, or with an id that matches no coverage context.
-- The floor is the default patterns `**/config/**`, `**/migrations/**`, `**/poetry.lock`, `**/uv.lock`, `**/Pipfile.lock`, `**/requirements*.txt`, `**/pyproject.toml`, `**/setup.py`, `**/setup.cfg`, `**/pytest.ini` and `**/tox.ini`, plus whatever patterns the repository's configuration adds. A configuration adds patterns and never removes them (§9.3).
-- The selection is every test in the run that at least one rule picks, each with its reasons, written below as: `covers P` (its row has the changed path P), `floor X (P)` (the changed path P matches floor pattern X, which picks every test), `unmeasured`, `own file P` (P is the file in its node id) and `conftest P` (P is a `conftest.py` in the test's directory or any directory above it, up to pytest's rootdir). A deleted or renamed path counts under its old name. This notation is for the examples, not an output format.
+- The floor is the default patterns `**/config/**`, `**/migrations/**`, `**/poetry.lock`, `**/uv.lock`, `**/Pipfile.lock`, `**/requirements*.txt`, `**/requirements/**`, `**/pyproject.toml`, `**/setup.py`, `**/setup.cfg`, `**/pytest.ini` and `**/tox.ini`, plus whatever patterns the repository's configuration adds. A configuration adds patterns and never removes them (§9.3).
+- Floor patterns have their own syntax, not Python's `fnmatch`, whose `*` crosses `/` and whose `**/uv.lock` does not match `uv.lock` at the root. A pattern is matched, case-sensitively and one `/`-separated segment at a time, against each changed path, relative to the repository root. A segment that is exactly `**` matches zero or more whole segments, or one or more when it ends the pattern. In any other segment, `*` matches any run of characters except `/`, and every other character matches itself, except `?`, `[` and `]`. A pattern with any of those three, or with a `**` inside a segment, as in `**.lock`, is not valid: whoever writes `data/?.csv` expects a wildcard, and taken literally it would match no real file. So `**/uv.lock` matches `uv.lock` and `services/billing/uv.lock`; `config/**` matches every file under the top-level `config/` but not a file named `config`; and `**/requirements*.txt` matches `requirements-dev.txt` but not `requirements/dev.txt`, which is why the floor also has `**/requirements/**`.
+- The selection is every test in the run that at least one rule picks, each with its reasons, written below as: `covers P` (its row has the changed path P), `floor X (P)` (the changed path P matches floor pattern X, which picks every test), `unmeasured`, `own file P` (P is the file in its node id) and `conftest P` (P is a `conftest.py` in the test's directory or any directory above it, up to pytest's rootdir). A renamed path counts under both of its names, a deleted one under its old name. This notation is for the examples, not an output format.
 - A run is red when at least one test has a `failure` or an `error` that the rerun file does not discard; only a pass in the rerun file discards one, and the test is then marked not reproduced. A red run is caught when the selection holds at least one of its failed tests and missed otherwise. A run that is not red is green.
 - The miss rate counts pull requests: n is the number of PRs with at least one red run, k the number of those with at least one missed run.
 - Savings are 1 − Σ selected duration / Σ full-suite duration, summed over every recorded run, green and red, using the JUnit times.
+- The floor rate counts pull requests, as §13.2 does: the share of evaluated PRs, those with at least one recorded run, in which at least one run had a changed path that matched the floor. It is one of the two figures with which §13.2 decides whether to build file tracing.
 
 All examples use this fixture unless they say otherwise. Coverage measured `src/` only, M is an ancestor of the merge-base, pytest's rootdir is the repository root, and there is no floor configuration. The full suite takes 12.0 s:
 
@@ -78,6 +81,7 @@ All examples use this fixture unless they say otherwise. Coverage measured `src/
 - Given a diff that renames `src/shop/tax.py` to `src/shop/taxes.py`, when the run is evaluated, then the selection is test_total and test_vat, through the old path, and `src/shop/taxes.py` is listed as a path with no column.
 - Given a diff that modifies only `templates/invoice.html`, when the run is evaluated, then the selection is empty and `templates/invoice.html` is listed as a path with no column.
 - Given a diff that modifies only `src/shop/constants.py`, when the run is evaluated, then the selection is empty and `src/shop/constants.py` is listed as import-only, separately from the paths with no column.
+- Given commits on the base branch after M, all before the merge-base, that modify `src/shop/report.py`, and a pull request whose own change modifies only `src/shop/tax.py`, when the run is evaluated, then the selection is test_total and test_vat: the diff starts at the merge-base of B and H, so the base branch's change to `src/shop/report.py` is not in it.
 
 #### Verdict
 - Given a diff that modifies `src/shop/tax.py` and a full run in which test_vat failed, when the run is evaluated, then it is caught.
@@ -90,10 +94,12 @@ All examples use this fixture unless they say otherwise. Coverage measured `src/
 - Given recorded runs r1 (green) and r2 (caught) of PR 1, r3 (missed) and r4 (caught) of PR 2, r5 (green) of PR 3 and r6 (caught) of PR 4, when the report is produced, then it shows 1 missed PR out of 3 PRs with a red run, a one-sided 95% Clopper–Pearson upper bound of 86.5%, and 4 red runs.
 - Given 30 PRs with a red run and none missed, when the report is produced, then it shows 0 out of 30 and an upper bound of 9.5%.
 - Given two recorded runs of the 12.0 s suite, one that selected 3.0 s and one where the floor selected all 12.0 s, when the report is produced, then it shows savings of 37.5% and says this is an upper bound, because fixed per-run costs such as start-up and collection are not in the JUnit times.
+- Given recorded runs of 4 PRs, where all 3 runs of PR 1 matched the floor and the single runs of PRs 2, 3 and 4 did not, when the report is produced, then it shows a floor rate of 25%: 1 PR out of 4, not 3 runs out of 6.
 - Given two recorded runs of four tests each, one of which had one unmeasured test, when the report is produced, then it shows 12.5% of tests treated as unmeasured.
 - Given a recorded missed run whose diff modifies only `templates/invoice.html` and in which test_render failed, when the report is produced, then it lists test_render with the reason it was left out (its row, `src/shop/report.py` and `src/shop/pricing.py`, has none of the diff's paths, and no other rule picked it), next to the diff's paths with no column (`templates/invoice.html`) and the import-only ones (none).
 - Given a recorded caught run in which test_render also failed without being selected, when the report is produced, then test_render is listed the same way: every failed test left out of a selection is, whether or not its run was caught.
 - Given 5 recorded red runs, 2 of them without a rerun file, when the report is produced, then it says that the failures of 2 red runs were not confirmed by a rerun.
+- Given recorded runs in which 3 failed tests passed in their rerun files, when the report is produced, then it says that 3 failures were discarded as not reproduced: order-dependent failures (§7) can hide in that count.
 
 #### Invariants
 - Given the same inputs, when the run is evaluated twice, then the selection, its reasons and the verdict come out byte-identical; given the same recorded runs, when the report is produced twice, then both reports are byte-identical.
@@ -121,12 +127,15 @@ All examples use this fixture unless they say otherwise. Coverage measured `src/
 - Edge case: a changed file under `src/` that M never saw, because the PR added it or the base branch did after M -> listed as a path with no column; it picks no test.
 - Edge case: a changed path that is a column and also matches the floor (`src/shop/config/loader.py`) -> the whole suite; the tests that cover it carry `covers` as well as the floor reason.
 - Edge case: a diff that modifies `services/billing/uv.lock` -> the whole suite: the default patterns match at any depth.
+- Edge case: a diff that modifies `requirements/base.txt` -> the whole suite, through `**/requirements/**`.
 - Edge case: a diff with no paths -> only the unmeasured tests are selected (none in the fixture).
 - Edge case: a test with an `error` in setup or teardown and no `failure` -> it counts as failed, like a `failure`.
 - Edge case: a run whose only non-passing results are skips -> green.
 - Edge case: a failed test that is missing from the rerun file -> still failed: only a pass in the rerun file discards a failure.
 - Edge case: a test in the rerun file that did not fail in the full run -> ignored.
-- Edge case: a failure that only happens after certain other tests have run (order dependence, §7) -> it passes in the rerun file and is marked not reproduced, like a flaky one; Slice 1 cannot tell the two apart.
+- Edge case: a failure that only happens after certain other tests have run (order dependence, §7) -> it passes in the rerun file and is marked not reproduced, like a flaky one; Slice 1 cannot tell the two apart, and the report shows it only in its count of discarded failures.
+- Edge case: a diff that renames `settings/app.yaml` to `config/app.yaml` -> the whole suite: the new name matches `**/config/**`.
+- Edge case: a floor configuration with the pattern `**.lock` or `data/?.csv` -> not a valid pattern: an input the evaluation cannot use, as in the [core] example on unusable inputs.
 - Property (only while properties are on): for every <input>, <invariant that must hold>.
 
 ## Technical sheet
@@ -136,7 +145,7 @@ an irreversible effect that no [core] example observes means a missing example.>
 
 ## Open questions
 - Collection errors. A collection error is a result of the evaluated run: if it counted as an unmeasured test, the selection would no longer be blind to results. Decide how to treat it according to how pytest will run once the tool decides which tests run.
-- Which PR a run belongs to. None of the inputs says so, and the miss rate counts PRs. How each run gets its PR is open, and so is what happens to runs that belong to none, such as pushes to the base branch.
+- Which PR a run belongs to. None of the inputs says so, and both the miss rate and the floor rate count PRs. How each run gets its PR is open, and so is what happens to runs that belong to none, such as pushes to the base branch.
 - How JUnit test cases map to the node ids in the coverage contexts (classes, parametrization, rootdir) is unverified. It does not block the slice: a mismatch fails toward the safe side, because the test counts as unmeasured, which lowers savings and never hides a miss, and the report's unmeasured share is where a bad mapping shows up.
 - Failures inherited from the base branch. If the base branch was already red at the merge-base, the PR's run fails for reasons outside its diff and counts against the selector, and the rerun file reproduces them. Should a later slice read the base's results to set them apart?
 - Matrix age. Slice 1 sets no limit on how far M lags behind the merge-base, while regime assumes a matrix at most 24 h old (§8). Should the report show the lag?
