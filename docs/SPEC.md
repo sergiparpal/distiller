@@ -18,7 +18,12 @@ Teams whose pull-request CI is dominated by the test suite. As the suite grows, 
 The whole product is described in `docs/C6-destilador-revisada.md` (in Spanish); the § numbers in this spec refer to it.
 
 ## Non-goals
-- <What it will not do, even if it is easy.>
+- It never deletes, skips or deselects tests for good: a selection holds for one commit and can be undone, and it is never minimization (§1, §9.1).
+- Failure history never decides which tests are left out (§9.4).
+- No columns for database schemas, environment variables or calls to other services (§6).
+- It never calls a selection safe: it reports a measured miss rate with its bound (§11).
+- In Slice 1 it never decides which tests run, and its verdict never changes the CI result: the full suite runs every time, and a missed run exits like a caught one.
+- Not in Slice 1, though not ruled out: the solver, shards and order (§5); file tracing (§6), which §13.2 decides with this slice's figures; the static envelope (§14); any runner other than pytest.
 
 ## Constraints
 - Stack: Python 3.12+, as a command-line tool run as a CI step; `git` is called as a local binary.
@@ -113,14 +118,17 @@ All examples use this fixture unless they say otherwise. Coverage measured `src/
 - Given a diff that modifies `src/shop/tax.py` and a run that also has the unmeasured test_rounding, when the run is evaluated, then every selected test has at least one reason, and every path a reason names is in the diff.
 
 #### Records, rejections and CI signal
-- [core] Given a run evaluated as in the examples above, when its evaluation is recorded, then <TO FILL>.
-- [core] Given a full run in which test_render failed and a rerun file in which it passed, when the evaluation is recorded, then <TO FILL>.
-- [core] Given a run whose evaluation is already recorded, when the same inputs are evaluated again, then <TO FILL>.
-- [core] Given coverage recorded at a commit that is neither the merge-base nor one of its ancestors, such as the evaluated run's own coverage at H, when the run is evaluated, then <TO FILL>.
-- [core] Given a checkout without the history to prove that M is the merge-base or one of its ancestors, such as a shallow clone, when the run is evaluated, then <TO FILL>.
-- [core] Given a JUnit file that declares an external entity or nests entity expansions ("billion laughs"), when the run is evaluated, then <TO FILL>.
-- [core] Given a run with valid inputs, whether green, caught or missed, when its evaluation finishes as a CI step, then <TO FILL>.
-- [core] Given an input the evaluation cannot use, such as a missing coverage file or a JUnit file that is not well-formed XML, when the run is evaluated, then <TO FILL>.
+- [core] Given a run evaluated as in the examples above, when its evaluation is recorded, then exactly this line is appended to the record file, where `<H>`, `<merge-base>` and `<M>` stand for the fixture's commit ids and `<sha>` for the SHA-256 of its JUnit file:
+  ```json
+  {"format":1,"head":"<H>","junit_sha256":"<sha>","pr":7,"verdict":"missed","merge_base":"<merge-base>","coverage_commit":"<M>","selected_ms":0,"full_ms":12000,"tests":4,"unmeasured":0,"tests_with_row":4,"tests_with_row_not_in_run":0,"floor_matched":false,"rerun_given":false,"not_reproduced":[],"failed_left_out":[{"pair":["tests.test_report","test_render"],"node_id":"tests/test_report.py::test_render","row":["src/shop/pricing.py","src/shop/report.py"]}],"no_column":["templates/invoice.html"],"import_only":[]}
+  ```
+- [core] Given a full run in which test_render failed and a rerun file in which it passed, when the evaluation is recorded, then its record has `"verdict":"green"`, `"rerun_given":true`, `"not_reproduced":[["tests.test_report","test_render"]]` and `"failed_left_out":[]`.
+- [core] Given a run whose evaluation is already recorded, when the same inputs are evaluated again, then the record file is left byte for byte as it was, the tool warns on stderr that the run is already recorded, naming its key, and it exits with code 0.
+- [core] Given coverage recorded at a commit that is neither the merge-base nor one of its ancestors, such as the evaluated run's own coverage at H, when the run is evaluated, then nothing is evaluated, exactly this line is appended: `{"format":1,"head":"<H>","junit_sha256":"<sha>","pr":7,"verdict":"rejected","reason":"coverage-not-ancestor","input":"coverage"}`, the error message names M, and the tool exits with code 3.
+- [core] Given a checkout without the history to prove that M is the merge-base or one of its ancestors, such as a shallow clone, when the run is evaluated, then nothing is evaluated, a record with `"reason":"missing-history"` and `"input":"checkout"` is appended, the error message names the checkout, and the tool exits with code 3.
+- [core] Given a JUnit file that declares an external entity or nests entity expansions ("billion laughs"), when the run is evaluated, then no entity is resolved or expanded, so no file or URL that an entity names is ever read; nothing is evaluated, a record with `"reason":"unsafe-xml"` and `"input":"junit"`, or `"input":"rerun"` for the rerun file, is appended, the error message names the file and quotes nothing from it, and the tool exits with code 3.
+- [core] Given a run with valid inputs, whether green, caught or missed, when its evaluation finishes as a CI step, then it exits with code 0 whatever the verdict: a missed run never turns the step red.
+- [core] Given an input the evaluation cannot use, such as a missing coverage file or a JUnit file that is not well-formed XML, when the run is evaluated, then nothing is evaluated, a record with `"reason":"unusable-input"` and the input that failed is appended, the error message names that input, and the tool exits with code 3. The input is `"checkout"` for a directory that is not a git checkout, `"head"` for an H that names no commit, `"base"` for a base branch that names none, `"coverage"` for a coverage file that is missing or is not a coverage data file, or for an M that names no commit, `"junit"` for a full-run JUnit file that is missing or is not well-formed XML, `"rerun"` for such a rerun file, and `"floor"` for a floor configuration that cannot be read or has an invalid pattern.
 
 #### Edge cases
 - Edge case: test_vat also uses the session fixture whose setup runs `src/shop/db.py` during test_total's setup -> a session fixture's setup counts only in the row of the first test that requests it, and its teardown in the row of the session's last test, even if that test does not use it. A module fixture goes the same way, with its teardown in the row of the last test of its module, and so do `setUpClass` and `tearDownClass`, in the rows of the first and the last test of their class. Here the fixture's teardown runs no line of `src/shop/db.py`, so a diff that modifies only that file selects test_total and not test_vat; if it ran one, that diff would also select the session's last test.
