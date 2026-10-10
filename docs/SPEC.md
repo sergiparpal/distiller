@@ -8,9 +8,9 @@ Properties: off. While off, write each invariant as one or two concrete
 examples. -->
 
 ## Bet
-- Hypothesis: on <repo>, an all-affected, file-level selector would cut at least <X>% of the full suite's test time across its PRs.
-- Appetite: <N> weeks, ends <YYYY-MM-DD>
-- Kill signal: at the end of the appetite, the savings measured on <repo> are below <X>%, or Slice 1 does not run end to end in its CI.
+- Hypothesis: on sergiparpal/adaptive-policy-compilation, an all-affected, file-level selector would cut at least 25% of the full suite's test time across its PRs.
+- Appetite: 3 weeks, ends 2026-10-31
+- Kill signal: at the end of the appetite, the savings measured on sergiparpal/adaptive-policy-compilation are below 25%, or Slice 1 does not run end to end in its CI.
 
 ## Problem
 Teams whose pull-request CI is dominated by the test suite. As the suite grows, every PR waits for all of it and CI time becomes the bottleneck of the feedback loop: developers wait, and the platform or DevEx team that owns CI pays for the minutes. Today they run the full suite on every PR, keep hand-written per-directory rules, or buy a predictive service that ranks tests but cannot say why a given test did not run. None of these tells a team, from its own history, how often running fewer tests would have let a real failure through, and nobody hands a selector authority without that number.
@@ -22,8 +22,9 @@ The whole product is described in `docs/C6-destilador-revisada.md` (in Spanish);
 - Failure history never decides which tests are left out (§9.4).
 - No columns for database schemas, environment variables or calls to other services (§6).
 - It never calls a selection safe: it reports a measured miss rate with its bound (§11).
-- In Slice 1 it never decides which tests run, and its verdict never changes the CI result: the full suite runs every time, and a missed run exits like a caught one.
-- Not in Slice 1, though not ruled out: the solver, shards and order (§5); file tracing (§6), which §13.2 decides with this slice's figures; the static envelope (§14); any runner other than pytest.
+- In Slice 1 it never decides which tests run, and an evaluated run's verdict never changes the CI result: the full suite runs every time, and a missed run exits like a caught one.
+- It classifies no failed test left out of a selection by cause: a person does it, from the report.
+- Not in Slice 1, though not ruled out: the solver, shards and order (§5); sharded runs, with several JUnit files per run or coverage at M combined from several jobs; file tracing (§6), which §13.2 decides with this slice's figures; the static envelope (§14); any runner other than pytest.
 
 ## Constraints
 - Stack: Python 3.12+, as a command-line tool run as a CI step; `git` is called as a local binary.
@@ -150,8 +151,8 @@ All examples use this fixture unless they say otherwise. The run belongs to pull
 - [core] Given a shallow checkout, such as a clone made with `--depth 1`, when the run is evaluated, then nothing is evaluated, a record with `"reason":"missing-history"` and `"input":"checkout"` is appended, the error message names the checkout, and the tool exits with code 3.
 - [core] Given a JUnit file that declares an external entity or nests entity expansions ("billion laughs"), when the run is evaluated, then no entity is resolved or expanded, so no file or URL that an entity names is ever read; nothing is evaluated, a record with `"reason":"unsafe-xml"` and `"input":"junit"`, or `"input":"rerun"` for the rerun file, is appended, the error message names the file and quotes nothing from it, and the tool exits with code 3.
 - [core] Given a run with valid inputs, whether green, caught or missed, when its evaluation finishes as a CI step, then it exits with code 0 whatever the verdict: a missed run never turns the step red.
-- [core] Given an input the evaluation cannot use, such as a missing coverage file or a JUnit file that is not well-formed XML, when the run is evaluated, then nothing is evaluated, a record with `"reason":"unusable-input"` and the input that failed is appended, the error message names that input, and the tool exits with code 3. The input is `"checkout"` for a directory that is not a git checkout, `"head"` for an H that names no commit, `"base"` for a base branch that names none, `"coverage"` for a coverage file that is missing or is not a coverage data file, or for an M that names no commit, `"junit"` for a full-run JUnit file that is missing or is not well-formed XML, `"rerun"` for such a rerun file, and `"floor"` for a floor configuration that cannot be read or has an invalid pattern.
-- [core] Given a full run whose JUnit holds only a collection error, for `tests/test_report.py`, when the run is evaluated, then <TO FILL>.
+- [core] Given an input the evaluation cannot use, such as a missing coverage file or a JUnit file that is not well-formed XML, when the run is evaluated, then nothing is evaluated, a record with `"reason":"unusable-input"` and the input that failed is appended, the error message names that input, and the tool exits with code 3. The input is `"checkout"` for a directory that is not a git checkout, `"head"` for an H that names no commit, `"base"` for a base branch that names no commit or shares no history with H, `"coverage"` for a coverage file that is missing or is not a coverage data file, or for an M that names no commit, `"junit"` for a full-run JUnit file that is missing or is not well-formed XML, `"rerun"` for such a rerun file, and `"floor"` for a floor configuration that cannot be read or has an invalid pattern.
+- [core] Given a full run whose JUnit holds only a collection error, for `tests/test_report.py`, when the run is evaluated, then nothing is evaluated, a record with `"reason":"collection-error"` and `"input":"junit"` is appended, the error message names the JUnit file, and the tool exits with code 3.
 - [core] Given a run rejected because its coverage file was missing, when it is evaluated again with the same inputs, then the record file is left byte for byte as it was, the error message names the coverage file again, and the tool exits with code 3.
 - [core] Given that same rejected run, when it is evaluated again with its coverage file, then it is evaluated, its record is appended after the rejected one, and the tool exits with code 0.
 - [core] Given coverage in which no line was recorded for more than one test, as the `sysmon` core leaves it, when the run is evaluated, then nothing is evaluated, a record with `"reason":"no-shared-lines"` and `"input":"coverage"` is appended, the error message says that the coverage at M must be recorded with `--cov-context=test` and `COVERAGE_CORE=ctrace`, or that the suite's tests share no code, and the tool exits with code 3.
