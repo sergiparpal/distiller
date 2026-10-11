@@ -218,19 +218,17 @@ Option A of `notes/2026-10-10-architecture-options.md`, with D-001 and D-002 of 
 ### Modules
 | Module | Does | Tier | [core] "then"s |
 |---|---|---|---|
-| `__main__` | `raise SystemExit(cli.main())`: the only place where a return value becomes the exit code the CI step sees, so one test runs `python -m distiller` | core | K3–K12, K13\*–K15\* |
-| `cli` | argparse (`allow_abbrev=False`) into `RunArgs`; runs `evaluate.run` or `report.run`; turns an unexpected exception into `messages.unexpected_failure` and 1. Nothing else | core | K1–K12, K13\*–K15\* |
-| `evaluate` | `RunArgs`, and the evaluate command as `run`: record file, key, evaluated check, problem order, record, append, message, exit code | core | K1–K12, K13\*–K15\* |
-| `selection` | pure, no I/O: `pair_of`, `match_tests`, `select`, `judge` | core | K1, K2, K11, K13\* |
-| `messages` | `Rejected`, and one function per text written to stderr | core | K3–K6, K8–K10, K12, K14\*, K15\* |
-| `git` | the seven git queries | core | K1–K6, K8–K12, K13\*, K14\* |
-| `coverage_at_m` | reads the coverage at M as D-002 says; maps it to M's tree with the pure `build_matrix` | core | K1, K8, K10–K12, K13\*, K14\* |
-| `junit` | reads both JUnit files, `None` when missing or unreadable, and parses them, with the test-case rules and pytest's internal error | core | K1–K6, K8–K12, K13\*, K14\* |
-| `floor` | reads the floor configuration; the patterns and their matching | core | K1, K8, K11, K13\* |
-| `records` | encode, decode, read the record file, append | core | K1–K6, K8–K12, K13\*–K15\* |
+| `__main__` | `raise SystemExit(cli.main())`: the only place where a return value becomes the exit code the CI step sees, so one test runs `python -m distiller` | core | K3–K15 |
+| `cli` | argparse (`allow_abbrev=False`) into `RunArgs`; runs `evaluate.run` or `report.run`; turns an unexpected exception into `messages.unexpected_failure` and 1. Nothing else | core | K1–K15 |
+| `evaluate` | `RunArgs`, and the evaluate command as `run`: record file, key, evaluated check, problem order, record, append, message, exit code | core | K1–K15 |
+| `selection` | pure, no I/O: `pair_of`, `match_tests`, `select`, `judge` | core | K1, K2, K11, K13 |
+| `messages` | `Rejected`, and one function per text written to stderr | core | K3–K6, K8–K10, K12, K14, K15 |
+| `git` | the seven git queries | core | K1–K6, K8–K14 |
+| `coverage_at_m` | reads the coverage at M as D-002 says; maps it to M's tree with the pure `build_matrix` | core | K1, K8, K10–K14 |
+| `junit` | reads both JUnit files, `None` when missing or unreadable, and parses them, with the test-case rules and pytest's internal error | core | K1–K6, K8–K14 |
+| `floor` | reads the floor configuration; the patterns and their matching | core | K1, K8, K11, K13 |
+| `records` | encode, decode, read the record file, append | core | K1–K6, K8–K15 |
 | `report` | the report command: dedupe, figures, bound, text, with the sentence that its figures belong to the all-affected selector | medium | none |
-
-\* Read from the prose that decides its Given: its "then" is still `<TO FILL>`.
 
 `git` and `junit` give the run's key, so they are in every row whose record or warning shows it. `report` is medium: records are kept, so a wrong figure is fixed by running a corrected report again.
 
@@ -418,17 +416,16 @@ The report reads its record files in the order given, all of them before it writ
 ### Irreversible effects
 | Effect | Module | Observed by |
 |---|---|---|
-| Appending a record line | `records`, as `evaluate` decides | K1, K2, K4–K6, K8, K9, K11, K12, K13\*, K14\*; nothing appended: K3, K10, K15\* |
-| Creating the record file | `records` | K13\* |
-| Writing to the coverage file | `coverage_at_m`, through coverage | K14\* |
+| Appending a record line | `records`, as `evaluate` decides | K1, K2, K4–K6, K8, K9, K11–K14; nothing appended: K3, K10, K15 |
+| Creating the record file | `records` | K13 |
+| Writing to the coverage file | `coverage_at_m`, through coverage | K13, K14 |
+| Writing to the JUnit file | `junit`, which opens it for reading only | K13 |
 | Reading a file or URL that an XML entity names | `junit`, through defusedxml | K6 |
-| Text on stderr, kept in the CI log | `messages`, printed by `evaluate`, `report` and `cli` | what it names: K3–K6, K8–K10, K12; that it quotes nothing: K6, K15\*. The unexpected-failure line: a test that makes a reader raise an error whose text holds a canary |
+| Text on stderr, kept in the CI log | `messages`, printed by `evaluate`, `report` and `cli` | what it names: K3–K6, K8–K10, K12, K14, K15; that it quotes nothing: K6, K15. The unexpected-failure line: a test that makes a reader raise an error whose text holds a canary |
 | The report's text, in a terminal or a log | `report` | no [core], since `report` is medium; its escaping, the Report example on a path with a newline and an escape character |
-| A torn append, from a killed runner or a full disk | `records` | none; the line it leaves is not a record, which K15\* covers |
+| A torn append, from a killed runner or a full disk | `records` | none; the line it leaves is not a record, which K15 covers |
 | A network connection opened by git | `git` | none: the Deployment rules out a partial clone |
 | The private copy, left in the temporary directory | `coverage_at_m` | none: only a killed process leaves it (D-002) |
-
-\* Once its "then" says so.
 
 ### Checked and [VERIFY]
 *read*: in the installed source of coverage 7.16.2, pytest 9.1.1 and defusedxml 0.7.1. *run*: executed on 2026-10-10, git with git 2.43.0 and coverage on Python 3.13.
