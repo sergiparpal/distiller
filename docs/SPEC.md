@@ -28,11 +28,11 @@ The whole product is described in `docs/C6-destilador-revisada.md` (in Spanish);
 
 ## Constraints
 - Stack: Python 3.12+, as a command-line tool run as a CI step; `git` is called as a local binary.
-- Allowed dependencies: at run time, `coverage`, to read test contexts through its public API rather than the internal schema of `.coverage`, and `defusedxml`, because the JUnit XML is written by the code under review and is not trusted. `pytest` for the tool's own tests. Anything else needs a change to this spec.
+- Allowed dependencies: at run time, `coverage`, to read test contexts through its public API rather than the internal schema of `.coverage`, and `defusedxml`, because the JUnit XML is written by the code under review and is not trusted. `pytest` for the tool's own tests and, for development only, the harness's tools: `ruff`, `pyright`, `pip-audit`, `import-linter` and `pre-commit` with a secret scanner, none of which the tool imports. Anything else needs a change to this spec.
 - Performance: in shadow the tool decides nothing and fails no check, but it runs in the pull request's test job, after the tests, so its time adds to that job's. Evaluating one run with 10,000 tests and 2,000 files takes under 60 s and under 1 GB of memory on a standard hosted CI runner; a report over 1,000 recorded runs takes under 10 s. Regime will set its own limit.
 - Agent safety: not an agent and does not run inside one; no model reads its inputs or makes its decisions. The external-communication leg is cut anyway: Slice 1 opens no network connection. It reads local files, runs the local `git` and writes local output.
 - If no leg can be cut: not applicable.
-- Deployment: Slice 1 runs on one pilot repository, named in the Bet, on GitHub Actions. The pull request's full pytest run writes its JUnit in a single pytest invocation, without `--junit-prefix`. The tool's step runs after it whatever the tests' outcome (`if: always()`) and never fails the pull request's CI (`continue-on-error: true`): a rejection shows in the step's log and in the report, never as a failed check. The checkout has the whole history (`fetch-depth: 0`). H is the commit the full run tested, the checkout's HEAD: on the `pull_request` event, the merge commit in `github.sha`, not the pull request's head. Each CI job writes its own record file and the report reads them all, so no two jobs append to the same file. The coverage at M is recorded on the base branch by a separate job, at least once a day, with `--cov-context=test` and `COVERAGE_CORE=ctrace`, and each run is given the newest recorded M that is the merge-base or one of its ancestors. In the first week on the pilot, the records are checked by hand against the CI's list of pull request runs.
+- Deployment: Slice 1 runs on one pilot repository, named in the Bet, on GitHub Actions. The pull request's full pytest run writes its JUnit in a single pytest invocation, without `--junit-prefix`. The tool's step runs after it whatever the tests' outcome (`if: always()`) and never fails the pull request's CI (`continue-on-error: true`): a rejection shows in the step's log and in the report, never as a failed check. The checkout has the whole history (`fetch-depth: 0`). H is the commit the full run tested, the checkout's HEAD: on the `pull_request` event, the merge commit in `github.sha`, not the pull request's head. Each CI job writes its own record file and the report reads them all, so no two jobs append to the same file. The coverage at M is recorded on the base branch by a separate job, at least once a day, with `--cov-context=test` and `COVERAGE_CORE=ctrace`, and each run is given the newest recorded M that is the merge-base or one of its ancestors. In the first week on the pilot, the records are checked by hand against the CI's list of pull request runs. The checkout is a full clone, not a partial one: in a partial clone, git can fetch missing objects from the remote, and Slice 1 opens no network connection. The base branch is given as `origin/<branch>`, since a pull request's checkout has it only as a remote-tracking branch. Slice 1 is not packaged: the step runs `python -m distiller` from a checkout of this repository at a fixed commit, with the same version of `coverage` installed as in the job that records M.
 
 ## Slices
 <Add each slice's criteria just before starting it.>
@@ -49,14 +49,15 @@ Inputs for one run:
 - the per-test coverage, recorded on the base branch at a commit M as a coverage.py data file with test contexts (pytest-cov `--cov-context=test`), and M itself. M must be the merge-base or one of its ancestors. The pytest run that records the coverage must use coverage's `ctrace` core (`COVERAGE_CORE=ctrace`): the `sysmon` core, coverage's default from Python 3.14, records each line only for the first test that runs it, and the data file does not say which core recorded it, so coverage in which no line was recorded for more than one test is rejected with a reason of its own, `no-shared-lines`, rather than as an unusable input. The rows recorded at M depend on the order of the tests and, under xdist, on how it shares them out among its workers, which changes from one identical run to the next (see the edge case on the session fixture);
 - the full run's JUnit XML and, optionally, the JUnit XML of re-running only the tests that failed in it (the rerun file);
 - pytest's rootdir, relative to the repository root, if it is not the repository root. Node ids are relative to it, and `own file` and `conftest` resolve paths through it;
-- the floor configuration, if any: a text file whose path is given on the command line, with one pattern per line. Blank lines and lines that start with `#` are ignored, and spaces at either end of a line are not part of its pattern;
+- the floor configuration, if any: a text file whose path is given on the command line, with one pattern per line. Blank lines and lines that start with `#` are ignored, and spaces at either end of a line are not part of its pattern. It is read as UTF-8: a byte order mark at its start is ignored, a line may end in `\n` or `\r\n`, and the `\r` is not part of its pattern. A file that is not valid UTF-8 cannot be read;
 - the record file, whose path is given on the command line.
 
 Terms:
-- The changed paths are those that `git diff --name-only --no-renames --no-relative -z <merge-base> <H>` lists. With `--no-renames`, a renamed file is listed under both of its names, and with `-z`, no path is quoted; plain `git diff --name-only` lists only a renamed file's new name and quotes paths with non-ASCII or control characters, quotation marks or backslashes (checked with git 2.43).
+- The changed paths are those that `git diff --name-only --no-renames --no-relative -z <merge-base> <H>` lists. With `--no-renames`, a renamed file is listed under both of its names, and with `-z`, no path is quoted; plain `git diff --name-only` lists only a renamed file's new name and quotes paths with non-ASCII or control characters, quotation marks or backslashes (checked with git 2.43). When H and the base branch have more than one best common ancestor, the merge-base is the one that `git merge-base` prints. That choice can change with the version of git, so evaluating the same inputs twice gives byte-identical results only with the same version of git.
 - A test is a pytest test case, named by its node id (`tests/test_tax.py::test_vat`).
 - A test context is a coverage context of the form `<node id>|setup`, `<node id>|run` or `<node id>|teardown`, read by splitting it at its last `|`, since a node id can contain one (`tests/test_tax.py::test_odd[a|b]|run`). Any other context, such as the empty one or a static one (`[run] context = ci`), is outside any test.
-- A test's row is the set of repository files with at least one line recorded in one of its test contexts: during its setup, its call (`run`) or its teardown.
+- A test's row is the set of repository files with at least one line recorded in one of its test contexts: during its setup, its call (`run`) or its teardown. A node id whose recorded lines all fall in files outside the repository has an empty row, and an empty row is no row: its test is unmeasured, and the node id is not among the tests with a row.
+- A coverage file is a coverage data file only if coverage reads it without an error and it lists at least one measured file, so an empty file is not one, nor is an SQLite database of something else. A measured file in which no line was recorded is in no row and is not import-only.
 - A file recorded in the coverage maps to the longest path among the files in M's tree that the recorded path equals or ends with right after a `/`, compared case-sensitively. A recorded file that maps to none is outside the repository and in no row. So `/runner/work/shop/src/shop/tax.py` maps to `src/shop/tax.py`.
 - A column is a file in at least one row. A file whose lines were all recorded outside any test (at import, during collection) is import-only and in no row. A changed path that is neither a column nor import-only has no column.
 - The JUnit XML names a test by a pair (`classname`, `name`) that pytest works out from its node id with a private function, `_pytest.junitxml.mangle_test_address`: it splits the node id at `::`, leaving the parameters, from the first `[` on, whole; `classname` is the node id's path, with each `/` turned into `.` and the final `.py` dropped, followed by any classes, all joined by `.`, and `name` is the function with its parameters. So the pair of `tests/test_tax.py::TestVat::test_rate[es-0.21]` is (`tests.test_tax.TestVat`, `test_rate[es-0.21]`).
@@ -65,20 +66,23 @@ Terms:
 - The floor is the default patterns `**/config/**`, `**/migrations/**`, `**/poetry.lock`, `**/uv.lock`, `**/Pipfile.lock`, `**/requirements*.txt`, `**/requirements/**`, `**/pyproject.toml`, `**/setup.py`, `**/setup.cfg`, `**/pytest.ini` and `**/tox.ini`, plus whatever patterns the floor configuration adds. A configuration adds patterns and never removes them (§9.3).
 - Floor patterns have their own syntax, not Python's `fnmatch`, whose `*` crosses `/` and whose `**/uv.lock` does not match `uv.lock` at the root. A pattern is matched, case-sensitively and one `/`-separated segment at a time, against each changed path, relative to the repository root. A segment that is exactly `**` matches zero or more whole segments, or one or more when it ends the pattern. In any other segment, `*` matches any run of characters except `/`, and every other character matches itself, except `?`, `[` and `]`. A pattern with any of those three, or with a `**` inside a segment, as in `**.lock`, is not valid: whoever writes `data/?.csv` expects a wildcard, and taken literally it would match no real file. So `**/uv.lock` matches `uv.lock` and `services/billing/uv.lock`; `config/**` matches every file under the top-level `config/` but not a file named `config`; and `**/requirements*.txt` matches `requirements-dev.txt` but not `requirements/dev.txt`, which is why the floor also has `**/requirements/**`.
 - The selection is every test in the run that at least one rule picks, each with its reasons, written below as: `covers P` (its row has the changed path P), `floor X (P)` (the changed path P matches floor pattern X, which picks every test), `unmeasured`, `own file P` (P is the file in its node id) and `conftest P` (P is a `conftest.py` in the test's directory or any directory above it, up to pytest's rootdir). An unmeasured test has no node id, since a pair is never turned back into one, so `own file` and `conftest` never pick it; besides `unmeasured`, only a floor reason can. A renamed path counts under both of its names, a deleted one under its old name. This notation is for the examples, not an output format.
-- A run is red when at least one test has a `failure` or an `error` that the rerun file does not discard; only a pass in the rerun file discards one, and the test is then marked not reproduced. A red run is caught when the selection holds at least one of its failed tests and missed otherwise. A run that is not red is green.
+- A run is red when at least one test has a `failure` or an `error` that the rerun file does not discard; only a pass in the rerun file discards one, and the test is then marked not reproduced. A test passes in the rerun file only if none of its test cases there has a `failure`, an `error` or a `skipped`. A red run is caught when the selection holds at least one of its failed tests and missed otherwise. A run that is not red is green.
 - A collection error is the test case that pytest writes in the JUnit for a file it could not collect: an empty `classname` and an `error` whose message is `collection failure` (checked with pytest 9.1.1). By default pytest then runs no test, so the JUnit holds only such errors. A run whose full-run JUnit holds a collection error is rejected with `collection-error`, with the input `junit`: evaluated, it would always count as caught, since the error has no row and is selected as unmeasured, and every test with a row would count as not in the run.
-- A record is one line that the tool appends to the record file named on its command line: a JSON object in ASCII, with no spaces between tokens and a newline at the end. In its strings, quotation marks, backslashes and the control characters that have one take JSON's short escapes (`\"`, `\\`, `\b`, `\f`, `\n`, `\r`, `\t`), and every other character outside printable ASCII (from space to `~`) is written as `\u` and four lowercase hex digits, as a surrogate pair beyond U+FFFF. Every record starts with these keys, in this order: `format`, the record format version, 1; `head`, H's full commit id, or H as given if it names no commit in the checkout; `junit_sha256`, the SHA-256 of the full run's JUnit file, or `null` if there is no such file; `pr`, the pull request's number; and `verdict`, which is `green`, `caught`, `missed` or `rejected`. `head` and `junit_sha256` are the run's key. An evaluated run's record goes on with `merge_base` and `coverage_commit` (M), as full commit ids; `selected_ms` and `full_ms`, the selected and full-suite durations in whole milliseconds; `tests`, how many tests the run has; `unmeasured`, how many of them are unmeasured; `tests_with_row`, how many tests have a row; `tests_with_row_not_in_run`, how many of those are not in the run; `floor_matched` and `rerun_given`, as booleans; `not_reproduced`, the failures not reproduced, as pairs; `failed_left_out`, the failed tests left out of the selection, each an object with `pair`, `node_id` and `row`, in that order; `no_column`, the changed paths with no column; and `import_only`, the import-only ones. A rejected run's record goes on with `reason`, one of `coverage-not-ancestor`, `missing-history`, `unsafe-xml`, `no-shared-lines`, `collection-error` and `unusable-input`, and `input`, one of `head`, `base`, `coverage`, `junit`, `rerun`, `floor` and `checkout`. A pair is a list of two strings, `classname` and `name`. Lists of pairs are sorted by `classname` and then `name`, `failed_left_out` by its pairs, and lists of paths by path, always by Unicode code point. A record holds nothing that changes between two evaluations of the same inputs, such as the time.
-- A run is rejected for one of these reasons, each recorded with its input. `unusable-input`, with the input that cannot be used: `checkout` for a directory that is not a git checkout, `head` for an H that names no commit, `base` for a base branch that names no commit, or whose commit shares no history with H, so that they have no merge-base, `coverage` for a coverage file that is missing or is not a coverage data file, or for an M that names no commit, `junit` for a full-run JUnit file that is missing or is not well-formed XML, `rerun` for such a rerun file, and `floor` for a floor configuration that cannot be read or has an invalid pattern. `coverage-not-ancestor`, with `coverage`, when M is neither the merge-base nor one of its ancestors. `missing-history`, with `checkout`, when the checkout is shallow, as `git rev-parse --is-shallow-repository` reports: a shallow clone usually lacks M and the merge-base, so git cannot tell whether M is an ancestor. `unsafe-xml`, with `junit` or `rerun`, for a JUnit or rerun file that declares an entity, even one it never uses: no entity is ever resolved or expanded, so no file or URL that an entity names is ever read. `no-shared-lines`, with `coverage`, for coverage in which no line was recorded for more than one test. `collection-error`, with `junit`, for a full-run JUnit file that holds a collection error.
-- When a run has more than one problem, the first in this order decides its record: the checkout (not a git checkout, then shallow); H; the base branch; the coverage (unusable, then `coverage-not-ancestor`, then `no-shared-lines`); the full run's JUnit (missing, then `unsafe-xml` or not well-formed, whichever the parser meets first, then `collection-error`); the rerun file (missing, then `unsafe-xml` or not well-formed, whichever comes first); the floor configuration.
-- Warnings and error messages go to stderr. They name inputs by their path, and commits as given, and never quote what a file holds. A rejection's message names its input, or M when M is what failed: for `coverage-not-ancestor` and for an M that names no commit; the one for `no-shared-lines` also says that the coverage at M must be recorded with `--cov-context=test` and `COVERAGE_CORE=ctrace`, or that the suite's tests share no code. The message for an invalid floor pattern names the configuration file and the pattern's line number. The warning for a run that is already recorded says so and names its key as the record holds it.
+- A test case cannot be used if it lacks a `classname`, a `name` or a `time` attribute, or if its `time` is not one or more ASCII digits, optionally followed by a point and one or more ASCII digits, as pytest writes it (`0.123`). pytest's internal error is the test case it writes when it fails itself: `classname="pytest"`, `name="internal"` and an `error` whose message is `internal error` (checked with pytest 9.1.1). A JUnit file, the full run's or the rerun's, that has a test case that cannot be used, or that holds pytest's internal error, is rejected with `unusable-input` and its input. Evaluated, the internal error would count as an unmeasured failed test and make the run caught, as a collection error would.
+- A record is one line that the tool appends to the record file named on its command line: a JSON object in ASCII, with no spaces between tokens and a newline at the end. In its strings, quotation marks, backslashes and the control characters that have one take JSON's short escapes (`\"`, `\\`, `\b`, `\f`, `\n`, `\r`, `\t`), and every other character outside printable ASCII (from space to `~`) is written as `\u` and four lowercase hex digits, as a surrogate pair beyond U+FFFF. Every record starts with these keys, in this order: `format`, the record format version, 1; `head`, H's full commit id, or H as given if it names no commit in the checkout; `junit_sha256`, the SHA-256 of the full run's JUnit file, or `null` if there is no such file or it cannot be read; `pr`, the pull request's number; and `verdict`, which is `green`, `caught`, `missed` or `rejected`. `head` and `junit_sha256` are the run's key. `pr` is not part of it: a rejected record already there with the same key, reason and input stops the append, whatever its `pr`. An evaluated run's record goes on with `merge_base` and `coverage_commit` (M), as full commit ids; `selected_ms` and `full_ms`, the selected and full-suite durations in whole milliseconds; `tests`, how many tests the run has; `unmeasured`, how many of them are unmeasured; `tests_with_row`, how many tests have a row; `tests_with_row_not_in_run`, how many of those are not in the run; `floor_matched` and `rerun_given`, as booleans; `not_reproduced`, the failures not reproduced, as pairs; `failed_left_out`, the failed tests left out of the selection, each an object with `pair`, `node_id` and `row`, in that order; `no_column`, the changed paths with no column; and `import_only`, the import-only ones. A node id with a row is in the run when its pair is in the run's JUnit, so two node ids with one pair are both in the run, or both not. A rejected run's record goes on with `reason`, one of `coverage-not-ancestor`, `missing-history`, `unsafe-xml`, `no-shared-lines`, `collection-error` and `unusable-input`, and `input`, one of `head`, `base`, `coverage`, `junit`, `rerun`, `floor` and `checkout`. A pair is a list of two strings, `classname` and `name`. Lists of pairs are sorted by `classname` and then `name`, `failed_left_out` by its pairs, and lists of paths by path, always by Unicode code point. A record holds nothing that changes between two evaluations of the same inputs, such as the time.
+- A run is rejected for one of these reasons, each recorded with its input. `unusable-input`, with the input that cannot be used: `checkout` for a directory that is not a git checkout, `head` for an H that names no commit, `base` for a base branch that names no commit, or whose commit shares no history with H, so that they have no merge-base, `coverage` for a coverage file that is missing, cannot be read or is not a coverage data file, or for an M that names no commit, `junit` for a full-run JUnit file that is missing, cannot be read or is not well-formed XML, that has a test case that cannot be used, or that holds pytest's internal error, `rerun` for such a rerun file, and `floor` for a floor configuration that cannot be read or has an invalid pattern. `coverage-not-ancestor`, with `coverage`, when M is neither the merge-base nor one of its ancestors. `missing-history`, with `checkout`, when the checkout is shallow, as `git rev-parse --is-shallow-repository` reports: a shallow clone usually lacks M and the merge-base, so git cannot tell whether M is an ancestor. `unsafe-xml`, with `junit` or `rerun`, for a JUnit or rerun file that declares an entity, even one it never uses: no entity is ever resolved or expanded, so no file or URL that an entity names is ever read. `no-shared-lines`, with `coverage`, for coverage in which no line was recorded for more than one test. `collection-error`, with `junit`, for a full-run JUnit file that holds a collection error.
+- An input file that exists but is not a regular file, such as a directory, or that the tool is not allowed to read, cannot be read, and counts like a missing one: `unusable-input`, with that input. The record file is not one of these inputs: if it exists but cannot be read, that is any other failure.
+- When a run has more than one problem, the first in this order decides its record: the checkout (not a git checkout, then shallow); H; the base branch; the coverage (unusable, then `coverage-not-ancestor`, then `no-shared-lines`); the full run's JUnit (missing or cannot be read, then `unsafe-xml` or not well-formed, whichever the parser meets first, then a test case that cannot be used or pytest's internal error, then `collection-error`); the rerun file (missing or cannot be read, then `unsafe-xml` or not well-formed, whichever comes first, then a test case that cannot be used or pytest's internal error); the floor configuration.
+- Warnings and error messages go to stderr. They name inputs by their path, and commits as given, and never quote what a file holds. A rejection's message names its input, or M when M is what failed: for `coverage-not-ancestor` and for an M that names no commit; the one for `no-shared-lines` also says that the coverage at M must be recorded with `--cov-context=test` and `COVERAGE_CORE=ctrace`, or that the suite's tests share no code. The message for an invalid floor pattern names the configuration file and the pattern's line number. The warning for a run that is already recorded says so and names its key as the record holds it. Any other failure, that is, one that is not a rejection, a line that is not a record, a record file that the report finds missing or cannot read or a usage error, prints one line that names only the class of the error, never its text or a traceback, and exits with 1: a library's error can quote what a file holds.
 - Before evaluating a run, the tool reads the record file; if it does not exist, the tool treats it as empty and creates it when it appends. If the file holds a line that is not a record, the tool appends nothing, names the file and the line number in its error message, without quoting the line, and exits with 1. If an evaluated run's record has the run's key, nothing is appended, and the tool warns and exits with 0. Otherwise it evaluates the run, appends its record and exits with 0, whatever the verdict. If it rejects the run instead, it appends its record unless one with the same key, reason and input is already there, and exits with 3. A usage error exits with 2, and any other failure with 1.
-- A line of a record file is a record only if it is byte for byte what the tool would write for some run: a record as defined above, of format 1, ending in a newline. Anything else is not a record, such as an empty line, a line that ends in a carriage return or lacks its newline, or a record of another format.
+- Apart from appending to the record file, the tool never writes to its inputs: it runs only git commands that read, and it leaves the coverage file, the JUnit files and the floor configuration byte for byte as they were, whatever the outcome.
+- A line of a record file is a record only if it is byte for byte what the tool would write for a record with those keys and values: a record as defined above, of format 1, ending in a newline. Anything else is not a record, such as an empty line, a line that ends in a carriage return or lacks its newline, or a record of another format. That is checked on the line's shape: its keys and their order, the type and the allowed values of each field, and its bytes. Whether the fields agree with each other, as a `missed` record with an empty `failed_left_out` would not, is not checked.
 - The miss rate counts pull requests and looks only at evaluated runs, never at rejected ones: n is the number of PRs with at least one red run, k the number of those with at least one missed run.
 - Savings are 1 − Σ selected duration / Σ full-suite duration, summed over every evaluated run, green and red, but never over a rejected one, using the JUnit times.
 - Each test case's JUnit time is rounded to the nearest whole millisecond, halves up, before any sum. `full_ms` is the sum over every test case of the full run's JUnit and `selected_ms` over those of the selected tests; neither uses a `testsuite` element's `time`.
 - The floor rate counts pull requests, as §13.2 does, and looks only at evaluated runs, never at rejected ones: the share of evaluated PRs, those with at least one evaluated run, in which at least one run had a changed path that matched the floor. It measures how often the floor costs a run its savings. Unlike in §13.2, it does not decide whether to build file tracing: §9.3 keeps the floor when tracing is on, so tracing would not change it.
 - The no-column rate counts pull requests: the share of evaluated PRs with at least one run in which a changed path had no column and no changed path matched the floor. Only in such runs could file tracing (§6) change the selection, so the rate is a ceiling on what tracing can change: it also counts paths that tracing would not turn into columns, such as new files or documentation. It is one of the two figures for §13.2. The other is the share of failed tests left out of a selection that are due to a file dependency, which a person classifies from the report, whether or not their run was caught.
-- The report reads one or more record files. If one of them holds a line that is not a record, the report produces nothing, names the file and the line number in its error message, without quoting the line, and exits with 1, as the evaluation does. Every figure in it counts each key once, even when the key appears in several record files. If two evaluated runs' records have the same key but differ, the key is left out of every figure, and the report lists it as a conflict, with the record files it appears in: choosing one of the records would make the report depend on the order of the files. The report shows the rejected runs by reason and input, counting only the keys that no evaluated run's record has. The report covers one repository and is never given record files from several. A figure whose denominator is zero is never shown as a percentage: with no pull request with a red run, the miss rate is 0 out of 0, with no bound, and with no evaluated run, or a total full-suite time of zero, there is no savings figure. The report says that its figures belong to the all-affected selector, which picks every test that any rule picks over these rows; a selector that picks only some of them, such as a set cover over the same rows, misses at least as often.
+- The report reads one or more record files. If one of them holds a line that is not a record, the report produces nothing, names the file and the line number in its error message, without quoting the line, and exits with 1, as the evaluation does. Every record file given to the report must exist and be readable: if one does not exist or cannot be read, the report writes nothing to stdout, names that file in its error message and exits with 1. Unlike the evaluation, it never takes a missing record file as empty, since a mistyped path would drop its runs without a warning. Every figure in it counts each key once, even when the key appears in several record files. If two evaluated runs' records have the same key but differ, the key is left out of every figure, and the report lists it as a conflict, with the record files it appears in: choosing one of the records would make the report depend on the order of the files. The report shows the rejected runs by reason and input, counting only the keys that no evaluated run's record has. The report covers one repository and is never given record files from several. A figure whose denominator is zero is never shown as a percentage: with no pull request with a red run, the miss rate is 0 out of 0, with no bound, and with no evaluated run, or a total full-suite time of zero, there is no savings figure. The report says that its figures belong to the all-affected selector, which picks every test that any rule picks over these rows; a selector that picks only some of them, such as a set cover over the same rows, misses at least as often. The report writes every pair, node id and path as a JSON string, the way the records hold it, so a control character in a test's name or in a path never reaches the terminal or a log unescaped.
 - The report depends on neither the order of the record files nor that of their lines. Its lists are sorted first by the run's key, `head` and then `junit_sha256`, with `null` first, and within each run, tests by their pair and paths by path, a conflict's record files among them; the counts of rejected runs are sorted by reason and then input. Every comparison is by Unicode code point, as in records.
 
 All examples use this fixture unless they say otherwise. The run belongs to pull request 7, and `<H>`, `<merge-base>` and `<M>` stand for its commit ids and `<sha>` for the SHA-256 of its JUnit file. Coverage measured `src/` only, M is an ancestor of the merge-base, pytest's rootdir is the repository root, and there is no floor configuration. The full suite takes 12.0 s:
@@ -133,6 +137,8 @@ All examples use this fixture unless they say otherwise. The run belongs to pull
 - Given a record file in which r1 of PR 1 was first rejected with `"reason":"unusable-input"` and `"input":"coverage"`, because its coverage file was missing, and then evaluated as caught, when the report is produced, then it shows no rejected run and 0 missed PRs out of 1 PR with a red run: a key that an evaluated run's record has is never counted as rejected.
 - Given a record file with r1, which selected 3.0 s of the 12.0 s suite, and r2, where the floor selected all 12.0 s, and a second record file with the same record of r1, when the report is produced from both files, then it shows savings of 37.5%, not the 50% that counting r1 twice would give.
 - Given a record file with r1 (caught) of PR 1 and r2 (missed) of PR 2, and a second record file where r2, with the same key, is caught, because it was evaluated against coverage from another commit, when the report is produced from both files, then it lists r2's key as a conflict, naming both files, and shows 0 missed PRs out of 1 PR with a red run: r2 counts in no figure.
+- Given a recorded run in which a changed path with no column has a newline and an escape character in its name, when the report is produced, then both are written escaped, as `\n` and `\u001b`.
+- Given two record files, one of which does not exist, when the report is produced, then it writes no report, its error message names the missing file, and it exits with code 1.
 
 #### Invariants
 - Given the same inputs, when the run is evaluated twice, each time with an empty record file, then the two record files end up byte-identical; given the same recorded runs, in any order of the record files and of the lines in them, when the report is produced twice, then both reports are byte-identical.
@@ -156,6 +162,9 @@ All examples use this fixture unless they say otherwise. The run belongs to pull
 - [core] Given a run rejected because its coverage file was missing, when it is evaluated again with the same inputs, then the record file is left byte for byte as it was, the error message names the coverage file again, and the tool exits with code 3.
 - [core] Given that same rejected run, when it is evaluated again with its coverage file, then it is evaluated, its record is appended after the rejected one, and the tool exits with code 0.
 - [core] Given coverage in which no line was recorded for more than one test, as the `sysmon` core leaves it, when the run is evaluated, then nothing is evaluated, a record with `"reason":"no-shared-lines"` and `"input":"coverage"` is appended, the error message says that the coverage at M must be recorded with `--cov-context=test` and `COVERAGE_CORE=ctrace`, or that the suite's tests share no code, and the tool exits with code 3.
+- [core] Given the missed run of the first [core] example and no file at the record file's path, when the run is evaluated, then <TO FILL>.
+- [core] Given a coverage file that is empty, 0 bytes long, when the run is evaluated, then <TO FILL>.
+- [core] Given a record file whose first line is a record and whose second line is not one and holds the text `canary`, when a run is evaluated, then <TO FILL>.
 
 #### Edge cases
 - Edge case: test_vat also uses the session fixture whose setup runs `src/shop/db.py` during test_total's setup -> a session fixture's setup counts only in the row of the first test that requests it, and its teardown in the row of the session's last test, even if that test does not use it. A module fixture goes the same way, with its teardown in the row of the last test of its module, and so do `setUpClass` and `tearDownClass`, in the rows of the first and the last test of their class. Here the fixture's teardown runs no line of `src/shop/db.py`, so a diff that modifies only that file selects test_total and not test_vat; if it ran one, that diff would also select the session's last test.
@@ -166,6 +175,7 @@ All examples use this fixture unless they say otherwise. The run belongs to pull
 - Edge case: test_vat overrides its `classname` with `record_xml_attribute` -> the JUnit names it by a pair that its node id does not turn into, so it is unmeasured: selected with `unmeasured`, counted in the unmeasured share, and counted among the tests with a row that are not in the run.
 - Edge case: a test that has a row but is not in the run, because it was deleted or renamed at H -> not selected, and counted only among the tests with a row that are not in the run.
 - Edge case: a changed file under `src/` that M never saw, because the PR added it or the base branch did after M -> listed as a path with no column; it picks no test.
+- Edge case: a diff that modifies a file that the coverage lists as measured, but with no line recorded -> listed as a path with no column; it picks no test.
 - Edge case: a changed path that is a column and also matches the floor (`src/shop/config/loader.py`) -> the whole suite; the tests that cover it carry `covers` as well as the floor reason.
 - Edge case: a diff that modifies `services/billing/uv.lock` -> the whole suite: the default patterns match at any depth.
 - Edge case: a diff that modifies `requirements/base.txt` -> the whole suite, through `**/requirements/**`.
@@ -173,20 +183,273 @@ All examples use this fixture unless they say otherwise. The run belongs to pull
 - Edge case: a test with an `error` in setup or teardown and no `failure` -> it counts as failed, like a `failure`.
 - Edge case: a run whose only non-passing results are skips -> green.
 - Edge case: a failed test that is missing from the rerun file -> still failed: only a pass in the rerun file discards a failure.
-- Edge case: a test in the rerun file that did not fail in the full run -> ignored.
+- Edge case: a failed test that the rerun file shows as skipped -> still failed: a skip is not a pass.
+- Edge case: a test in the rerun file that did not fail in the full run -> its result is ignored, but the file is still rejected if it has a test case that cannot be used or holds pytest's internal error.
 - Edge case: a failure that only happens after certain other tests have run (order dependence, §7) -> it passes in the rerun file and is marked not reproduced, like a flaky one; Slice 1 cannot tell the two apart, and the report shows it only in its count of discarded failures.
 - Edge case: a diff that renames `settings/app.yaml` to `config/app.yaml` -> the whole suite: the new name matches `**/config/**`.
 - Edge case: a floor configuration with the pattern `**.lock` or `data/?.csv` -> not a valid pattern: an input the evaluation cannot use, as in the [core] example on unusable inputs.
+- Edge case: a floor configuration saved with a byte order mark and `\r\n` line endings -> read like the same file without them: its patterns match as usual.
 - Property (only while properties are on): for every <input>, <invariant that must hold>.
 
 ## Technical sheet
-<Modules with their risk tier, interfaces, data model. Written in phase 2.
-A module that produces the "then" of a [core] example is core. A module with
-an irreversible effect that no [core] example observes means a missing example.>
+A module that produces the "then" of a [core] example is core. A module with an irreversible effect that no [core] example observes means a missing example.
+
+Option A of `notes/2026-10-10-architecture-options.md`, with D-001 and D-002 of `docs/DECISIONS.md` applied: eleven modules in one package, `distiller`, and no layers.
+
+### [core] examples
+| # | Given, in short |
+|---|---|
+| K1 | a diff that modifies only `templates/invoice.html`; test_render failed; no rerun file |
+| K2 | test_render failed in the full run and passed in the rerun file |
+| K3 | a run whose evaluation is already recorded, evaluated again with the same inputs |
+| K4 | coverage recorded at a commit that is neither the merge-base nor one of its ancestors |
+| K5 | a shallow checkout |
+| K6 | a JUnit file that declares an external entity or nests entity expansions |
+| K7 | valid inputs, and a run that is green, caught or missed |
+| K8 | an input the evaluation cannot use, such as a missing coverage file or a malformed JUnit file |
+| K9 | a full-run JUnit that holds only a collection error |
+| K10 | a run rejected for its missing coverage file, evaluated again with the same inputs |
+| K11 | that run, evaluated again with its coverage file |
+| K12 | coverage in which no line was recorded for more than one test |
+| K13 | K1's missed run, with no file at the record file's path |
+| K14 | a coverage file that is empty, 0 bytes long |
+| K15 | a record file whose first line is a record and whose second, holding `canary`, is not |
+
+### Modules
+| Module | Does | Tier | [core] "then"s |
+|---|---|---|---|
+| `__main__` | `raise SystemExit(cli.main())`: the only place where a return value becomes the exit code the CI step sees, so one test runs `python -m distiller` | core | K3–K12, K13\*–K15\* |
+| `cli` | argparse (`allow_abbrev=False`) into `RunArgs`; runs `evaluate.run` or `report.run`; turns an unexpected exception into `messages.unexpected_failure` and 1. Nothing else | core | K1–K12, K13\*–K15\* |
+| `evaluate` | `RunArgs`, and the evaluate command as `run`: record file, key, evaluated check, problem order, record, append, message, exit code | core | K1–K12, K13\*–K15\* |
+| `selection` | pure, no I/O: `pair_of`, `match_tests`, `select`, `judge` | core | K1, K2, K11, K13\* |
+| `messages` | `Rejected`, and one function per text written to stderr | core | K3–K6, K8–K10, K12, K14\*, K15\* |
+| `git` | the seven git queries | core | K1–K6, K8–K12, K13\*, K14\* |
+| `coverage_at_m` | reads the coverage at M as D-002 says; maps it to M's tree with the pure `build_matrix` | core | K1, K8, K10–K12, K13\*, K14\* |
+| `junit` | reads both JUnit files, `None` when missing or unreadable, and parses them, with the test-case rules and pytest's internal error | core | K1–K6, K8–K12, K13\*, K14\* |
+| `floor` | reads the floor configuration; the patterns and their matching | core | K1, K8, K11, K13\* |
+| `records` | encode, decode, read the record file, append | core | K1–K6, K8–K12, K13\*–K15\* |
+| `report` | the report command: dedupe, figures, bound, text, with the sentence that its figures belong to the all-affected selector | medium | none |
+
+\* Read from the prose that decides its Given: its "then" is still `<TO FILL>`.
+
+`git` and `junit` give the run's key, so they are in every row whose record or warning shows it. `report` is medium: records are kept, so a wrong figure is fixed by running a corrected report again.
+
+### Interfaces
+```python
+# cli.py
+def main(argv: list[str] | None = None) -> int: ...
+
+# evaluate.py
+def run(args: RunArgs) -> int: ...                       # prints its message; returns the exit code
+
+# report.py
+def run(paths: list[str]) -> int: ...                    # the report on stdout
+def clopper_pearson_upper(k: int, n: int) -> float | None: ...  # None when n is 0
+
+# messages.py
+class Rejected(Exception):
+    def __init__(self, reason: str, input_name: str, subject: str,
+                 line_number: int | None = None) -> None: ...
+def rejection(error: Rejected) -> str: ...
+def already_recorded(head: str, junit_sha256: str | None) -> str: ...
+def not_a_record(path: str, line_number: int) -> str: ...
+def unreadable_record_file(path: str) -> str: ...        # the report's: it does not exist or cannot be read
+def unexpected_failure(error_type: type[BaseException]) -> str: ...  # the class, never the instance
+
+# selection.py
+def pair_of(node_id: NodeId) -> Pair: ...
+def match_tests(results: dict[Pair, Result], rows: dict[NodeId, frozenset[RepoPath]]) -> list[Test]: ...
+def select(tests: list[Test], changed: list[RepoPath],
+           hits: list[tuple[str, RepoPath]], rootdir: str) -> Selection: ...
+def judge(full: JUnit, rerun: JUnit | None, tests: list[Test], selection: Selection) -> Judgement: ...
+
+# git.py: each runs `git -C checkout ...`
+def is_checkout(checkout: str) -> bool: ...
+def is_shallow(checkout: str) -> bool: ...
+def resolve_commit(checkout: str, name: str) -> Commit | None: ...
+def merge_base(checkout: str, a: Commit, b: Commit) -> Commit | None: ...  # None: no common history
+def is_ancestor(checkout: str, ancestor: Commit, descendant: Commit) -> bool: ...
+def changed_paths(checkout: str, old: Commit, new: Commit) -> list[RepoPath]: ...
+def tree_files(checkout: str, commit: Commit) -> frozenset[RepoPath]: ...
+
+# coverage_at_m.py
+def read_coverage(path: str) -> RawCoverage: ...         # raises Rejected
+def node_id_of(context: str) -> NodeId | None: ...       # None: not a test context
+def build_matrix(raw: RawCoverage, tree: frozenset[RepoPath]) -> Matrix: ...
+
+# junit.py
+def read_junit(path: str) -> bytes | None: ...           # None: missing or cannot be read
+def parse_junit(data: bytes, input_name: str, path: str) -> JUnit: ...  # raises Rejected
+
+# floor.py
+DEFAULT_PATTERNS: tuple[str, ...]
+def read_floor(path: str | None) -> tuple[str, ...]: ... # the defaults, then the file's; raises Rejected
+def matches(pattern: str, path: RepoPath) -> bool: ...
+def floor_hits(patterns: tuple[str, ...], changed: list[RepoPath]) -> list[tuple[str, RepoPath]]: ...
+
+# records.py
+class NotARecord(Exception):
+    def __init__(self, path: str, line_number: int) -> None: ...
+def encode(record: Record) -> bytes: ...
+def decode(line: bytes) -> Record | None: ...            # None: not a record
+def read_record_file(path: str) -> list[Record] | None: ...  # None: no file; raises NotARecord,
+                                                             # or OSError if it exists but cannot be read
+def has_evaluated(records: list[Record], key: RunKey) -> bool: ...
+def has_rejected(records: list[Record], key: RunKey, reason: str, input_name: str) -> bool: ...
+def append_record(path: str, record: Record) -> None: ...
+```
+
+A `Rejected`'s `subject` is the path or name, as given on the command line, that its message names; `line_number` is set only for an invalid floor pattern.
+
+### Data model
+Frozen dataclasses, the only decorator in the code: no metaclasses, registries, `getattr` dispatch or dynamic imports. Each type lives in the module that creates it, and there is no `model.py`. Python names say `input_name` where the record says `input`.
+
+```python
+# git.py
+Commit = str                     # a full commit id
+RepoPath = str                   # "/"-separated, from the repository root
+
+# junit.py
+Pair = tuple[str, str]           # (classname, name)
+@dataclass(frozen=True)
+class Result:                    # one pair in one JUnit file, its test cases merged
+    failed: bool                 # a case has a failure or an error
+    passed: bool                 # no case has a failure, an error or a skipped
+    time_ms: int                 # the cases' times, each rounded half up, summed
+@dataclass(frozen=True)
+class JUnit:
+    results: dict[Pair, Result]
+    has_collection_error: bool
+
+# coverage_at_m.py
+NodeId = str                     # relative to pytest's rootdir
+@dataclass(frozen=True)
+class RawCoverage:               # as coverage's API gives it
+    nodes_by_file: dict[str, frozenset[NodeId]]  # recorded path -> node ids with a line in it
+    import_only_files: frozenset[str]            # recorded paths with lines, none in a test context
+    has_shared_line: bool                        # a line recorded for two node ids or more
+@dataclass(frozen=True)
+class Matrix:                    # mapped to M's tree
+    rows: dict[NodeId, frozenset[RepoPath]]      # every node id in a test context, empty rows too
+    import_only: frozenset[RepoPath]
+
+# selection.py
+@dataclass(frozen=True)
+class Test:                      # a test of the run, after matching
+    pair: Pair
+    node_id: NodeId | None       # None when unmeasured
+    row: frozenset[RepoPath] | None
+@dataclass(frozen=True)
+class Reason:
+    rule: str                    # "covers", "floor", "unmeasured", "own file" or "conftest"
+    path: RepoPath | None        # None only for "unmeasured"
+    pattern: str | None = None   # only for "floor"
+Selection = dict[Pair, frozenset[Reason]]        # selected tests only, never an empty set
+@dataclass(frozen=True)
+class Judgement:
+    verdict: str                 # "green", "caught" or "missed"
+    not_reproduced: frozenset[Pair]
+    failed_left_out: tuple[Test, ...]            # all measured, so node_id and row are set
+
+# records.py
+@dataclass(frozen=True)
+class RunKey:
+    head: str                    # H's full commit id, or H as given
+    junit_sha256: str | None
+@dataclass(frozen=True)
+class RejectedRecord:
+    key: RunKey
+    pr: int
+    reason: str
+    input_name: str
+Record = EvaluatedRecord | RejectedRecord
+```
+
+`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`: `pr`, the durations and the counts are `int`, `verdict` is `str`, `merge_base` and `coverage_commit` are `Commit`, `floor_matched` and `rerun_given` `bool`, `not_reproduced` a `tuple[Pair, ...]`, `failed_left_out` a `tuple[Test, ...]`, and `no_column` and `import_only` `tuple[RepoPath, ...]`. `RunArgs` (`evaluate.py`) has one field per option, as given: `pr: int`, `rerun` and `floor_config` `str | None`, `rootdir` `""` for the repository root, and the rest `str`.
+
+`Matrix.rows` keeps empty rows because a node id with an empty row still counts among the node ids of its pair; for everything else an empty row is no row.
+
+### Command line
+```
+python -m distiller evaluate --pr N --head REV --base REV --coverage PATH
+    --coverage-commit REV --junit PATH [--rerun PATH] [--rootdir DIR]
+    [--floor-config PATH] --records PATH [--checkout DIR]
+python -m distiller report RECORD_FILE [RECORD_FILE ...]
+```
+
+Each option is one of the inputs in the prose, `--coverage-commit` being M. On `pull_request`, `--head` is `$GITHUB_SHA` and `--base` is `origin/<branch>`. `--rootdir` defaults to the repository root and `--checkout` to `.`. Choosing M stays outside the tool.
+
+Usage errors exit with 2 and append nothing: a missing or unknown option, never abbreviated, so `--cov` is not `--coverage`; a `--pr` that is not ASCII digits above 0; a `--rootdir` that is absolute or has a `..` segment. A path that does not exist is never a usage error: for `evaluate` it is a rejection, or an empty record file for `--records`, and for `report` an error that names it.
+
+| Exit | `evaluate` | `report` |
+|---|---|---|
+| 0 | evaluated, whatever the verdict, or already recorded | the report, on stdout |
+| 1 | a line that is not a record, or any other failure | a record file that does not exist or cannot be read, a line that is not a record, or any other failure |
+| 2 | a usage error | a usage error |
+| 3 | rejected | never |
+
+### How a run goes
+1. `cli.main` parses the arguments and calls `evaluate.run`.
+2. `run` reads the record file, `None` being an empty one (`NotARecord`: `messages.not_a_record`, exit 1), then reads the full run's JUnit bytes and resolves H, which give the key. If an evaluated record has the key: `messages.already_recorded`, exit 0, nothing appended.
+3. It walks the problem order, one call per check, each returning a value or raising `Rejected`. For the coverage: M, then the file, read in full, then the ancestry, then the shared lines.
+4. With no problem: the diff, M's tree, `build_matrix`, `match_tests`, `floor_hits`, `select` and `judge` give the record, which is appended; exit 0.
+5. On `Rejected`: the rejected record is appended unless `has_rejected` finds it, and `messages.rejection` is printed; exit 3.
+6. Any other exception reaches `cli.main`: `messages.unexpected_failure`, exit 1.
+
+The report reads its record files in the order given, all of them before it writes anything to stdout, and the first problem stops it with exit 1: `messages.unreadable_record_file` when `read_record_file` gives `None` or raises `OSError`, and `messages.not_a_record` when it raises `NotARecord`.
+
+### Rules
+1. **Dependencies.** The standard library, `coverage` and `defusedxml`, each of the two imported by one module (Imports). git runs only through `subprocess.run` with an argument list, never a shell.
+2. **Git names.** H, the base and M are each resolved once, with `git rev-parse --verify --quiet --end-of-options NAME^{commit}`; every other git command gets full commit ids only, so nothing from the command line reaches git as an option. Paths come from `-z` output, decoded with `os.fsdecode`. git's stdout and stderr are always captured, so nothing git prints reaches the tool's stderr. Only the commands under "Checked" run.
+3. **Inputs are only read.** The coverage, JUnit, floor and record file paths are checked with `os.stat` to be regular files before they are opened: opening a FIFO blocks. The JUnit files and the floor configuration are opened for reading only. The coverage file is copied as D-002 says, with no SQLite header check, and `read()` runs on the copy before any query; a `coverage.CoverageException`, or a copy that lists no measured file, is `unusable-input`.
+4. **Rows from the public API.** One `contexts_by_lineno(f)` per measured file; a line recorded for two node ids or more sets `has_shared_line`. If reading the rows misses the time or memory limit, only `read_coverage` changes.
+5. **JUnit.** Each file is read once into bytes; the full run's give `junit_sha256` and are parsed, and hashing parses nothing. `defusedxml.ElementTree.fromstring` runs at its defaults, with entities and external references forbidden and DTDs allowed: `EntitiesForbidden` and `ExternalReferenceForbidden` are `unsafe-xml`, `ParseError` is `unusable-input`. A `time` must fullmatch `[0-9]+(\.[0-9]+)?`, since `\d` and `Decimal` also take other scripts' digits, and goes through `Decimal(text).quantize(Decimal("0.001"), ROUND_HALF_UP)`, never through a float.
+6. **Messages.** Every text on stderr comes from a function of `messages` (D-001), except argparse's usage error, which holds only the command line. `cli` catches any other `Exception`, prints `messages.unexpected_failure` and returns 1.
+7. **Records.** `encode` builds a dict in the SPEC's key order and writes `json.dumps(obj, separators=(",", ":"))` and `\n`; the default `ensure_ascii` gives the SPEC's escapes. `decode` checks that the line is ASCII, parses it, checks its keys and their order, exact types (`type(x) is int`, so `true` is not `1`), allowed values, and lists sorted with no repeats, rebuilds the record and requires `encode(record) == line`. It checks no agreement between fields. `report` writes pairs, node ids and paths with the same `json.dumps`.
+8. **Determinism.** Every list that reaches a record or the report is sorted where it is built, by code point, which is Python's `str` order. No set order, clock or environment value reaches an output. The append is one write of the whole line to a file opened for appending, created if missing.
+9. **Floor configuration.** Its lines are split on `\n` only, and one `\r` at the end of a line is dropped: `str.splitlines()` also splits on `\r` alone, `\v`, `\f`, `\x1c` to `\x1e`, `\x85`, `\u2028` and `\u2029`.
+
+### Imports
+`lint-imports`, from import-linter, checks these once the harness is in place:
+- only `coverage_at_m` imports `coverage`, only `junit` imports `defusedxml`, and only `git` imports `subprocess`;
+- `messages` imports no other module of the package;
+- only `__main__` imports `cli`, and only `cli` imports `evaluate` and `report`.
+
+### Irreversible effects
+| Effect | Module | Observed by |
+|---|---|---|
+| Appending a record line | `records`, as `evaluate` decides | K1, K2, K4–K6, K8, K9, K11, K12, K13\*, K14\*; nothing appended: K3, K10, K15\* |
+| Creating the record file | `records` | K13\* |
+| Writing to the coverage file | `coverage_at_m`, through coverage | K14\* |
+| Reading a file or URL that an XML entity names | `junit`, through defusedxml | K6 |
+| Text on stderr, kept in the CI log | `messages`, printed by `evaluate`, `report` and `cli` | what it names: K3–K6, K8–K10, K12; that it quotes nothing: K6, K15\*. The unexpected-failure line: a test that makes a reader raise an error whose text holds a canary |
+| The report's text, in a terminal or a log | `report` | no [core], since `report` is medium; its escaping, the Report example on a path with a newline and an escape character |
+| A torn append, from a killed runner or a full disk | `records` | none; the line it leaves is not a record, which K15\* covers |
+| A network connection opened by git | `git` | none: the Deployment rules out a partial clone |
+| The private copy, left in the temporary directory | `coverage_at_m` | none: only a killed process leaves it (D-002) |
+
+\* Once its "then" says so.
+
+### Checked and [VERIFY]
+*read*: in the installed source of coverage 7.16.2, pytest 9.1.1 and defusedxml 0.7.1. *run*: executed on 2026-10-10, git with git 2.43.0 and coverage on Python 3.13.
+
+- coverage 7.16.2. *read*: `CoverageData(basename=path)`, whose `read()` does nothing when the file is missing; `measured_files() -> set[str]`, which may list a file with no line; `measured_contexts() -> set[str]`; `contexts_by_lineno(filename) -> dict[int, list[str]]`, `{}` for an unknown file, built from arcs under branch coverage, both also used on pytest-cov data in the spike; `set_query_contexts()`, whose regexes are matched with `re.search`; `SCHEMA_VERSION = 7`, another version raising `DataError`; `set_context()` and `add_lines()` for test fixtures, with `write()` a no-op without a suffix. *run*: a file queried before `read()` loses its contexts for good; `read()` modifies an SQLite database without coverage's tables, and an empty file grows to 53,248 bytes; through a private copy the original is unchanged in all three cases, and the copy of an empty file, or of a foreign SQLite database, lists no measured file; a text file raises `DataError`, a subclass of `coverage.CoverageException`, which coverage exports at the top level; a data file recorded without contexts lists its files and only the empty context.
+- pytest 9.1.1. *read*: `_pytest.junitxml.mangle_test_address(address: str) -> list[str]`; `classname` is `".".join(names[:-1])`, after `--junit-prefix`, and `name` is `bin_xml_escape(names[-1])`; a collection error is `<error message="collection failure">`, also seen in the spike; the fixtures `tmp_path`, `capsys`, `capfd` and `monkeypatch`. *run*: `pytest_internalerror` writes a test case with `classname="pytest"`, `name="internal"` and an `error` with the message `internal error`, whose text is the traceback; every test case's `time` is written as `f"{duration:.3f}"`.
+- git 2.43. *run*: `rev-parse --is-inside-work-tree` prints `true`, and exits with 128 outside a repository; `rev-parse --is-shallow-repository` prints `false` in a full clone and `true` in one made with `--depth 1`; `rev-parse --verify --quiet --end-of-options NAME^{commit}` prints the full id, and exits with 1 for an unknown name, a tree or an option-like name such as `--all`; `merge-base A B` prints one commit, and with no common history exits with 1 and prints nothing; `merge-base --is-ancestor A B` exits with 0 when A is B or an ancestor of it, 1 when not, 128 for an unknown name; `diff --name-only --no-renames --no-relative -z A B` prints NUL-terminated paths from the root, also from a subdirectory with `diff.relative=true`, prints no colour codes with `color.ui=always` and leaves `.git/index` unchanged; `ls-tree -r --name-only -z --full-tree C` lists every path from the root, while without `--full-tree`, from a subdirectory, it lists only that subdirectory; in a clone made with `--filter=blob:none`, `diff --name-only`, `ls-tree -r --name-only --full-tree` and `merge-base` work with the remote unreachable, while with `--filter=tree:0` `diff` and `ls-tree` need it; a partial clone has `remote.<name>.promisor=true`; `git --no-lazy-fetch` is an unknown option. From *man gitrevisions*: a bare branch name resolves only through `refs/heads/`, `refs/remotes/<name>` and `refs/remotes/<name>/HEAD`.
+- defusedxml 0.7.1. *read*: `defusedxml.ElementTree.fromstring(text, forbid_dtd=False, forbid_entities=True, forbid_external=True)`; an entity declaration raises `EntitiesForbidden`, an external reference `ExternalReferenceForbidden`, and malformed XML `xml.etree.ElementTree.ParseError`; the exceptions' `str()` holds the entity's name and system id. *run*: a malformed byte before an entity declaration raises `ParseError`; an entity declaration followed by a malformed body raises `EntitiesForbidden`; a DOCTYPE whose external subset does not exist parses, so the subset is not read.
+- Standard library. *run*: `json.dumps` escapes as the SPEC says, with DEL as `\u007f`, lowercase hex and surrogate pairs; a Clopper–Pearson upper bound by bisection gives 86.5% for 1 of 3, 9.5% for 0 of 30, 63.2% for 0 of 3 and 9.8% for 0 of 29, and since `math.comb(n, i) * p**i` overflows from about n = 1,030, the report works with `math.lgamma`.
+
+[VERIFY]:
+- The time and memory of reading the rows, one `contexts_by_lineno()` per file, at 10,000 tests and 2,000 files, and of copying M's file: the open question "Weight of M". Batching with `set_query_contexts()` would bound memory but not time, and its speed is unknown.
+- `mangle_test_address` is private: check its behaviour again on each pytest upgrade.
+- Whether `coverage.exceptions` is documented as public; catching `coverage.CoverageException` sidesteps it.
+- A repository owned by another user ("dubious ownership") makes every git command fail, which the tool would report as not a git checkout.
+- defusedxml 0.7.1 on Python 3.13 and 3.14.
+- Which coverage versions write schema 7: not needed while the Deployment installs the same `coverage` in both jobs.
 
 ## Open questions
 - Failures inherited from the base branch. If the base branch was already red at the merge-base, the PR's run fails for reasons outside its diff and counts against the selector, and the rerun file reproduces them. Should a later slice read the base's results to set them apart? The same goes for a red run whose diff is empty: it is missed unless one of its failed tests is unmeasured.
 - Matrix age. Slice 1 sets no limit on how far M lags behind the merge-base, while regime assumes a matrix at most 24 h old (§8). Should the report show the lag?
 - Thresholds for §13.2. What "marginal" and "low" mean in numbers, and how many classified failed tests left out that takes. With the report's bound, showing that file dependencies are rare takes far more of them than showing that they are common: 0 out of 3 bounds the share below 63.2%, and bounding it below 10% takes 29 classified failed tests left out with no file dependency.
-- Weight of M. How long the coverage run at M takes on the pilot, how big its file is, and whether the public API reads it within the performance limit. To be measured in Phase 2; if the API is too slow, decide which gives way, the public-API rule or the limit.
+- Weight of M. How long the coverage run at M takes on the pilot, how big its file is, how long the tool takes to copy it (D-002), and whether the public API reads it within the performance limit. To be measured in Phase 2; if the API is too slow, decide which gives way, the public-API rule or the limit.
 - `sysmon` under xdist. Each worker records a line once, so a line can be shared by as many tests as there are workers, and `no-shared-lines` may not fire although the rows are partial. An untested inference; one spike scenario (`COVERAGE_CORE=sysmon`, `-n 4`) settles it.
