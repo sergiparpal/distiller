@@ -1,0 +1,96 @@
+# Tool settings only: Slice 1 is not packaged, so there is no [project] table.
+
+[tool.ruff]
+target-version = "py312"
+# The code blocks in the SPEC and the notes are prose, aligned by hand.
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",       # docstrings: the technical sheet documents the interfaces
+    "CPY",     # no copyright headers
+    "COM812",  # conflicts with ruff format
+    "TC",      # imports stay at the top, with no TYPE_CHECKING blocks
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+known-first-party = ["distiller"]
+
+[tool.ruff.lint.per-file-ignores]
+# Only the modules that print, as the technical sheet says, may call print.
+"src/distiller/{cli,evaluate,report}.py" = ["T201"]
+"tests/**" = [
+    "S101",     # assert is how pytest checks
+    "PLR2004",  # literal values are what a test compares against
+    "INP001",   # tests/ has no __init__.py: pytest imports it with importlib
+]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]
+strict = true
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+# Also measures the python -m distiller that a test runs as a process.
+patch = ["subprocess"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+
+[tool.importlinter]
+root_package = "distiller"
+include_external_packages = true
+
+# Until coverage_at_m, junit and git exist, "only X imports Y" means that no
+# module imports Y. Each of their tasks turns its contract into a protected one.
+[[tool.importlinter.contracts]]
+name = "only coverage_at_m imports coverage"
+type = "forbidden"
+source_modules = ["distiller"]
+forbidden_modules = ["coverage"]
+
+[[tool.importlinter.contracts]]
+name = "only junit imports defusedxml"
+type = "forbidden"
+source_modules = ["distiller"]
+forbidden_modules = ["defusedxml"]
+
+[[tool.importlinter.contracts]]
+name = "only git imports subprocess"
+type = "forbidden"
+source_modules = ["distiller"]
+forbidden_modules = ["subprocess"]
+
+[[tool.importlinter.contracts]]
+name = "messages imports no other module of the package"
+type = "forbidden"
+source_modules = ["distiller.messages"]
+forbidden_modules = ["distiller.*"]
+
+[[tool.importlinter.contracts]]
+name = "only __main__ imports cli"
+type = "protected"
+protected_modules = ["distiller.cli"]
+allowed_importers = ["distiller.__main__"]
+
+[[tool.importlinter.contracts]]
+name = "only cli imports evaluate and report"
+type = "protected"
+protected_modules = ["distiller.evaluate", "distiller.report"]
+allowed_importers = ["distiller.cli"]

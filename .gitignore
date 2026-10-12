@@ -1,3 +1,10 @@
 .claude/claim-ledger/
 claim-ledger.toml
 docs/C6-destilador-revisada.md
+.venv/
+.lock-venv/
+__pycache__/
+.coverage
+.coverage.*
+.pytest_cache/
+.ruff_cache/

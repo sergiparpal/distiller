@@ -1,0 +1,9 @@
+# The harness's tools. `make lock` pins them, and everything they need, in
+# requirements-dev.txt.
+-r requirements.txt
+import-linter==2.15
+pip-audit==2.10.1
+pre-commit==4.6.2
+pyright==1.1.414
+pytest==9.1.1
+ruff==0.16.10
