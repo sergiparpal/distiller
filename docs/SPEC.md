@@ -363,7 +363,7 @@ class RejectedRecord:
 Record = EvaluatedRecord | RejectedRecord
 ```
 
-`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`: `pr`, the durations and the counts are `int`, `verdict` is `str`, `merge_base` and `coverage_commit` are `Commit`, `floor_matched` and `rerun_given` `bool`, `not_reproduced` a `tuple[Pair, ...]`, `failed_left_out` a `tuple[Test, ...]`, and `no_column` and `import_only` `tuple[RepoPath, ...]`. `RunArgs` (`evaluate.py`) has one field per option, as given: `pr: int`, `rerun` and `floor_config` `str | None`, `rootdir` `""` for the repository root, and the rest `str`.
+`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`: `pr`, the durations and the counts are `int`, `verdict` is `str`, `merge_base` and `coverage_commit` are `Commit`, `floor_matched` and `rerun_given` `bool`, `not_reproduced` a `tuple[Pair, ...]`, `failed_left_out` a `tuple[Test, ...]`, and `no_column` and `import_only` `tuple[RepoPath, ...]`. `RunArgs` (`evaluate.py`) has one field per option: `pr: int`, `rerun` and `floor_config` `str | None`, `rootdir` `""` for the repository root, and the rest `str`. Each field holds its option as given, except `rootdir`, which is normalized by the rules under "Command line".
 
 `Matrix.rows` keeps empty rows because a node id with an empty row still counts among the node ids of its pair; for everything else an empty row is no row.
 
@@ -377,7 +377,7 @@ python -m distiller report RECORD_FILE [RECORD_FILE ...]
 
 Each option is one of the inputs in the prose, `--coverage-commit` being M. On `pull_request`, `--head` is `$GITHUB_SHA` and `--base` is `origin/<branch>`. `--rootdir` defaults to the repository root and `--checkout` to `.`. Choosing M stays outside the tool.
 
-Usage errors exit with 2 and append nothing: a missing or unknown option, never abbreviated, so `--cov` is not `--coverage`; a `--pr` that is not ASCII digits above 0; a `--rootdir` that is absolute or has a `..` segment. A path that does not exist is never a usage error: for `evaluate` it is a rejection, or an empty record file for `--records`, and for `report` an error that names it.
+Usage errors exit with 2 and append nothing: a missing or unknown option, never abbreviated, so `--rec` is not `--records`; a `--pr` that is not ASCII digits above 0; a `--rootdir` that is absolute or has a `..` segment. A path that does not exist is never a usage error: for `evaluate` it is a rejection, or an empty record file for `--records`, and for `report` an error that names it.
 
 A `--rootdir` that is not a usage error is normalized by `cli`, which drops its empty and `.` segments: `.` and an empty value are the repository root, `""` in `RunArgs`, and `./backend` and `backend/` are `backend`.
 
