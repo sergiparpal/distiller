@@ -1,6 +1,7 @@
 {
   "permissions": {
     "defaultMode": "acceptEdits",
+    "blockReadsOutsideWorkingDirectories": true,
     "allow": [
       "Bash(make check)",
       "Bash(make verify)",
@@ -35,6 +36,22 @@
     ]
   },
   "autoMemoryEnabled": false,
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": ["pypi.org"]
+    },
+    "credentials": {
+      "envVars": [
+        { "name": "OPENROUTER_API_KEY", "mode": "deny" },
+        { "name": "GH_TOKEN", "mode": "deny" },
+        { "name": "GITHUB_TOKEN", "mode": "deny" },
+        { "name": "ANTHROPIC_API_KEY", "mode": "deny" }
+      ]
+    }
+  },
   "hooks": {
     "PreToolUse": [
       {
