@@ -8,3 +8,7 @@ __pycache__/
 .coverage.*
 .pytest_cache/
 .ruff_cache/
+.claude/phase
+.claude/blocked
+.claude/tests-phase.log
+.claude/stop-state.json
