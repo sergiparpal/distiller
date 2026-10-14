@@ -1,8 +1,12 @@
 # make install creates .venv and the pre-commit hook; make check runs the harness.
+# Bash, for the process substitution in make protected: /bin/sh is dash here.
+SHELL := /bin/bash
 PYTHON ?= python3
 BIN := .venv/bin
+# The commit that make protected compares docs/SPEC.md with.
+REF ?= HEAD
 
-.PHONY: install check format lint imports types test audit secrets lock
+.PHONY: install check format lint imports types test audit secrets lock protected
 
 install:
 	$(PYTHON) -m venv .venv
@@ -46,3 +50,20 @@ lock:
 	  .lock-venv/bin/python -m pip freeze --exclude coverage --exclude defusedxml; \
 	} > requirements-dev.txt
 	rm -rf .lock-venv
+
+# Fails if the Bet, the problem and the non-goals, or the [core] and "format"
+# lines of the slices, differ from REF, or if either comes out empty now. Both
+# checks always run, so one difference does not hide the other.
+protected:
+	@bet() { sed -n '/^## Bet/,/^## Constraints/p'; }; \
+	core() { sed -n '/^### Slice 1/,/^## Technical sheet/p' | grep -e '\[core\]' -e '"format"'; }; \
+	failed=0; \
+	diff <(git show $(REF):docs/SPEC.md | bet) <(bet < docs/SPEC.md) \
+	  || { echo "protected: the Bet, the problem or the non-goals differ from $(REF)"; failed=1; }; \
+	diff <(git show $(REF):docs/SPEC.md | core) <(core < docs/SPEC.md) \
+	  || { echo "protected: a [core] or format line differs from $(REF)"; failed=1; }; \
+	if [ -z "$$(bet < docs/SPEC.md)" ]; then \
+	  echo "protected: docs/SPEC.md has no Bet section"; failed=1; fi; \
+	if [ -z "$$(core < docs/SPEC.md)" ]; then \
+	  echo "protected: docs/SPEC.md has no [core] or format line in its slices"; failed=1; fi; \
+	exit $$failed

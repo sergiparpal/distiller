@@ -6,6 +6,7 @@
 - `make check`: format, lint, import contracts, types, tests, dependency audit and secret scan. Green here means done.
 - `make test`: tests only.
 - `PYTHONPATH=src .venv/bin/python -m distiller`: run the tool by hand.
+- `make protected REF=<commit>`: fails if the Bet, the non-goals or a [core] line of `docs/SPEC.md` differ from REF (HEAD by default). Run it after editing the SPEC.
 
 ## Where things are
 - Behaviour and acceptance criteria: `docs/SPEC.md`
