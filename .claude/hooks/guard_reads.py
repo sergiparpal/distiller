@@ -85,11 +85,15 @@ def check_read(
 def check_grep(
     repo: Repo, data: dict[str, object], cwd: Path, tool_input: dict[str, object]
 ) -> str | None:
-    root = (cwd / (text_field(tool_input, "path") or ".")).resolve()
-    # A search reads src/ when it starts inside it or in a directory above it.
-    if is_inside(root, repo.src) or is_inside(repo.src, root):
-        return SRC_IS_CLOSED.format(what=f"a search in {root} would read src/")
-    append_to_log(repo, data, [root], None)
+    start = (cwd / (text_field(tool_input, "path") or ".")).resolve()
+    return check_start(repo, data, start)
+
+
+def check_start(repo: Repo, data: dict[str, object], start: Path) -> str | None:
+    # A search reaches src/ when it starts inside it or in a directory above it.
+    if is_inside(start, repo.src) or is_inside(repo.src, start):
+        return SRC_IS_CLOSED.format(what=f"a search from {start} reaches src/")
+    append_to_log(repo, data, [start], None)
     return None
 
 
@@ -97,29 +101,18 @@ def check_glob(
     repo: Repo, data: dict[str, object], cwd: Path, tool_input: dict[str, object]
 ) -> str | None:
     root = cwd / (text_field(tool_input, "path") or ".")
-    pattern = text_field(tool_input, "pattern") or ""
-    fixed, rest = split_pattern(root / pattern)
-    if is_inside(fixed, repo.src):
-        return SRC_IS_CLOSED.format(what=f"{root / pattern} lists src/")
-    if is_inside(repo.src, fixed) and reaches_below(fixed, repo.src, rest):
-        return SRC_IS_CLOSED.format(what=f"{root / pattern} can list src/")
-    append_to_log(repo, data, [fixed], None)
-    return None
+    pattern = root / (text_field(tool_input, "pattern") or "")
+    # Glob's "*.md" also matches at any depth, so only where it starts counts.
+    return check_start(repo, data, starting_directory(pattern))
 
 
-def split_pattern(pattern: Path) -> tuple[Path, list[str]]:
-    """The directory a glob starts from, and the parts after it, wildcards first."""
-    parts = list(pattern.parts)
+def starting_directory(pattern: Path) -> Path:
+    """The part of a glob pattern before its first wildcard."""
+    parts = pattern.parts
     for index, part in enumerate(parts):
         if WILDCARDS & set(part):
-            return Path(*parts[:index]).resolve(), parts[index:]
-    return pattern.resolve(), []
-
-
-def reaches_below(fixed: Path, src: Path, rest: list[str]) -> bool:
-    # "*.md" from the root names src/ at most; "*/x.py" and "**" go inside it.
-    depth = len(src.relative_to(fixed).parts)
-    return any("**" in part for part in rest) or len(rest) > depth
+            return Path(*parts[:index]).resolve()
+    return pattern.resolve()
 
 
 def append_to_log(

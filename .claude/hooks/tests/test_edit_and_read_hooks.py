@@ -211,8 +211,11 @@ def test_grep_is_checked_by_where_it_searches(
         ("s*/pkg/core.py", None, 2),
         ("src", None, 2),
         ("*.py", "src/pkg", 2),
+        # Claude Code's Glob matches "*.md" at any depth, src/ included.
+        ("*.md", None, 2),
+        ("*.py", None, 2),
         ("tests/*.py", None, 0),
-        ("*.md", None, 0),
+        ("docs/*.md", None, 0),
         ("docs/**", None, 0),
         ("*.py", "tests", 0),
     ],
