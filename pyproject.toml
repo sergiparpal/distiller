@@ -28,9 +28,18 @@ known-first-party = ["distiller"]
     "PLR2004",  # literal values are what a test compares against
     "INP001",   # tests/ has no __init__.py: pytest imports it with importlib
 ]
+".claude/hooks/**" = [
+    "INP001",  # scripts that Claude Code runs, not a package
+    "S603",    # they run bwrap, git, make and ruff with fixed argument lists
+    "S607",    # those programs come from PATH, as in the Makefile
+]
+".claude/hooks/tests/**" = [
+    "S101",     # assert is how pytest checks
+    "PLR2004",  # literal values are what a test compares against
+]
 
 [tool.pyright]
-include = ["src", "tests"]
+include = ["src", "tests", ".claude/hooks"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 venvPath = "."

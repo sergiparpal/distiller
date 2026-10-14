@@ -6,14 +6,20 @@ BIN := .venv/bin
 # The commit that make protected compares docs/SPEC.md with.
 REF ?= HEAD
 
-.PHONY: install check format lint imports types test audit secrets lock protected
+.PHONY: install check verify format lint imports types test test-red test-hooks \
+  audit secrets lock protected
 
 install:
 	$(PYTHON) -m venv .venv
 	$(BIN)/python -m pip install --quiet --requirement requirements-dev.txt
 	$(BIN)/pre-commit install
 
-check: format lint imports types test audit secrets
+# CI runs make check: make verify, then pip-audit, the one step that needs the
+# network and that nothing the agent may change without asking can turn red.
+check: verify audit
+
+# What the Stop hook runs after every turn, inside bwrap and offline.
+verify: format lint imports types test secrets
 
 format:
 	$(BIN)/ruff format --check
@@ -32,6 +38,15 @@ test:
 	$(BIN)/coverage run -m pytest
 	$(BIN)/coverage combine --quiet
 	$(BIN)/coverage report
+
+# How the tests phase runs the tests: no tracebacks, which would show src/.
+test-red:
+	$(BIN)/python -m pytest --tb=no -rfE
+
+# The contract tests of the Claude Code hooks in .claude/hooks; make check
+# leaves them out.
+test-hooks:
+	$(BIN)/python -m pytest .claude/hooks/tests
 
 audit:
 	$(BIN)/pip-audit --strict --no-deps --disable-pip --progress-spinner off \
