@@ -116,9 +116,9 @@ def contamination(repo: Repo) -> list[str]:
         return []
     examples = "\n".join(line[:300] for line in bad[:3])
     problem = (
-        f".claude/tests-phase.log has {len(bad)} lines that read inside src/ or "
-        "that the hook did not write, so the tests may come from the code. "
-        f"For example:\n{examples}"
+        f".claude/tests-phase.log has lines that read inside src/ or that the "
+        f"hook did not write ({len(bad)} of them), so the tests may come from the "
+        f"code. For example:\n{examples}"
     )
     return [problem]
 
@@ -207,7 +207,7 @@ def run_checks(repo: Repo, phase: Phase) -> str | None:
     if result.returncode == 0:
         return None
     tail = "\n".join(result.stdout.splitlines()[-OUTPUT_LINES:])
-    return f"`{name}` is red. The end of its output:\n{tail}"
+    return f"`{name}` is red.\nThe end of its output:\n{tail}"
 
 
 def run_sandboxed(

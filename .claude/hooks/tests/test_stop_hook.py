@@ -192,9 +192,10 @@ def test_blocked_excuses_red(repo: Path) -> None:
     result = stop(repo)
 
     assert result.returncode == 0
-    message = cast("str", output(result)["systemMessage"])
-    assert "test_core: the SPEC example says 1" in message
-    assert "`make verify` is red" in message
+    assert output(result)["systemMessage"] == (
+        "The turn ended blocked: test_core: the SPEC example says 1 "
+        "(`make verify` is red.)"
+    )
 
 
 def test_a_hung_check_counts_as_red(repo: Path) -> None:
