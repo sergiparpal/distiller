@@ -32,6 +32,6 @@
 - Report the commands you ran, their output and what you could not verify. Never claim results you did not observe.
 
 ## Rules from observed failures
-- Write control and invisible characters in files as escapes (`\u2028`), never raw (failure: a raw U+2028 landed in docs/SPEC.md, 2026-10-11).
+- Write control and invisible characters as escapes, never raw; `make verify` fails on raw ones. In a Write or Edit call, a typed `\u` escape becomes the raw character (failures: a raw U+2028 landed in docs/SPEC.md, 2026-10-11, and in CLAUDE.md, 2026-10-14).
 - Outside the repo, touch only the temporary files you create for the task; never delete anything else (failure: deleted its saved notes outside the repo unasked, 2026-10-11).
 - Never read `.claude/settings.local.json` or any other file that holds credentials (failure: read it and printed the OpenRouter key into the session, 2026-10-14).

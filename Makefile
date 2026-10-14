@@ -24,8 +24,11 @@ verify: format lint imports types test secrets
 format:
 	$(BIN)/ruff format --check
 
+# ruff, then the raw control and invisible characters in the text files. Both
+# run in make verify and in the tests phase's Stop, which runs format lint types.
 lint:
 	$(BIN)/ruff check
+	$(BIN)/python scripts/check_characters.py
 
 imports:
 	PYTHONPATH=src $(BIN)/lint-imports

@@ -33,13 +33,18 @@ known-first-party = ["distiller"]
     "S603",    # they run bwrap, git, make and ruff with fixed argument lists
     "S607",    # those programs come from PATH, as in the Makefile
 ]
+"scripts/**" = [
+    "INP001",  # scripts that make runs, not a package
+    "S603",    # they run git with fixed argument lists
+    "S607",    # git comes from PATH, as in the Makefile
+]
 ".claude/hooks/tests/**" = [
     "S101",     # assert is how pytest checks
     "PLR2004",  # literal values are what a test compares against
 ]
 
 [tool.pyright]
-include = ["src", "tests", ".claude/hooks"]
+include = ["src", "tests", "scripts", ".claude/hooks"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 venvPath = "."
