@@ -1,7 +1,37 @@
 {
   "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(make check)",
+      "Bash(make verify)",
+      "Bash(make test)",
+      "Bash(make test-red)",
+      "Bash(make lint)",
+      "Bash(.venv/bin/python -m pytest *)",
+      "Bash(.venv/bin/ruff check *)",
+      "Bash(git status *)",
+      "Bash(git diff *)"
+    ],
     "deny": [
-      "Edit(claim-ledger.toml)"
+      "Edit(claim-ledger.toml)",
+      "Read(/.claude/settings.local.json)",
+      "Edit(/.claude/phase)",
+      "Edit(/.claude/tests-phase.log)",
+      "Edit(/.claude/stop-state.json)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Bash(git push *)",
+      "Bash(git -C * push*)",
+      "Bash(git -c * push*)",
+      "Bash(gh *)",
+      "Bash(rm* /*)",
+      "Bash(rm* ~*)",
+      "Bash(rm* *$HOME*)",
+      "Bash(rm* ../*)",
+      "Bash(unlink *)",
+      "Bash(shred *)",
+      "Bash(find /* -delete*)",
+      "Bash(find ~* -delete*)"
     ]
   },
   "autoMemoryEnabled": false,
