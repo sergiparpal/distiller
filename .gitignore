@@ -12,3 +12,27 @@ __pycache__/
 .claude/blocked
 .claude/tests-phase.log
 .claude/stop-state.json
+# While one of its commands runs, Claude Code's Bash sandbox puts a placeholder,
+# a device file inside the sandbox, at each protected path that does not exist.
+# Listed so that git status inside the sandbox stays clean and git add -A does
+# not fail on them (D-003). Remove a line before tracking a real file there.
+/.bash_profile
+/.bashrc
+/.claude/agents
+/.claude/commands
+/.claude/launch.json
+/.claude/loop.md
+/.claude/output-styles
+/.claude/routines
+/.claude/scheduled_tasks.json
+/.claude/skills
+/.claude/workflows
+/.gitconfig
+/.gitmodules
+/.idea
+/.mcp.json
+/.profile
+/.ripgreprc
+/.vscode
+/.zprofile
+/.zshrc
