@@ -21,7 +21,6 @@
       "Read(/.claude/settings.local.json)",
       "Edit(/.claude/settings.json)",
       "Edit(/.claude/settings.local.json)",
-      "Edit(/.claude/hooks/**)",
       "Edit(/.claude/phase)",
       "Edit(/.claude/tests-phase.log)",
       "Edit(/.claude/stop-state.json)",
