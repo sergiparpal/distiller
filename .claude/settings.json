@@ -14,6 +14,9 @@
       "Bash(git diff *)"
     ],
     "deny": [
+      "Edit(/.venv/**)",
+      "Edit(/.git/hooks/**)",
+      "Edit(/.git/config)",
       "Edit(claim-ledger.toml)",
       "Read(/.claude/settings.local.json)",
       "Edit(/.claude/settings.json)",
