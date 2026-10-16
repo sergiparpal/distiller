@@ -237,7 +237,7 @@ def test_implement_with_untouched_frozen_files_lets_the_agent_stop(repo: Path) -
 
 @pytest.mark.parametrize(
     "relative",
-    ["tests/test_core.py", "Makefile", "pyproject.toml"],
+    ["tests/test_core.py", "Makefile", "pyproject.toml", ".gitignore"],
 )
 def test_implement_catches_a_changed_frozen_file(repo: Path, relative: str) -> None:
     sha = implement(repo)
@@ -250,15 +250,96 @@ def test_implement_catches_a_changed_frozen_file(repo: Path, relative: str) -> N
 
 
 @pytest.mark.parametrize(
-    "relative", ["tests/test_new.py", "conftest.py", "src/conftest.py"]
+    "relative",
+    [
+        "tests/test_new.py",
+        "scripts/new.py",
+        "pytest.toml",
+        ".pytest.toml",
+        "pytest.ini",
+        ".pytest.ini",
+        "tox.ini",
+        "setup.cfg",
+        ".coveragerc",
+        ".coveragerc.toml",
+        "pyrightconfig.json",
+        ".importlinter",
+        ".pre-commit-config.yaml",
+        ".gitleaks.toml",
+        ".gitleaksignore",
+        "conftest.py",
+        "src/conftest.py",
+        "src/pyproject.toml",
+        "ruff.toml",
+        "src/pkg/ruff.toml",
+        ".ruff.toml",
+        "src/.ruff.toml",
+        ".gitattributes",
+        "src/.gitattributes",
+        "src/pkg/.gitignore",
+    ],
 )
 def test_implement_catches_a_new_frozen_file(repo: Path, relative: str) -> None:
     implement(repo)
+    (repo / relative).parent.mkdir(parents=True, exist_ok=True)
     (repo / relative).write_text("VALUE = 4\n", encoding="utf-8")
 
     reason = blocks(stop(repo))
 
     assert f"delete, as they are new: {relative}" in reason
+
+
+def test_implement_catches_a_frozen_file_a_nested_gitignore_hides(repo: Path) -> None:
+    implement(repo)
+    (repo / "src/.gitignore").write_text("*\n", encoding="utf-8")
+    (repo / "src/ruff.toml").write_text("lint.select = []\n", encoding="utf-8")
+
+    reason = blocks(stop(repo))
+
+    assert "delete, as they are new: src/.gitignore src/ruff.toml" in reason
+
+
+def test_implement_catches_a_frozen_file_git_info_exclude_hides(repo: Path) -> None:
+    implement(repo)
+    (repo / ".git/info").mkdir(exist_ok=True)
+    with (repo / ".git/info/exclude").open("a", encoding="utf-8") as exclude:
+        exclude.write("pytest.ini\n")
+    (repo / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
+
+    reason = blocks(stop(repo))
+
+    assert "delete, as they are new: pytest.ini" in reason
+
+
+def test_implement_catches_a_root_gitignore_changed_to_hide_a_frozen_file(
+    repo: Path,
+) -> None:
+    sha = implement(repo)
+    with (repo / ".gitignore").open("a", encoding="utf-8") as ignore:
+        ignore.write("pytest.ini\n")
+    (repo / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
+
+    reason = blocks(stop(repo))
+
+    assert f"restore with: git checkout {sha} -- .gitignore" in reason
+
+
+def test_implement_ignores_the_caches_the_root_gitignore_lists(repo: Path) -> None:
+    caches = [".venv", ".pytest_cache", ".ruff_cache", ".import_linter_cache"]
+    with (repo / ".gitignore").open("a", encoding="utf-8") as ignore:
+        ignore.write("".join(f"{cache}/\n" for cache in [*caches, "__pycache__"]))
+    commit(repo, "ignore the caches")
+    implement(repo)
+    # Each tool's cache ignores itself with a .gitignore of its own.
+    for cache in caches:
+        (repo / cache).mkdir()
+        (repo / cache / ".gitignore").write_text("*\n", encoding="utf-8")
+    (repo / "tests/__pycache__").mkdir()
+    (repo / "tests/__pycache__/test_core.cpython-312.pyc").write_bytes(b"")
+
+    result = stop(repo)
+
+    assert (result.returncode, result.stdout) == (0, "")
 
 
 def test_implement_catches_a_frozen_file_changed_in_a_later_commit(repo: Path) -> None:

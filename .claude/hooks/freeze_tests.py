@@ -15,9 +15,11 @@ from phase import (
 )
 
 BLOCKED = (
-    "{path} is frozen in the implement phase (.claude/phase): tests/, the Makefile, "
-    "pyproject.toml and every conftest.py. If a test looks wrong, write the test "
-    "name, the SPEC example and your reason to .claude/blocked and stop."
+    "{path} is frozen in the implement phase (.claude/phase), with tests/, "
+    "scripts/, the Makefile and every file that configures the tools make runs: "
+    "see FROZEN_AT_ROOT and FROZEN_ANYWHERE in .claude/hooks/phase.py. If a test "
+    "looks wrong, write the test name, the SPEC example and your reason to "
+    ".claude/blocked and stop."
 )
 
 

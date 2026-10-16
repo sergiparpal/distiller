@@ -165,9 +165,7 @@ def frozen_report(repo: Repo, phase: Phase) -> str | None:
     changed = git_lines(
         repo, ["diff", "--name-only", phase.commit, "--", *FROZEN_PATHSPECS]
     )
-    added = git_lines(
-        repo, ["ls-files", "--others", "--exclude-standard", "--", *FROZEN_PATHSPECS]
-    )
+    added = new_frozen_files(repo)
     if not changed and not added:
         return None
     lines = [f"Frozen files differ from {phase.commit}, the tests commit:"]
@@ -178,6 +176,15 @@ def frozen_report(repo: Repo, phase: Phase) -> str | None:
     if added:
         lines.append(f"  delete, as they are new: {' '.join(added)}")
     return "\n".join(lines)
+
+
+def new_frozen_files(repo: Repo) -> list[str]:
+    # Only the root .gitignore may hide a new file: it is frozen, so a change to it
+    # shows in git diff. Nested .gitignore files and .git/info/exclude do not.
+    arguments = ["ls-files", "--others"]
+    if (repo.root / ".gitignore").is_file():
+        arguments.append("--exclude-from=.gitignore")
+    return git_lines(repo, [*arguments, "--", *FROZEN_PATHSPECS])
 
 
 def git_lines(repo: Repo, arguments: list[str]) -> list[str]:

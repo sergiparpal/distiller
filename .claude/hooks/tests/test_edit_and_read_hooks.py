@@ -67,11 +67,35 @@ def log_entries(repo: Path) -> list[dict[str, object]]:
     [
         "tests/test_core.py",
         "tests/test_new.py",
+        "scripts/check_characters.py",
+        "scripts/new.py",
         "Makefile",
-        "pyproject.toml",
+        "pytest.toml",
+        ".pytest.toml",
+        "pytest.ini",
+        ".pytest.ini",
+        "tox.ini",
+        "setup.cfg",
+        ".coveragerc",
+        ".coveragerc.toml",
+        "pyrightconfig.json",
+        ".importlinter",
+        ".pre-commit-config.yaml",
+        ".gitleaks.toml",
+        ".gitleaksignore",
         "conftest.py",
         "src/conftest.py",
         "tests/deep/conftest.py",
+        "pyproject.toml",
+        "src/pyproject.toml",
+        "ruff.toml",
+        "src/pkg/ruff.toml",
+        ".ruff.toml",
+        "src/.ruff.toml",
+        ".gitattributes",
+        "src/.gitattributes",
+        ".gitignore",
+        "src/pkg/.gitignore",
     ],
 )
 def test_implement_freezes_the_oracle(repo: Path, relative: str) -> None:
@@ -85,7 +109,15 @@ def test_implement_freezes_the_oracle(repo: Path, relative: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "relative", ["src/pkg/core.py", "src/pkg/new.py", "docs/SPEC.md", "README.md"]
+    "relative",
+    [
+        "src/pkg/core.py",
+        "src/pkg/new.py",
+        "docs/SPEC.md",
+        "README.md",
+        # The tools that read setup.cfg read it at the root only.
+        "src/pkg/setup.cfg",
+    ],
 )
 def test_implement_lets_the_rest_be_edited(repo: Path, relative: str) -> None:
     set_phase(repo, "implement 0123abc\n")

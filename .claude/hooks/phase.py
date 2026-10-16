@@ -15,8 +15,42 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import cast
 
-# The tests and everything that decides how they run, as git pathspecs.
-FROZEN_PATHSPECS = ("tests", "Makefile", "pyproject.toml", ":(glob)**/conftest.py")
+# The tests and everything that decides how the checks run. make runs each tool
+# from the root, where it reads these files. More is frozen than the tools read
+# today, on purpose: one file too few loosens the checks, one too many costs
+# nothing.
+FROZEN_DIRECTORIES = ("tests", "scripts")
+FROZEN_AT_ROOT = (
+    "Makefile",
+    "pytest.toml",
+    ".pytest.toml",
+    "pytest.ini",
+    ".pytest.ini",
+    "tox.ini",
+    "setup.cfg",
+    ".coveragerc",
+    ".coveragerc.toml",
+    "pyrightconfig.json",
+    ".importlinter",
+    ".pre-commit-config.yaml",
+    ".gitleaks.toml",
+    ".gitleaksignore",
+)
+# Read in every directory: conftest.py by pytest, the others by ruff and git.
+FROZEN_ANYWHERE = (
+    "conftest.py",
+    "pyproject.toml",
+    "ruff.toml",
+    ".ruff.toml",
+    ".gitattributes",
+    ".gitignore",
+)
+# The same, as git pathspecs.
+FROZEN_PATHSPECS = (
+    *FROZEN_DIRECTORIES,
+    *FROZEN_AT_ROOT,
+    *(f":(glob)**/{name}" for name in FROZEN_ANYWHERE),
+)
 
 
 @dataclass(frozen=True)
@@ -26,10 +60,6 @@ class Repo:
     @property
     def src(self) -> Path:
         return self.root / "src"
-
-    @property
-    def tests(self) -> Path:
-        return self.root / "tests"
 
     @property
     def phase_file(self) -> Path:
@@ -91,11 +121,13 @@ def is_inside(path: Path, directory: Path) -> bool:
 
 
 def is_frozen(path: Path, repo: Repo) -> bool:
-    return (
-        is_inside(path, repo.tests)
-        or path in {repo.root / "Makefile", repo.root / "pyproject.toml"}
-        or (path.name == "conftest.py" and is_inside(path, repo.root))
+    if not is_inside(path, repo.root):
+        return False
+    in_a_frozen_directory = any(
+        is_inside(path, repo.root / name) for name in FROZEN_DIRECTORIES
     )
+    at_the_root = path.parent == repo.root and path.name in FROZEN_AT_ROOT
+    return in_a_frozen_directory or at_the_root or path.name in FROZEN_ANYWHERE
 
 
 def read_input() -> dict[str, object]:
