@@ -15,6 +15,7 @@
     ],
     "deny": [
       "Edit(/.venv/**)",
+      "Edit(/.git/info/**)",
       "Edit(/.git/hooks/**)",
       "Edit(/.git/config)",
       "Edit(claim-ledger.toml)",
