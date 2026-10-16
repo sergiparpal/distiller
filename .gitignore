@@ -8,6 +8,7 @@ __pycache__/
 .coverage.*
 .pytest_cache/
 .ruff_cache/
+.import_linter_cache/
 .claude/phase
 .claude/blocked
 .claude/tests-phase.log
