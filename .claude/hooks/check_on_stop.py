@@ -2,9 +2,10 @@
 
 Everything this hook runs, git included, runs inside bwrap: no network, the
 home directory and /mnt hidden apart from what the checks read, only the repo
-writable, and no variable that looks like a credential. The tests the agent
-writes run here, and a fixture with a wrong directory must not reach the
-user's home, credentials or network.
+writable but not its .venv or .git, and no variable that looks like a
+credential. The tests the agent writes run here, and a fixture with a wrong
+directory must not reach the user's home, credentials or network, nor leave
+behind something that runs outside the sandbox later.
 
 - tests phase: make format lint types, because red tests are expected there;
 - any other phase: make verify, which is make check without pip-audit;
@@ -244,6 +245,11 @@ def sandboxed(repo: Repo, command: list[str]) -> list[str]:
     for needed in (home / ".nvm", home / ".cache" / "pre-commit"):
         arguments += ["--ro-bind-try", str(needed), str(needed)]
     arguments += ["--bind", str(repo.root), str(repo.root)]
+    # Read-only inside the repository, what runs outside the sandbox later: in
+    # .venv, the format hook's ruff and the .pth files Python runs as it starts;
+    # in .git, the hooks and the settings git runs at the user's next commit.
+    for kept in (repo.root / ".venv", repo.root / ".git"):
+        arguments += ["--ro-bind-try", str(kept), str(kept)]
     local_settings = repo.root / ".claude" / "settings.local.json"
     if local_settings.exists():
         # It can hold credentials. Inside, /dev/null sits on it, and a device on a

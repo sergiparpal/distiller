@@ -55,6 +55,28 @@ print("\\n".join(failures))
 sys.exit(1 if failures else 0)
 """
 
+# Runs inside the sandbox as make verify: git still reads the repository, and
+# nothing that runs outside the sandbox later can be written.
+WRITE_PROBE = """\
+import subprocess, sys
+from pathlib import Path
+
+failures = []
+for command in (["git", "diff", "--name-only", "HEAD"], ["git", "ls-files", "-o"]):
+    if subprocess.run(command, capture_output=True, check=False).returncode != 0:
+        failures.append(f"{' '.join(command)} failed")
+for target in (".venv/bin/ruff", ".venv/lib/x.pth", ".git/hooks/pre-commit",
+               ".git/config"):
+    try:
+        with Path(target).open("a", encoding="utf-8") as file:
+            file.write("written from the sandbox\\n")
+        failures.append(f"{target} can be written")
+    except OSError:
+        pass
+print("\\n".join(failures))
+sys.exit(1 if failures else 0)
+"""
+
 
 def git(repo: Path, *arguments: str) -> str:
     return subprocess.run(
@@ -442,6 +464,22 @@ def test_the_checks_run_offline_hidden_and_without_credentials(
     assert (repo / "written-inside.txt").exists()
     assert not outside.exists()
     assert (repo / ".claude/settings.local.json").read_text() == "canary"
+
+
+def test_the_checks_cannot_write_what_runs_outside_the_sandbox(repo: Path) -> None:
+    (repo / ".venv/bin").mkdir(parents=True)
+    (repo / ".venv/lib").mkdir()
+    (repo / "probe.py").write_text(WRITE_PROBE, encoding="utf-8")
+    (repo / "Makefile").write_text("verify:\n\t@python3 probe.py\n", encoding="utf-8")
+    config = (repo / ".git/config").read_text(encoding="utf-8")
+
+    result = stop(repo)
+
+    assert (result.returncode, result.stdout) == (0, "")
+    assert not (repo / ".venv/bin/ruff").exists()
+    assert not (repo / ".venv/lib/x.pth").exists()
+    assert not (repo / ".git/hooks/pre-commit").exists()
+    assert (repo / ".git/config").read_text(encoding="utf-8") == config
 
 
 @pytest.mark.skipif(
