@@ -1,8 +1,8 @@
 """Stop: no turn ends red, with the oracle changed, or with src/ read for tests.
 
 Everything this hook runs, git included, runs inside bwrap: no network, the
-home directory and /mnt hidden apart from what the checks read, only the repo
-writable but not its .venv or .git, and no variable that looks like a
+home directory, /run and /mnt hidden apart from what the checks read, only the
+repo writable but not its .venv or .git, and no variable that looks like a
 credential. The tests the agent writes run here, and a fixture with a wrong
 directory must not reach the user's home, credentials or network, nor leave
 behind something that runs outside the sandbox later.
@@ -235,9 +235,13 @@ def run_sandboxed(
 def sandboxed(repo: Repo, command: list[str]) -> list[str]:
     home = Path.home()
     arguments = ["bwrap", "--unshare-all", "--die-with-parent", "--new-session"]
-    # Everything read-only, then the home directory, /tmp and /mnt emptied.
-    # /tmp is a mount point here, not a file anyone writes to.
+    # Everything read-only, then the home directory, /tmp, /run and /mnt emptied.
+    # /tmp is a mount point here, not a file anyone writes to. /run holds the
+    # sockets of the user's session, such as the session bus, through which
+    # systemd starts processes outside the sandbox: a read-only mount still lets
+    # anyone connect to a socket.
     arguments += ["--ro-bind", "/", "/", "--tmpfs", str(home), "--tmpfs", "/tmp"]  # noqa: S108
+    arguments += ["--tmpfs", "/run"]
     if Path("/mnt").is_dir():
         arguments += ["--tmpfs", "/mnt"]
     # What the checks read from the home directory: node for pyright, and the

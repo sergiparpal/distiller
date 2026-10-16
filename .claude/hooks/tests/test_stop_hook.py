@@ -77,6 +77,17 @@ print("\\n".join(failures))
 sys.exit(1 if failures else 0)
 """
 
+# Runs inside the sandbox as make verify: /run, where the sockets of the user's
+# session live, the session bus among them, shows nothing.
+RUN_PROBE = """\
+import os, sys
+
+shown = sorted(os.listdir("/run"))
+if shown:
+    print(f"/run shows {shown}")
+sys.exit(1 if shown else 0)
+"""
+
 
 def git(repo: Path, *arguments: str) -> str:
     return subprocess.run(
@@ -480,6 +491,15 @@ def test_the_checks_cannot_write_what_runs_outside_the_sandbox(repo: Path) -> No
     assert not (repo / ".venv/lib/x.pth").exists()
     assert not (repo / ".git/hooks/pre-commit").exists()
     assert (repo / ".git/config").read_text(encoding="utf-8") == config
+
+
+def test_the_checks_cannot_reach_the_sockets_in_run(repo: Path) -> None:
+    (repo / "probe.py").write_text(RUN_PROBE, encoding="utf-8")
+    (repo / "Makefile").write_text("verify:\n\t@python3 probe.py\n", encoding="utf-8")
+
+    result = stop(repo)
+
+    assert (result.returncode, result.stdout) == (0, "")
 
 
 @pytest.mark.skipif(
