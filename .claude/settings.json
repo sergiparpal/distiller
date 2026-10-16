@@ -19,6 +19,7 @@
       "Edit(/.git/hooks/**)",
       "Edit(/.git/config)",
       "Edit(claim-ledger.toml)",
+      "Edit(/.claude/hooks/**)",
       "Read(/.claude/settings.local.json)",
       "Edit(/.claude/settings.json)",
       "Edit(/.claude/settings.local.json)",
