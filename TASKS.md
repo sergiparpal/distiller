@@ -1,7 +1,7 @@
 # Tasks
 
 - In the tests phase nothing stops the agent from creating the files that implement freezes (pytest.ini, ruff.toml, .gitattributes and the rest of `FROZEN_AT_ROOT` and `FROZEN_ANYWHERE` in `.claude/hooks/phase.py`); one that enters the tests commit becomes implement's reference.
-- `.git/info/` can be written from the agent's Bash, and git does not track it: `.git/info/attributes` outranks every `.gitattributes`, and `.git/info/exclude` hides untracked files from `scripts/check_characters.py`. Proposed, for the user: `"Edit(/.git/info/**)"` among the deny rules of `.claude/settings.json`. With the rules for .venv, .git/hooks and .git/config, the Bash sandbox made those read-only; the same is expected for .git/info [VERIFY].
+- `.git/info/` could be written from the agent's Bash, and git does not track it: `.git/info/attributes` outranks every `.gitattributes`, and `.git/info/exclude` hides untracked files from `scripts/check_characters.py`. Done in fbb10d9: `"Edit(/.git/info/**)"` is among the deny rules of `.claude/settings.json`. With the rules for .venv, .git/hooks and .git/config, the Bash sandbox made those read-only; the same is expected for .git/info [VERIFY].
 - `clean_environment` in the Stop hook drops `GIT_CONFIG_KEY_n`, whose names hold KEY, but keeps `GIT_CONFIG_COUNT`, so git fails inside Stop's bwrap wherever that variable is set. The Bash sandbox sets it, which is why the implement-phase Stop tests fail there.
 
 ## Slice 1
@@ -149,6 +149,7 @@ How to read the fields:
 ### 8. Verdict
 - **Closes**: whether a run is green, caught or missed, which failures are not reproduced, and which failed tests were left out.
 - **Covers**: Verdict 1-5. Prose, "A run is red when...": only a pass in the rerun file discards a failure, the test is then marked not reproduced; caught, missed and green. Edge 2, 15, 16, 17, 18 (its first clause; that the rerun file is still rejected is task 14's) and 19.
+- **Constrained by**: K1 (`"verdict":"missed"`, `"not_reproduced":[]`, `"failed_left_out":[{"pair":["tests.test_report","test_render"],"node_id":"tests/test_report.py::test_render","row":["src/shop/pricing.py","src/shop/report.py"]}]`), K2 (`"verdict":"green"`, `"not_reproduced":[["tests.test_report","test_render"]]`, `"failed_left_out":[]`).
 - **Modules**: `selection`.
 - **Stubs**, by the user, before the phase:
   ```python
@@ -315,8 +316,8 @@ Each line has the one task that covers it. "Constrains" lists the earlier tasks 
 
 | Item | Task | Constrains |
 |---|---|---|
-| K1 | 13 | 9, 10, 11 |
-| K2 | 13 | 10 |
+| K1 | 13 | 8, 9, 10, 11 |
+| K2 | 13 | 8, 10 |
 | K3 | 13 | 1, 12 |
 | K4 | 15 | 1, 10, 11 |
 | K5 | 15 | 1, 10 |
