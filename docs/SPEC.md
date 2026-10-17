@@ -368,7 +368,7 @@ class RejectedRecord:
 Record = EvaluatedRecord | RejectedRecord
 ```
 
-`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`: `pr`, the durations and the counts are `int`, `verdict` is `str`, `merge_base` and `coverage_commit` are `Commit`, `floor_matched` and `rerun_given` `bool`, `not_reproduced` a `tuple[Pair, ...]`, `failed_left_out` a `tuple[Test, ...]`, and `no_column` and `import_only` `tuple[RepoPath, ...]`. `RunArgs` (`evaluate.py`) has one field per option: `pr: int`, `rerun` and `floor_config` `str | None`, `rootdir` `""` for the repository root, and the rest `str`. Each field holds its option as given, except `rootdir`, which is normalized by the rules under "Command line".
+`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`, and no `format`: `pr`, the durations and the counts are `int`, `verdict` is `str`, `merge_base` and `coverage_commit` are `Commit`, `floor_matched` and `rerun_given` `bool`, `not_reproduced` a `tuple[Pair, ...]`, `failed_left_out` a `tuple[Test, ...]`, and `no_column` and `import_only` `tuple[RepoPath, ...]`. `RunArgs` (`evaluate.py`) has one field per option: `pr: int`, `rerun` and `floor_config` `str | None`, `rootdir` `""` for the repository root, and the rest `str`. Each field holds its option as given, except `rootdir`, which is normalized by the rules under "Command line".
 
 `Matrix.rows` keeps empty rows because a node id with an empty row still counts among the node ids of its pair; for everything else an empty row is no row.
 
