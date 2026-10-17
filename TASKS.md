@@ -12,7 +12,8 @@ A module that does not exist yet gets its stubs from the agent, in the tests pha
 
 How to read the fields:
 - **Closes**: the behaviour that the task's tests pin down.
-- **Covers**: the [core] examples (K, from the technical sheet's table), the other examples and the rules of Slice 1's prose. Other examples are named by their section and position: Selection 1-16, Verdict 1-5, Report 1-17, Invariants 1-4 and Edge 1-22, in the order of `docs/SPEC.md`. Prose rules are named by the term or the paragraph they belong to. **Constrained by** lists the K examples whose "then" holds a text, a value or a line that the task produces: its tests use those exact values.
+- **Covers**: the [core] examples (K, from the technical sheet's table), the other examples and the rules of Slice 1's prose. Other examples are named by their section and position: Selection 1-16, Verdict 1-5, Report 1-17, Invariants 1-4 and Edge 1-22, in the order of `docs/SPEC.md`. Prose rules are named by the term or the paragraph they belong to.
+- **Constrained by**: the K examples that the task cites, whose values its tests use exactly. A task cites a K example when that example's line or "then" shows a value that one of the task's own functions returns, from inputs that the example's "given" states explicitly. The task's own functions are those under its Stubs, and the fixture that an example uses is part of its "given".
 - **Modules**: from D-001.
 - **Stubs**: exact signatures, from the technical sheet, and who writes them.
 - **Contract**: the import-linter contract that the task adds or changes, in `pyproject.toml`.
@@ -57,7 +58,6 @@ How to read the fields:
 ### 3. Reading and parsing JUnit
 - **Closes**: reading a JUnit file into bytes, and parsing it into its results by pair, with the rejections that come from its content.
 - **Covers**: prose, JUnit term: the test cases of one file that share a pair are one test, failed if any of them has a `failure` or an `error`, with the sum of their times. Prose, "A run is red...": a test passes in the rerun file only if none of its test cases there has a `failure`, an `error` or a `skipped` (`Result.passed`). Prose, "A collection error is...": how a collection error is recognized (`has_collection_error`). Prose, "A test case cannot be used if...": the missing attributes, the `time` format, pytest's internal error, each `unusable-input` with the input given. Prose, the rejection reasons: `unsafe-xml` for a file that declares an entity, even one it never uses, with nothing resolved or expanded; a file that is not well-formed XML is `unusable-input`; within one file, `unsafe-xml` or not well-formed, whichever the parser meets first. Prose, "An input file that exists but is not a regular file...", for the JUnit files: `read_junit` gives `None`, and a FIFO does not block. Prose, "Each test case's JUnit time is rounded to the nearest whole millisecond, halves up, before any sum". Technical sheet, Rule 5 (a `time` in another script's digits cannot be used) and Rule 3 (opened for reading only). Edge 14.
-- **Constrained by**: K6 (`unsafe-xml`, with `junit` or `rerun`), K8 (`unusable-input`, with `junit` or `rerun`), K9 (a test case with an empty `classname` and an `error` whose message is `collection failure`).
 - **Modules**: `junit`.
 - **Stubs**, by the agent, in the tests phase (new module):
   ```python
@@ -79,7 +79,7 @@ How to read the fields:
 ### 4. Reading the coverage at M and building the matrix
 - **Closes**: reading the coverage file without changing it, and mapping it to M's tree as rows and import-only files.
 - **Covers**: prose, "A test context is...": split at the last `|`, and any other context is outside any test. Prose, "A test's row is...": setup, call and teardown all count, and files outside the repository are in no row; a node id whose recorded lines all fall outside the repository keeps an empty row in `Matrix.rows`. Prose, "A coverage file is a coverage data file only if..." and "A measured file in which no line was recorded is in no row and is not import-only". Prose, "A file recorded in the coverage maps to the longest path...". Prose, "A file whose lines were all recorded outside any test... is import-only". Prose, Inputs, the per-test coverage: a line recorded for two node ids or more (`has_shared_line`). Prose, "An input file that exists but is not a regular file...", for the coverage file. Technical sheet, Rule 3 for the coverage file and Rule 4; D-002: the coverage file is left byte for byte as it was, an empty one and a foreign SQLite database included. Edge 4.
-- **Constrained by**: K8 and K14 (`unusable-input`, with `coverage`), K14 (an empty file stays 0 bytes long), K13 (the coverage file is left byte for byte as it was).
+- **Constrained by**: K1 (the row of `tests/test_report.py::test_render`, `"row":["src/shop/pricing.py","src/shop/report.py"]`).
 - **Modules**: `coverage_at_m`.
 - **Stubs**, by the agent, in the tests phase (new module):
   ```python
@@ -102,7 +102,6 @@ How to read the fields:
 ### 5. The floor
 - **Closes**: reading the floor configuration, the default patterns, pattern validity and matching.
 - **Covers**: prose, Inputs, the floor configuration: blank lines, lines that start with `#`, spaces at either end, UTF-8 with a byte order mark and `\r\n` endings, a file that is not valid UTF-8. Prose, "The floor is the default patterns...", and "A configuration adds patterns and never removes them". Prose, "Floor patterns have their own syntax...": segment matching, `**`, `*`, the invalid patterns, and its examples (`**/uv.lock`, `config/**`, `**/requirements*.txt`). Prose, the rejection reasons: `floor` for a configuration that cannot be read or has an invalid pattern, with the pattern's line number. Prose, "An input file that exists but is not a regular file...", for the floor configuration. Technical sheet, Rule 9 (lines split on newline only). Edge 21, Edge 22.
-- **Constrained by**: K8 (`unusable-input`, with `floor`).
 - **Modules**: `floor`.
 - **Stubs**, by the agent, in the tests phase (new module):
   ```python
@@ -116,6 +115,7 @@ How to read the fields:
 ### 6. Matching tests to rows
 - **Closes**: turning node ids into pairs and matching the run's tests to their rows.
 - **Covers**: prose, JUnit term: the pair rule, with its example (`tests.test_tax.TestVat`, `test_rate[es-0.21]`). Prose, "Each node id in the test contexts is turned into its pair...": one direction only, and two node ids with one pair make that pair's test unmeasured, `tests/v1.2/test_x.py::test_m` and `tests/v1/2/test_x.py::test_m` among them. Prose, "An unmeasured test is...". Prose, "A test's row is...": an empty row is no row, but its node id still counts among its pair's node ids (the sentence after the Data model).
+- **Constrained by**: K1 (test_render's entry in `"failed_left_out"`, `{"pair":["tests.test_report","test_render"],"node_id":"tests/test_report.py::test_render","row":["src/shop/pricing.py","src/shop/report.py"]}`).
 - **Modules**: `selection`.
 - **Stubs**, by the agent, in the tests phase (new module):
   ```python
@@ -226,7 +226,6 @@ How to read the fields:
 ### 11. Telling a record from a line that is not one
 - **Closes**: which lines of a record file are records.
 - **Covers**: prose, "A line of a record file is a record only if it is byte for byte what the tool would write...": an empty line, a carriage return, a missing newline, another format; shape only, no agreement between fields. Technical sheet, Rule 7 (`decode`: ASCII, keys and order, exact types, so `true` is not `1`, allowed values, lists sorted with no repeats, `encode` of the result equal to the line).
-- **Constrained by**: K1 and K4 (their lines are records, and decode to the values they show), K15 (a line holding `canary` is not a record).
 - **Modules**: `records`.
 - **Stubs**, by the user, before the phase:
   ```python
@@ -237,7 +236,6 @@ How to read the fields:
 ### 12. The record file
 - **Closes**: reading the record file, looking up a key, and appending a line.
 - **Covers**: prose, "Before evaluating a run, the tool reads the record file; if it does not exist, the tool treats it as empty and creates it when it appends", as far as reading, the lookups and the append go. Prose, "`pr` is not part of it: a rejected record already there with the same key, reason and input stops the append, whatever its `pr`" (`has_rejected`). Prose, "The record file is not one of these inputs: if it exists but cannot be read, that is any other failure" (`read_record_file` raises `OSError`). Prose, a line that is not a record named by its line number. Technical sheet, Rule 3 for the record file (a FIFO does not block) and Rule 8 (one write of the whole line, to a file opened for appending, created if missing).
-- **Constrained by**: K3 (an evaluated record with the key is found), K10 (a rejected record with the same key, reason and input is found), K11 (an evaluated record is appended after the rejected one), K13 (the file is created and holds that one line), K15 (line 2 is reported, the file is left as it was).
 - **Modules**: `records`.
 - **Stubs**, by the user, before the phase:
   ```python
@@ -312,25 +310,25 @@ How to read the fields:
   - [ ] In the first week, check the records by hand against the CI's list of pull request runs.
 
 ### Coverage
-Each line has the one task that covers it. "Constrains" lists the earlier tasks whose tests use the K example's exact values.
+Each line has the one task that covers it. "Constrains" lists the earlier tasks that cite the K example under Constrained by.
 
 | Item | Task | Constrains |
 |---|---|---|
-| K1 | 13 | 8, 9, 10, 11 |
+| K1 | 13 | 4, 6, 8, 9, 10 |
 | K2 | 13 | 8, 10 |
-| K3 | 13 | 1, 12 |
-| K4 | 15 | 1, 10, 11 |
+| K3 | 13 | 1 |
+| K4 | 15 | 1, 10 |
 | K5 | 15 | 1, 10 |
-| K6 | 15 | 1, 3, 10 |
+| K6 | 15 | 1, 10 |
 | K7 | 13 | |
-| K8 | 14 | 1, 3, 4, 5, 10 |
-| K9 | 15 | 1, 3, 10 |
-| K10 | 14 | 1, 12 |
-| K11 | 14 | 12 |
+| K8 | 14 | 1, 10 |
+| K9 | 15 | 1, 10 |
+| K10 | 14 | 1 |
+| K11 | 14 | |
 | K12 | 15 | 1, 10 |
-| K13 | 13 | 4, 12 |
-| K14 | 14 | 1, 4, 10 |
-| K15 | 13 | 1, 11, 12 |
+| K13 | 13 | |
+| K14 | 14 | 1, 10 |
+| K15 | 13 | 1 |
 | Selection 1-12 | 7 | |
 | Selection 13, 14, 15 | 9 | |
 | Selection 16 | 13 | |
