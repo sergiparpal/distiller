@@ -221,7 +221,7 @@ Option A of `notes/2026-10-10-architecture-options.md`, with D-001 and D-002 of 
 | `__main__` | `raise SystemExit(cli.main())`: the only place where a return value becomes the exit code the CI step sees, so one test runs `python -m distiller` | core | K3–K15 |
 | `cli` | argparse (`allow_abbrev=False`) into `RunArgs`; runs `evaluate.run` or `report.run`; turns an unexpected exception into `messages.unexpected_failure` and 1. Nothing else | core | K1–K15 |
 | `evaluate` | `RunArgs`, and the evaluate command as `run`: record file, key, evaluated check, problem order, record, append, message, exit code | core | K1–K15 |
-| `selection` | pure, no I/O: `pair_of`, `match_tests`, `select`, `judge` | core | K1, K2, K11, K13 |
+| `selection` | pure, no I/O: `pair_of`, `match_tests`, `select`, `judge`, `no_column`, `import_only_paths`, `row_counts`, `durations` | core | K1, K2, K11, K13 |
 | `messages` | `Rejected`, and one function per text written to stderr | core | K3–K6, K8–K10, K12, K14, K15 |
 | `git` | the seven git queries | core | K1–K6, K8–K14 |
 | `coverage_at_m` | reads the coverage at M as D-002 says; maps it to M's tree with the pure `build_matrix` | core | K1, K8, K10–K14 |

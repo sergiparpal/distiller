@@ -203,7 +203,7 @@ How to read the fields:
   | `no_column` | `tuple[RepoPath, ...]` | "`no_column` and `import_only` `tuple[RepoPath, ...]`" |
   | `import_only` | `tuple[RepoPath, ...]` | same sentence |
 
-  The order is "the record's fields in the SPEC's order", that of the prose's "A record is one line...", with `key` where `head` and `junit_sha256` are. Whether `format` is a field is open question 2.
+  The order is "the record's fields in the SPEC's order", that of the prose's "A record is one line...", with `key` where `head` and `junit_sha256` are. No record dataclass has a `format` field: `encode` writes `"format":1` as a constant, the value that K1's and K4's lines fix (open question 2, decided).
   ```python
   @dataclass(frozen=True)
   class RunKey:
@@ -421,7 +421,7 @@ Not covered by any task:
 Each one is to be decided before the task that needs it.
 
 1. **A home for `no_column`, `import_only`, `tests_with_row`, `tests_with_row_not_in_run`, `selected_ms` and `full_ms`.** Decided: four pure functions in `selection`, in Interfaces, with task 9 of their own (D-004).
-2. **Is `format` a field of `EvaluatedRecord`?** Data model: "`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`". Readings: (a) `format` is a field, since it is one of the record's fields; (b) it is not, since its value is always 1 and `RejectedRecord`, written out, has no `format` and no `verdict`. The [core] lines do not settle it: K1's and K4's lines begin with `"format":1`, which fixes the bytes that `encode` writes, but not whether the dataclass holds the value or `encode` adds it. Task 10's stubs need the answer.
+2. **Is `format` a field of `EvaluatedRecord`?** Decided: no record dataclass has a `format` field. `encode` writes `"format":1` as a constant, which is what K1's and K4's lines fix; a field that admits only one valid value would only serve to allow invalid records. What `decode` does with that key is the SPEC's to say, in task 11.
 3. **How percentages are written in the report.** Report 1: "a one-sided 95% Clopper-Pearson upper bound of 86.5%"; Report 2: "an upper bound of 9.5%"; Report 4: "savings of 37.5%"; Report 5: "a floor rate of 25%"; Report 7: "12.5% of tests treated as unmeasured". Readings: (a) one decimal, with `25.0%`; (b) at most one decimal, so `25%` and `37.5%`; (c) another precision, with the examples rounded. And how the bound is rounded to that precision: (a) half up; (b) up, since it is an upper bound; (c) half to even.
 4. **The report's layout.** The SPEC says what the report "shows", "lists" and "says", but not its layout or wording. Readings: (a) the tests check only that each figure, list and sentence appears, and every report task adds to the text without breaking the earlier ones; (b) a layout is fixed in the SPEC before task 16, and the tests compare whole outputs.
 5. **Report 9, the reason a failed test was left out.** Report 9: "it lists test_render with the reason it was left out (its row, `src/shop/pricing.py` and `src/shop/report.py`, has none of the diff's paths, and no other rule picked it), next to the diff's paths with no column (`templates/invoice.html`) and the import-only ones (none)". A record holds the test's `row`, `no_column` and `import_only`, but not the diff's paths. Readings: (a) the report shows the row and a fixed sentence that no rule picked the test; (b) the report shows the diff's paths, which needs a new record field and so a change to record format 1.
