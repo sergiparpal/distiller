@@ -6,9 +6,9 @@
 
 ## Slice 1
 
-Seventeen tasks, each one cycle: a tests session, which cannot read `src/`, then an implement session, with the tests frozen. Task 18 is outside the cycle. The tasks go bottom up through the imports that the technical sheet's signatures and types imply (each type lives in the module that creates it): `messages` and `git` import no module of the package; `junit`, `coverage_at_m` and `floor` use `Rejected` and `RepoPath`; `selection` uses their types; `records` uses `Pair` and `Test`; `evaluate` and `report` sit on top. Each task, once done, leaves main green and depends on no later task.
+Eighteen tasks, each one cycle: a tests session, which cannot read `src/`, then an implement session, with the tests frozen. Task 19 is outside the cycle. The tasks go bottom up through the imports that the technical sheet's signatures and types imply (each type lives in the module that creates it): `messages` and `git` import no module of the package; `junit`, `coverage_at_m` and `floor` use `Rejected` and `RepoPath`; `selection` uses their types; `records` uses `Pair` and `Test`; `evaluate` and `report` sit on top. Each task, once done, leaves main green and depends on no later task.
 
-A module that does not exist yet gets its stubs from the agent, in the tests phase, with its import-linter contract. A signature missing from a module that exists is the user's to write before the tests phase. With `fail_under = 100`, a stub that no test runs turns main red, so `selection` and `records` are split into three tasks each: the first creates the module with its own stubs only.
+A module that does not exist yet gets its stubs from the agent, in the tests phase, with its import-linter contract. A signature missing from a module that exists is the user's to write before the tests phase. With `fail_under = 100`, a stub that no test runs turns main red, so `selection` is split into four tasks and `records` into three: the first of each creates the module with its own stubs only.
 
 How to read the fields:
 - **Closes**: the behaviour that the task's tests pin down.
@@ -148,7 +148,7 @@ How to read the fields:
 
 ### 8. Verdict
 - **Closes**: whether a run is green, caught or missed, which failures are not reproduced, and which failed tests were left out.
-- **Covers**: Verdict 1-5. Prose, "A run is red when...": only a pass in the rerun file discards a failure, the test is then marked not reproduced; caught, missed and green. Edge 2, 15, 16, 17, 18 (its first clause; that the rerun file is still rejected is task 13's) and 19.
+- **Covers**: Verdict 1-5. Prose, "A run is red when...": only a pass in the rerun file discards a failure, the test is then marked not reproduced; caught, missed and green. Edge 2, 15, 16, 17, 18 (its first clause; that the rerun file is still rejected is task 14's) and 19.
 - **Modules**: `selection`.
 - **Stubs**, by the user, before the phase:
   ```python
@@ -161,7 +161,22 @@ How to read the fields:
   ```
 - **Contract**: none.
 
-### 9. Encoding records
+### 9. Figures of an evaluated run
+- **Closes**: the changed paths with no column and the import-only ones, how many tests have a row and how many of those are not in the run, and the selected and full-suite durations (D-004).
+- **Covers**: Selection 13, 14 and 15. Edge 6, 7, 8 and 9. Prose, "A column is a file in at least one row... A changed path that is neither a column nor import-only has no column" (`no_column`, `import_only`). Prose, "A record is one line...": `tests_with_row`, how many tests have a row, and `tests_with_row_not_in_run`, how many of those are not in the run; "A node id with a row is in the run when its pair is in the run's JUnit, so two node ids with one pair are both in the run, or both not". Prose, "`full_ms` is the sum over every test case of the full run's JUnit and `selected_ms` over those of the selected tests; neither uses a `testsuite` element's `time`". Technical sheet, Rule 8, for the two lists of paths (sorted by code point).
+- **Constrained by**: K1 (`"selected_ms":0`, `"full_ms":12000`, `"tests_with_row":4`, `"tests_with_row_not_in_run":0`, `"no_column":["templates/invoice.html"]`, `"import_only":[]`).
+- **Modules**: `selection`.
+- **Stubs**, by the user, before the phase:
+  ```python
+  def no_column(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]: ...         # sorted
+  def import_only_paths(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]: ...  # sorted
+  def row_counts(rows: dict[NodeId, frozenset[RepoPath]],
+                 results: dict[Pair, Result]) -> tuple[int, int]: ...  # tests_with_row, not in the run
+  def durations(full: JUnit, selection: Selection) -> tuple[int, int]: ...  # selected_ms, full_ms
+  ```
+- **Contract**: none.
+
+### 10. Encoding records
 - **Closes**: the record types and the exact bytes of a record line.
 - **Covers**: prose, "A record is one line...": ASCII JSON with no spaces, the escapes, the keys and their order for evaluated and rejected records, the sorting of lists of pairs, of `failed_left_out` and of lists of paths by code point, a pair as a list of two strings. Technical sheet, Rule 7 (`encode`) and Rule 8 (sorted, no time or environment value).
 - **Constrained by**: K1 (its whole line), K2 (`"verdict":"green"`, `"rerun_given":true`, `"not_reproduced":[["tests.test_report","test_render"]]`, `"failed_left_out":[]`), K4 (its whole line), K5 (`missing-history`, `checkout`), K6 (`unsafe-xml`, `junit` or `rerun`), K8 and K14 (`unusable-input` and each input), K9 (`collection-error`, `junit`), K12 (`no-shared-lines`, `coverage`).
@@ -207,7 +222,7 @@ How to read the fields:
   ```
 - **Contract**: none.
 
-### 10. Telling a record from a line that is not one
+### 11. Telling a record from a line that is not one
 - **Closes**: which lines of a record file are records.
 - **Covers**: prose, "A line of a record file is a record only if it is byte for byte what the tool would write...": an empty line, a carriage return, a missing newline, another format; shape only, no agreement between fields. Technical sheet, Rule 7 (`decode`: ASCII, keys and order, exact types, so `true` is not `1`, allowed values, lists sorted with no repeats, `encode` of the result equal to the line).
 - **Constrained by**: K1 and K4 (their lines are records, and decode to the values they show), K15 (a line holding `canary` is not a record).
@@ -218,7 +233,7 @@ How to read the fields:
   ```
 - **Contract**: none.
 
-### 11. The record file
+### 12. The record file
 - **Closes**: reading the record file, looking up a key, and appending a line.
 - **Covers**: prose, "Before evaluating a run, the tool reads the record file; if it does not exist, the tool treats it as empty and creates it when it appends", as far as reading, the lookups and the append go. Prose, "`pr` is not part of it: a rejected record already there with the same key, reason and input stops the append, whatever its `pr`" (`has_rejected`). Prose, "The record file is not one of these inputs: if it exists but cannot be read, that is any other failure" (`read_record_file` raises `OSError`). Prose, a line that is not a record named by its line number. Technical sheet, Rule 3 for the record file (a FIFO does not block) and Rule 8 (one write of the whole line, to a file opened for appending, created if missing).
 - **Constrained by**: K3 (an evaluated record with the key is found), K10 (a rejected record with the same key, reason and input is found), K11 (an evaluated record is appended after the rejected one), K13 (the file is created and holds that one line), K15 (line 2 is reported, the file is left as it was).
@@ -234,26 +249,26 @@ How to read the fields:
   ```
 - **Contract**: none.
 
-### 12. Evaluating a run end to end
+### 13. Evaluating a run end to end
 - **Closes**: `python -m distiller evaluate` on valid inputs: the record file, the key, the evaluated record, the warning for a run already recorded, and the exit codes 0 and 1.
-- **Covers**: K1, K2, K3, K7, K13, K15. Selection 13-16. Invariants 1, its first half (two evaluations, byte-identical record files). Edge 6, 7, 8 and 9. Prose, Inputs, the base branch: the diff is `merge-base..H`, never against M. Prose, "A column is a file in at least one row... A changed path that is neither a column nor import-only has no column" (`no_column`, `import_only`). Prose, "Every count and every list of the run's tests takes each pair once". Prose, "A node id with a row is in the run when its pair is in the run's JUnit" (`tests_with_row`, `tests_with_row_not_in_run`). Prose, "`full_ms` is the sum over every test case of the full run's JUnit and `selected_ms` over those of the selected tests; neither uses a `testsuite` element's `time`". Prose, "Before evaluating a run...": the record file read first, a missing one taken as empty and created, a line that is not a record (nothing appended, exit 1), a run already recorded (nothing appended, a warning, exit 0), an evaluated run appended with exit 0 whatever the verdict. Command line, the exit codes 0 and 1 of `evaluate`. Technical sheet, "How a run goes", steps 1, 2, 4 and 6.
+- **Covers**: K1, K2, K3, K7, K13, K15. Selection 16. Invariants 1, its first half (two evaluations, byte-identical record files). Prose, Inputs, the base branch: the diff is `merge-base..H`, never against M. Prose, "Every count and every list of the run's tests takes each pair once". Prose, "Before evaluating a run...": the record file read first, a missing one taken as empty and created, a line that is not a record (nothing appended, exit 1), a run already recorded (nothing appended, a warning, exit 0), an evaluated run appended with exit 0 whatever the verdict. Command line, the exit codes 0 and 1 of `evaluate`. Technical sheet, "How a run goes", steps 1, 2, 4 and 6.
 - **Modules**: `evaluate`, through `cli` and `__main__`.
 - **Stubs**: none; `evaluate.run` and `RunArgs` exist.
 - **Rewrites**: `tests/test_main.py::test_python_m_distiller_exits_with_what_main_returns`, and the `evaluate` case of `tests/test_cli.py::test_the_commands_are_not_implemented_yet`, which the walking skeleton marked for the evaluate tasks.
 
-### 13. Rejecting unusable inputs
+### 14. Rejecting unusable inputs
 - **Closes**: `unusable-input` for every input, the rejected record, its deduplication and exit code 3.
 - **Covers**: K8, K10, K11, K14. Prose, the reasons: `unusable-input` with `checkout`, `head`, `base` (no commit, or no common history with H), `coverage` (a file that is missing, cannot be read or is not a coverage data file, or an M that names no commit), `junit`, `rerun` and `floor`. Prose, "An input file that exists but is not a regular file... counts like a missing one", end to end. Prose, "A record is one line...": `head` is H as given when it names no commit, and `junit_sha256` is `null` when there is no such file or it cannot be read. Prose, "If it rejects the run instead, it appends its record unless one with the same key, reason and input is already there, and exits with 3". Prose, "Apart from appending to the record file, the tool never writes to its inputs... whatever the outcome". Edge 18, its second clause (a rerun file with a test case that cannot be used is rejected even when that test did not fail in the full run). Command line, exit 3 of `evaluate`. Technical sheet, "How a run goes", step 5.
 - **Modules**: `evaluate`.
 - **Stubs**: none.
 
-### 14. The other rejections and the problem order
+### 15. The other rejections and the problem order
 - **Closes**: `coverage-not-ancestor`, `missing-history`, `unsafe-xml`, `no-shared-lines` and `collection-error` end to end, and which problem decides a run that has several.
 - **Covers**: K4, K5, K6, K9, K12. Prose, Inputs, the per-test coverage: M must be the merge-base or one of its ancestors, and coverage with no line recorded for more than one test is `no-shared-lines`. Prose, the reasons: `coverage-not-ancestor`, `missing-history` (as `git rev-parse --is-shallow-repository` reports), `unsafe-xml` with `junit` or `rerun`, `no-shared-lines`, `collection-error`. Prose, "A collection error is...": a full-run JUnit that holds one is rejected. Prose, "When a run has more than one problem, the first in this order decides its record". Technical sheet, "How a run goes", step 3.
 - **Modules**: `evaluate`.
 - **Stubs**: none.
 
-### 15. Report: miss rate, bound and savings
+### 16. Report: miss rate, bound and savings
 - **Closes**: the report's main figures over one or more record files, each key counted once.
 - **Covers**: Report 1, 2, 3, 4 and 14. Prose, "The miss rate counts pull requests and looks only at evaluated runs". Prose, "Savings are 1 - the selected duration over the full-suite duration...", with the sentence that they are an upper bound (Report 4). Prose, the report: "Every figure in it counts each key once, even when the key appears in several record files"; a figure whose denominator is zero is never a percentage; the sentence that the figures belong to the all-affected selector.
 - **Modules**: `report`, through `cli`.
@@ -264,23 +279,23 @@ How to read the fields:
 - **Rewrites**: the `report` case of `tests/test_cli.py::test_the_commands_are_not_implemented_yet`, which leaves the test with no case, so the test goes.
 - **Open questions it needs**: 3 and 4.
 
-### 16. Report: errors, conflicts, rejected runs and order
+### 17. Report: errors, conflicts, rejected runs and order
 - **Closes**: what the report does with missing files, lines that are not records, conflicting keys and rejected runs, and that its output does not depend on the order of its inputs.
 - **Covers**: Report 13, 15 and 17. Invariants 1, its second half (two reports, byte-identical, whatever the order of the files and of their lines). Prose, the report: a line that is not a record (nothing produced, file and line named, exit 1); every record file must exist and be readable (nothing on stdout, the file named, exit 1), never taken as empty; two evaluated records with one key that differ form a conflict, left out of every figure and listed with its record files; rejected runs shown by reason and input, counting only keys that no evaluated record has. Prose, "The report depends on neither the order of the record files nor that of their lines...": the sort orders. Command line, the exit codes of `report`. Technical sheet, the paragraph after "How a run goes" (all files read before anything is written).
 - **Modules**: `report`.
 - **Stubs**: none.
 - **Open questions it needs**: 4.
 
-### 17. Report: rates, shares, failed tests left out and escaping
+### 18. Report: rates, shares, failed tests left out and escaping
 - **Closes**: the floor and no-column rates, the unmeasured and not-in-run shares, the list of failed tests left out, the rerun counts, and escaping in the report.
 - **Covers**: Report 5-12 and 16. Prose, "The floor rate counts pull requests...". Prose, "The no-column rate counts pull requests...". Prose, the report: "writes every pair, node id and path as a JSON string, the way the records hold it".
 - **Modules**: `report`.
 - **Stubs**: none.
 - **Open questions it needs**: 3, 4 and 5.
 
-### 18. Connect the step to the pilot's CI (outside the cycle)
+### 19. Connect the step to the pilot's CI (outside the cycle)
 - **Closes**: the Kill signal's "Slice 1 runs end to end in its CI" on sergiparpal/adaptive-policy-compilation. Work in the pilot's repository, not a tests and implement cycle here.
-- **Depends on**: tasks 1-17 merged, and the external requirements below.
+- **Depends on**: tasks 1-18 merged, and the external requirements below.
 - **Checklist**, from Constraints and Deployment unless noted [VERIFY: the pilot's repository has not been read]:
   - [ ] The pilot's CI runs its suite with pytest instead of unittest, before anything else on this list.
   - [ ] The pull request's full run writes its JUnit in a single pytest invocation, without `--junit-prefix`.
@@ -300,43 +315,44 @@ Each line has the one task that covers it. "Constrains" lists the earlier tasks 
 
 | Item | Task | Constrains |
 |---|---|---|
-| K1 | 12 | 9, 10 |
-| K2 | 12 | 9 |
-| K3 | 12 | 1, 11 |
-| K4 | 14 | 1, 9, 10 |
-| K5 | 14 | 1, 9 |
-| K6 | 14 | 1, 3, 9 |
-| K7 | 12 | |
-| K8 | 13 | 1, 3, 4, 5, 9 |
-| K9 | 14 | 1, 3, 9 |
-| K10 | 13 | 1, 11 |
-| K11 | 13 | 11 |
-| K12 | 14 | 1, 9 |
-| K13 | 12 | 4, 11 |
-| K14 | 13 | 1, 4, 9 |
-| K15 | 12 | 1, 10, 11 |
+| K1 | 13 | 9, 10, 11 |
+| K2 | 13 | 10 |
+| K3 | 13 | 1, 12 |
+| K4 | 15 | 1, 10, 11 |
+| K5 | 15 | 1, 10 |
+| K6 | 15 | 1, 3, 10 |
+| K7 | 13 | |
+| K8 | 14 | 1, 3, 4, 5, 10 |
+| K9 | 15 | 1, 3, 10 |
+| K10 | 14 | 1, 12 |
+| K11 | 14 | 12 |
+| K12 | 15 | 1, 10 |
+| K13 | 13 | 4, 12 |
+| K14 | 14 | 1, 4, 10 |
+| K15 | 13 | 1, 11, 12 |
 | Selection 1-12 | 7 | |
-| Selection 13-16 | 12 | |
+| Selection 13, 14, 15 | 9 | |
+| Selection 16 | 13 | |
 | Verdict 1-5 | 8 | |
-| Report 1-4, 14 | 15 | |
-| Report 5-12, 16 | 17 | |
-| Report 13, 15, 17 | 16 | |
-| Invariants 1, first half | 12 | |
-| Invariants 1, second half | 16 | |
+| Report 1-4, 14 | 16 | |
+| Report 5-12, 16 | 18 | |
+| Report 13, 15, 17 | 17 | |
+| Invariants 1, first half | 13 | |
+| Invariants 1, second half | 17 | |
 | Invariants 2-4 | 7 | |
 | Edge 1, 3, 10, 11, 12, 13, 20 | 7 | |
 | Edge 2, 15, 16, 17, 19 | 8 | |
 | Edge 4 | 4 | |
 | Edge 5 | 2 | |
-| Edge 6, 7, 8, 9 | 12 | |
+| Edge 6, 7, 8, 9 | 9 | |
 | Edge 14 | 3 | |
 | Edge 18, first clause | 8 | |
-| Edge 18, second clause | 13 | |
+| Edge 18, second clause | 14 | |
 | Edge 21, 22 | 5 | |
 | Inputs: PR number required, `--pr` digits above 0 | walking skeleton, `tests/test_cli.py` | |
-| Inputs: diff is `merge-base..H`, never against M | 12 | |
-| Inputs: M is the merge-base or an ancestor | 14 | |
-| Inputs: `no-shared-lines` for coverage with no shared line | 14 | |
+| Inputs: diff is `merge-base..H`, never against M | 13 | |
+| Inputs: M is the merge-base or an ancestor | 15 | |
+| Inputs: `no-shared-lines` for coverage with no shared line | 15 | |
 | Inputs: rootdir, node ids and `own file`/`conftest` through it | 7 | |
 | Inputs: floor configuration file format | 5 | |
 | Inputs: record file path on the command line | walking skeleton | |
@@ -347,11 +363,11 @@ Each line has the one task that covers it. "Constrains" lists the earlier tasks 
 | Term: empty row is no row | 6 | |
 | Term: coverage data file; measured file with no line | 4 | |
 | Term: path mapping to M's tree | 4 | |
-| Term: column, import-only, no column | 12 | |
+| Term: column, import-only, no column | 9 | |
 | Term: pair rule (`mangle_test_address`) | 6 | |
 | Term: lookup by pair, one direction; shared pairs unmeasured | 6 | |
 | Term: test cases with one pair merged in one file | 3 | |
-| Term: counts and lists take each pair once | 12 | |
+| Term: counts and lists take each pair once | 13 | |
 | Term: unmeasured test | 6 | |
 | Term: floor, default patterns, configuration only adds | 5 | |
 | Term: floor pattern syntax and validity | 5 | |
@@ -359,64 +375,54 @@ Each line has the one task that covers it. "Constrains" lists the earlier tasks 
 | Term: red, caught, missed, green; rerun discards | 8 | |
 | Term: pass in the rerun file | 3 | |
 | Term: collection error recognized | 3 | |
-| Term: collection error rejected | 14 | |
+| Term: collection error rejected | 15 | |
 | Term: test case that cannot be used; pytest's internal error | 3 | |
-| Term: record encoding, keys, order, escapes, sorting | 9 | |
-| Term: run key; `head` as given; `junit_sha256` null | 13 | |
-| Term: rejected record deduplicated whatever its `pr` | 11 | |
-| Term: node id with a row in the run when its pair is | 12 | |
-| Rejections: `unusable-input` and its inputs | 13 | |
-| Rejections: the other five reasons | 14 | |
+| Term: record encoding, keys, order, escapes, sorting | 10 | |
+| Term: run key; `head` as given; `junit_sha256` null | 14 | |
+| Term: rejected record deduplicated whatever its `pr` | 12 | |
+| Term: node id with a row in the run when its pair is | 9 | |
+| Rejections: `unusable-input` and its inputs | 14 | |
+| Rejections: the other five reasons | 15 | |
 | Non-regular or unreadable input file: JUnit | 3 | |
 | Non-regular or unreadable input file: coverage | 4 | |
 | Non-regular or unreadable input file: floor | 5 | |
-| Non-regular or unreadable input file: end to end | 13 | |
-| Record file that exists but cannot be read | 11 | |
-| Problem order | 14 | |
+| Non-regular or unreadable input file: end to end | 14 | |
+| Record file that exists but cannot be read | 12 | |
+| Problem order | 15 | |
 | Messages: what they name, never quoting a file | 1 | |
 | Other failures: one line naming the class, exit 1 | walking skeleton, `tests/test_cli.py` | |
-| Record file: read first, created, not a record, already recorded, exit 0 | 12 | |
-| Rejected run: appended unless already there, exit 3 | 13 | |
+| Record file: read first, created, not a record, already recorded, exit 0 | 13 | |
+| Rejected run: appended unless already there, exit 3 | 14 | |
 | Usage errors: exit 2, no abbreviation, `--rootdir` rules and normalization | walking skeleton, `tests/test_cli.py` | |
-| Inputs never written, whatever the outcome | 13 | |
+| Inputs never written, whatever the outcome | 14 | |
 | git runs only commands that read; no network connection | 2 | |
-| Line of a record file is a record only if... | 10 | |
-| Miss rate | 15 | |
-| Savings | 15 | |
+| Line of a record file is a record only if... | 11 | |
+| Miss rate | 16 | |
+| Savings | 16 | |
 | JUnit time rounded half up per test case | 3 | |
-| `full_ms` and `selected_ms` | 12 | |
-| Floor rate | 17 | |
-| No-column rate | 17 | |
-| Report: not a record, missing or unreadable files | 16 | |
-| Report: each key once | 15 | |
-| Report: conflicts | 16 | |
-| Report: rejected runs by reason and input | 16 | |
-| Report: zero denominators; all-affected sentence | 15 | |
-| Report: pairs, node ids and paths as JSON strings | 17 | |
-| Report: order of its lists | 16 | |
+| `full_ms` and `selected_ms` | 9 | |
+| Floor rate | 18 | |
+| No-column rate | 18 | |
+| Report: not a record, missing or unreadable files | 17 | |
+| Report: each key once | 16 | |
+| Report: conflicts | 17 | |
+| Report: rejected runs by reason and input | 17 | |
+| Report: zero denominators; all-affected sentence | 16 | |
+| Report: pairs, node ids and paths as JSON strings | 18 | |
+| Report: order of its lists | 17 | |
 
 Not covered by any task:
-- Constraints, Performance (60 s and 1 GB for one run, 10 s for a report): measured in task 18, not tested. The SPEC already marks reading the rows at that size [VERIFY].
+- Constraints, Performance (60 s and 1 GB for one run, 10 s for a report): measured in task 19, not tested. The SPEC already marks reading the rows at that size [VERIFY].
 - "The report covers one repository and is never given record files from several": a precondition on its use, with no behaviour to test.
-- Deployment: tested by no task; it is task 18's checklist.
+- Deployment: tested by no task; it is task 19's checklist.
 - "Checked and [VERIFY]": a repository with "dubious ownership", defusedxml on Python 3.14, and which coverage versions write schema 7.
 
 ### Open questions
 Each one is to be decided before the task that needs it.
 
-1. **A home for `no_column`, `import_only`, `tests_with_row`, `tests_with_row_not_in_run`, `selected_ms` and `full_ms`.** Interfaces gives them no function, so as it stands they belong to `evaluate` and are tested only end to end, in task 12.
-   - Proposal: four pure functions in `selection`, which already imports the types they take, in a task of their own between 8 and 9, with stubs by the user:
-     ```python
-     def no_column(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]: ...         # sorted
-     def import_only_paths(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]: ...  # sorted
-     def row_counts(rows: dict[NodeId, frozenset[RepoPath]],
-                    results: dict[Pair, Result]) -> tuple[int, int]: ...  # tests_with_row, not in the run
-     def durations(full: JUnit, selection: Selection) -> tuple[int, int]: ...  # selected_ms, full_ms
-     ```
-     They would cover Selection 13 (its no-column clause), 14 and 15, Edge 6, 7, 8 and 9, and the terms on columns, rows in the run and durations, with literals; task 12 would keep Selection 16, K1, K2, K3, K7, K13, K15 and Invariants 1. This changes the technical sheet's Interfaces, which is the user's to edit.
-   - Alternative: they stay in `evaluate`. Task 12 then holds six K examples, four Selection examples, four Edge cases and every count of the record, with a git repository, a coverage file and JUnit files for each: too much for one session. It would split into 12a, the evaluated record (K1, K2, K7, Selection 13-16, Edge 6-9, Invariants 1 first half), and 12b, the record file (K3, K13, K15). 12b's tests may already pass after 12a, since appending to a missing file creates it.
-2. **Is `format` a field of `EvaluatedRecord`?** Data model: "`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`". Readings: (a) `format` is a field, since it is one of the record's fields; (b) it is not, since its value is always 1 and `RejectedRecord`, written out, has no `format` and no `verdict`. Task 9's stubs need the answer.
+1. **A home for `no_column`, `import_only`, `tests_with_row`, `tests_with_row_not_in_run`, `selected_ms` and `full_ms`.** Decided: four pure functions in `selection`, in Interfaces, with task 9 of their own (D-004).
+2. **Is `format` a field of `EvaluatedRecord`?** Data model: "`EvaluatedRecord` (`records.py`) has the record's fields in the SPEC's order, with `key: RunKey` in place of `head` and `junit_sha256`". Readings: (a) `format` is a field, since it is one of the record's fields; (b) it is not, since its value is always 1 and `RejectedRecord`, written out, has no `format` and no `verdict`. The [core] lines do not settle it: K1's and K4's lines begin with `"format":1`, which fixes the bytes that `encode` writes, but not whether the dataclass holds the value or `encode` adds it. Task 10's stubs need the answer.
 3. **How percentages are written in the report.** Report 1: "a one-sided 95% Clopper-Pearson upper bound of 86.5%"; Report 2: "an upper bound of 9.5%"; Report 4: "savings of 37.5%"; Report 5: "a floor rate of 25%"; Report 7: "12.5% of tests treated as unmeasured". Readings: (a) one decimal, with `25.0%`; (b) at most one decimal, so `25%` and `37.5%`; (c) another precision, with the examples rounded. And how the bound is rounded to that precision: (a) half up; (b) up, since it is an upper bound; (c) half to even.
-4. **The report's layout.** The SPEC says what the report "shows", "lists" and "says", but not its layout or wording. Readings: (a) the tests check only that each figure, list and sentence appears, and every report task adds to the text without breaking the earlier ones; (b) a layout is fixed in the SPEC before task 15, and the tests compare whole outputs.
+4. **The report's layout.** The SPEC says what the report "shows", "lists" and "says", but not its layout or wording. Readings: (a) the tests check only that each figure, list and sentence appears, and every report task adds to the text without breaking the earlier ones; (b) a layout is fixed in the SPEC before task 16, and the tests compare whole outputs.
 5. **Report 9, the reason a failed test was left out.** Report 9: "it lists test_render with the reason it was left out (its row, `src/shop/pricing.py` and `src/shop/report.py`, has none of the diff's paths, and no other rule picked it), next to the diff's paths with no column (`templates/invoice.html`) and the import-only ones (none)". A record holds the test's `row`, `no_column` and `import_only`, but not the diff's paths. Readings: (a) the report shows the row and a fixed sentence that no rule picked the test; (b) the report shows the diff's paths, which needs a new record field and so a change to record format 1.
 6. **Spaces and comments in the floor configuration.** Inputs: "Blank lines and lines that start with `#` are ignored, and spaces at either end of a line are not part of its pattern." Readings for "spaces": (a) U+0020 only; (b) any whitespace, tabs included. Readings for "start with `#`": (a) the line's first character, so `  # x` is the pattern `# x`; (b) after dropping the spaces, so `  # x` is a comment. And "blank lines": (a) empty only; (b) spaces only too. Task 5 needs the answers.

@@ -22,3 +22,9 @@
 {"sandbox": {"filesystem": {"allowRead": ["~/.nvm", "~/.cache/pre-commit"]},
              "network": {"strictAllowlist": true, "allowedDomains": ["pypi.org"]}}}
 ```
+
+## D-004 The record's derived figures as pure functions in selection, 2026-10-17
+- Context: An evaluated record holds `no_column`, `import_only`, `tests_with_row`, `tests_with_row_not_in_run`, `selected_ms` and `full_ms`, and the technical sheet's Interfaces gave none of them a function, so they fell to `evaluate` and could be tested only end to end, with a git repository, a coverage file and JUnit files for each case. That made the evaluated-run task too big for one tests-and-implement cycle.
+- Chosen: four pure functions in `selection`, which already imports the types they take: `no_column`, `import_only_paths`, `row_counts` and `durations`, in the SPEC's Interfaces. They get a task of their own, after `judge` and before `records`, tested with literals, and the evaluated-run task keeps the end-to-end examples.
+- Rejected: leaving them in `evaluate` and splitting the evaluated-run task in two, the evaluated record and then the record file. The second half's tests would likely pass before its implement phase, since appending to a missing file creates it, and tests that pass before their implement phase guide nothing.
+- Consequences: Easier: each figure's rules are tested on their own, and the evaluated-run task fits in one cycle. Harder: `selection` has eight public functions instead of four, and one more task comes before `records`; `evaluate` still has to call them in the right place, which only the end-to-end tests check.

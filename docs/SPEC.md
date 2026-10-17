@@ -260,6 +260,11 @@ def match_tests(results: dict[Pair, Result], rows: dict[NodeId, frozenset[RepoPa
 def select(tests: list[Test], changed: list[RepoPath],
            hits: list[tuple[str, RepoPath]], rootdir: str) -> Selection: ...
 def judge(full: JUnit, rerun: JUnit | None, tests: list[Test], selection: Selection) -> Judgement: ...
+def no_column(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]: ...         # sorted
+def import_only_paths(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]: ...  # sorted
+def row_counts(rows: dict[NodeId, frozenset[RepoPath]],
+               results: dict[Pair, Result]) -> tuple[int, int]: ...  # tests_with_row, not in the run
+def durations(full: JUnit, selection: Selection) -> tuple[int, int]: ...  # selected_ms, full_ms
 
 # git.py: each runs `git -C checkout ...`
 def is_checkout(checkout: str) -> bool: ...
