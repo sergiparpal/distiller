@@ -3,6 +3,8 @@
 - In the tests phase nothing stops the agent from creating the files that implement freezes (pytest.ini, ruff.toml, .gitattributes and the rest of `FROZEN_AT_ROOT` and `FROZEN_ANYWHERE` in `.claude/hooks/phase.py`); one that enters the tests commit becomes implement's reference.
 - `.git/info/` could be written from the agent's Bash, and git does not track it: `.git/info/attributes` outranks every `.gitattributes`, and `.git/info/exclude` hides untracked files from `scripts/check_characters.py`. Done in fbb10d9: `"Edit(/.git/info/**)"` is among the deny rules of `.claude/settings.json`. With the rules for .venv, .git/hooks and .git/config, the Bash sandbox made those read-only; the same is expected for .git/info [VERIFY].
 - `clean_environment` in the Stop hook drops `GIT_CONFIG_KEY_n`, whose names hold KEY, but keeps `GIT_CONFIG_COUNT`, so git fails inside Stop's bwrap wherever that variable is set. The Bash sandbox sets it, which is why the implement-phase Stop tests fail there.
+- `rev-parse --verify --quiet --end-of-options NAME^{commit}` exits with 128, not 1, for some names that name no commit, such as `HEAD@{99}` with a shorter reflog (run with git 2.43.0, 2026-10-18); the SPEC's "Checked" lists only 1. `git.resolve_commit` gives `None` for any failure, and no test pins the 128 case.
+- No test pins what `is_shallow`, `merge_base`, `is_ancestor`, `changed_paths` and `tree_files` do when git fails with an exit code that is not one of their answers, such as 128 for an unknown commit id (run with git 2.43.0, 2026-10-18): they raise `CalledProcessError`, through `check_returncode`, rather than answer, so a failed `diff` never becomes an empty diff.
 
 ## Slice 1
 
