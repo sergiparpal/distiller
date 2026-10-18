@@ -71,8 +71,8 @@ show_missing = true
 root_package = "distiller"
 include_external_packages = true
 
-# Until coverage_at_m, junit and git exist, "only X imports Y" means that no
-# module imports Y. Each of their tasks turns its contract into a protected one.
+# Until coverage_at_m and junit exist, "only X imports Y" means that no module
+# imports Y. Each of their tasks turns its contract into a protected one.
 [[tool.importlinter.contracts]]
 name = "only coverage_at_m imports coverage"
 type = "forbidden"
@@ -87,9 +87,28 @@ forbidden_modules = ["defusedxml"]
 
 [[tool.importlinter.contracts]]
 name = "only git imports subprocess"
+type = "protected"
+protected_modules = ["subprocess"]
+allowed_importers = ["distiller.git"]
+
+# Slice 1 opens no network connection: tests/test_git.py checks that git runs
+# only local commands, and this contract that no module imports these.
+[[tool.importlinter.contracts]]
+name = "no module imports the standard library's network modules"
 type = "forbidden"
 source_modules = ["distiller"]
-forbidden_modules = ["subprocess"]
+forbidden_modules = [
+    "socket",
+    "ssl",
+    "http",
+    "urllib",
+    "ftplib",
+    "smtplib",
+    "poplib",
+    "imaplib",
+    "xmlrpc",
+    "socketserver",
+]
 
 [[tool.importlinter.contracts]]
 name = "messages imports no other module of the package"
