@@ -71,8 +71,8 @@ show_missing = true
 root_package = "distiller"
 include_external_packages = true
 
-# Until coverage_at_m and junit exist, "only X imports Y" means that no module
-# imports Y. Each of their tasks turns its contract into a protected one.
+# Until coverage_at_m exists, "only X imports Y" means that no module imports
+# Y. Its task turns its contract into a protected one.
 [[tool.importlinter.contracts]]
 name = "only coverage_at_m imports coverage"
 type = "forbidden"
@@ -81,9 +81,9 @@ forbidden_modules = ["coverage"]
 
 [[tool.importlinter.contracts]]
 name = "only junit imports defusedxml"
-type = "forbidden"
-source_modules = ["distiller"]
-forbidden_modules = ["defusedxml"]
+type = "protected"
+protected_modules = ["defusedxml"]
+allowed_importers = ["distiller.junit"]
 
 [[tool.importlinter.contracts]]
 name = "only git imports subprocess"
