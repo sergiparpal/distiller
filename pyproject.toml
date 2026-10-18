@@ -108,6 +108,8 @@ forbidden_modules = [
     "imaplib",
     "xmlrpc",
     "socketserver",
+    "asyncio",
+    "multiprocessing",
 ]
 
 [[tool.importlinter.contracts]]
