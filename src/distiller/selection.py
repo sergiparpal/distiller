@@ -15,6 +15,16 @@ class Test:  # a test of the run, after matching
     row: frozenset[RepoPath] | None  # None when unmeasured
 
 
+@dataclass(frozen=True)
+class Reason:
+    rule: str  # "covers", "floor", "unmeasured", "own file" or "conftest"
+    path: RepoPath | None  # None only for "unmeasured"
+    pattern: str | None = None  # only for "floor"
+
+
+Selection = dict[Pair, frozenset[Reason]]  # selected tests only, never an empty set
+
+
 def pair_of(node_id: NodeId) -> Pair:
     # The SPEC's pair rule, the one pytest's mangle_test_address follows to
     # name a test in the JUnit. The parameters, from the first [ on, stay
@@ -44,6 +54,15 @@ def match_tests(
     return [
         _test_of(pair, node_ids_by_pair.get(pair, []), rows) for pair in sorted(results)
     ]
+
+
+def select(
+    tests: list[Test],
+    changed: list[RepoPath],
+    hits: list[tuple[str, RepoPath]],
+    rootdir: str,
+) -> Selection:
+    raise NotImplementedError
 
 
 def _dotted_path(path: str) -> str:
