@@ -1,4 +1,5 @@
 {
+  "idleCompaction": false,
   "permissions": {
     "defaultMode": "acceptEdits",
     "blockReadsOutsideWorkingDirectories": true,
