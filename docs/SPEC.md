@@ -341,7 +341,7 @@ class Matrix:                    # mapped to M's tree
 class Test:                      # a test of the run, after matching
     pair: Pair
     node_id: NodeId | None       # None when unmeasured
-    row: frozenset[RepoPath] | None
+    row: frozenset[RepoPath] | None  # None when unmeasured
 @dataclass(frozen=True)
 class Reason:
     rule: str                    # "covers", "floor", "unmeasured", "own file" or "conftest"
