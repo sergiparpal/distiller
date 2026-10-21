@@ -5,7 +5,8 @@ from distiller.git import RepoPath
 from distiller.junit import Pair, Result
 
 # Pure rules, with no I/O: node ids turned into the pairs that pytest writes in
-# the JUnit, and the run's tests matched to the rows of the coverage at M.
+# the JUnit, the run's tests matched to the rows of the coverage at M, and the
+# tests that the all-affected selector picks, each with its reasons.
 
 
 @dataclass(frozen=True)
@@ -62,7 +63,18 @@ def select(
     hits: list[tuple[str, RepoPath]],
     rootdir: str,
 ) -> Selection:
-    raise NotImplementedError
+    # Every test in the run that at least one rule picks, with every reason it
+    # carries. The rules look at a test's row and node id, never at its
+    # result, so which tests failed and how long they took change nothing.
+    changed_paths = frozenset(changed)
+    floor_reasons = _floor_reasons(hits)
+    selection: Selection = {}
+    for test in tests:
+        reasons = floor_reasons | _reasons_of(test, changed_paths, rootdir)
+        # A test that no rule picks is left out, so no set of reasons is empty.
+        if reasons:
+            selection[test.pair] = reasons
+    return selection
 
 
 def _dotted_path(path: str) -> str:
@@ -105,3 +117,88 @@ def _test_of(
         # an empty row is no row: unmeasured.
         return Test(pair=pair, node_id=None, row=None)
     return Test(pair=pair, node_id=node_id, row=row)
+
+
+def _floor_reasons(hits: list[tuple[str, RepoPath]]) -> frozenset[Reason]:
+    # floor X (P) for each floor pattern X and changed path P that match,
+    # which every test carries. A hit given twice, by a pattern written twice
+    # or a default one written again in the configuration, is one reason.
+    return frozenset(
+        Reason(rule="floor", path=path, pattern=pattern) for pattern, path in hits
+    )
+
+
+def _reasons_of(test: Test, changed: frozenset[RepoPath], rootdir: str) -> set[Reason]:
+    # The four rules besides the floor's, which look at the test itself:
+    # unmeasured and covers at its row, own file and conftest at its node id.
+    reasons: set[Reason] = set()
+    if test.row is None:
+        reasons.add(Reason(rule="unmeasured", path=None))
+    else:
+        reasons.update(_covers_reasons(test.row, changed))
+    # An unmeasured test has no node id, since a pair is never turned back
+    # into one, so own file and conftest never pick it.
+    if test.node_id is not None:
+        test_file = _file_in(test.node_id)
+        reasons.update(_own_file_reasons(test_file, changed, rootdir))
+        reasons.update(_conftest_reasons(test_file, changed, rootdir))
+    return reasons
+
+
+def _covers_reasons(
+    row: frozenset[RepoPath], changed: frozenset[RepoPath]
+) -> list[Reason]:
+    # covers P for each changed path P in the test's row.
+    return [Reason(rule="covers", path=path) for path in row & changed]
+
+
+def _file_in(node_id: NodeId) -> str:
+    # The file in a node id, what comes before its first ::, relative to
+    # pytest's rootdir as the node id is: tests/test_x.py::test_m[a::b] gives
+    # tests/test_x.py.
+    return node_id.partition("::")[0]
+
+
+def _own_file_reasons(
+    test_file: str, changed: frozenset[RepoPath], rootdir: str
+) -> list[Reason]:
+    # own file P when P, the test's file, is a changed path.
+    path = _from_repository_root(test_file, rootdir)
+    if path not in changed:
+        return []
+    return [Reason(rule="own file", path=path)]
+
+
+def _conftest_reasons(
+    test_file: str, changed: frozenset[RepoPath], rootdir: str
+) -> list[Reason]:
+    # conftest P for each conftest.py that is a changed path, in the test
+    # file's directory or in one above it, up to pytest's rootdir. Nothing
+    # looks at the disk: a conftest.py counts only as a changed path.
+    paths = [
+        _from_repository_root(conftest, rootdir)
+        for conftest in _conftests_up_to_rootdir(test_file)
+    ]
+    return [Reason(rule="conftest", path=path) for path in paths if path in changed]
+
+
+def _conftests_up_to_rootdir(test_file: str) -> list[str]:
+    # The conftest.py of each directory from pytest's rootdir down to the test
+    # file's own, relative to the rootdir as the test file is:
+    # tests/api/test_orders.py gives conftest.py, tests/conftest.py and
+    # tests/api/conftest.py.
+    directories = test_file.split("/")[:-1]  # the file's own name left out
+    conftests = ["conftest.py"]  # the rootdir's
+    directory = ""
+    for name in directories:
+        directory += name + "/"
+        conftests.append(directory + "conftest.py")
+    return conftests
+
+
+def _from_repository_root(path: str, rootdir: str) -> RepoPath:
+    # path: relative to pytest's rootdir, as node ids are. The rootdir is ""
+    # for the repository root, and has no empty or . segment, as cli leaves it.
+    if rootdir == "":
+        return path
+    return rootdir + "/" + path
