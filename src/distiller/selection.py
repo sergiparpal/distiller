@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from distiller.coverage_at_m import NodeId
 from distiller.git import RepoPath
-from distiller.junit import Pair, Result
+from distiller.junit import JUnit, Pair, Result
 
 # Pure rules, with no I/O: node ids turned into the pairs that pytest writes in
 # the JUnit, the run's tests matched to the rows of the coverage at M, and the
@@ -24,6 +24,13 @@ class Reason:
 
 
 Selection = dict[Pair, frozenset[Reason]]  # selected tests only, never an empty set
+
+
+@dataclass(frozen=True)
+class Judgement:
+    verdict: str  # "green", "caught" or "missed"
+    not_reproduced: frozenset[Pair]
+    failed_left_out: tuple[Test, ...]  # all measured, so node_id and row are set
 
 
 def pair_of(node_id: NodeId) -> Pair:
@@ -75,6 +82,12 @@ def select(
         if reasons:
             selection[test.pair] = reasons
     return selection
+
+
+def judge(
+    full: JUnit, rerun: JUnit | None, tests: list[Test], selection: Selection
+) -> Judgement:
+    raise NotImplementedError
 
 
 def _dotted_path(path: str) -> str:
