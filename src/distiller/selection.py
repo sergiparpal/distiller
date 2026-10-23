@@ -5,8 +5,10 @@ from distiller.git import RepoPath
 from distiller.junit import JUnit, Pair, Result
 
 # Pure rules, with no I/O: node ids turned into the pairs that pytest writes in
-# the JUnit, the run's tests matched to the rows of the coverage at M, and the
-# tests that the all-affected selector picks, each with its reasons.
+# the JUnit, the run's tests matched to the rows of the coverage at M, the
+# tests that the all-affected selector picks, each with its reasons, and the
+# run's verdict, whether it is green, caught or missed, with the failures that
+# the rerun file discards and the failed tests that the selection leaves out.
 
 
 @dataclass(frozen=True)
@@ -87,7 +89,18 @@ def select(
 def judge(
     full: JUnit, rerun: JUnit | None, tests: list[Test], selection: Selection
 ) -> Judgement:
-    raise NotImplementedError
+    # A run is red when at least one test has a failure or an error that the
+    # rerun file does not discard. A discarded failure is marked not
+    # reproduced and is not one of the run's failed tests: it neither makes
+    # the run caught nor is listed as left out.
+    failures = _failures(full)
+    not_reproduced = _not_reproduced(failures, rerun)
+    failed = failures - not_reproduced
+    return Judgement(
+        verdict=_verdict(failed, selection),
+        not_reproduced=not_reproduced,
+        failed_left_out=_failed_left_out(failed, tests, selection),
+    )
 
 
 def _dotted_path(path: str) -> str:
@@ -215,3 +228,54 @@ def _from_repository_root(path: str, rootdir: str) -> RepoPath:
     if rootdir == "":
         return path
     return rootdir + "/" + path
+
+
+def _failures(full: JUnit) -> frozenset[Pair]:
+    # The tests with a failure or an error in the full run. A skipped test did
+    # not fail, so a run whose only results that are not passes are skips has
+    # no failure.
+    return frozenset(pair for pair, result in full.results.items() if result.failed)
+
+
+def _not_reproduced(failures: frozenset[Pair], rerun: JUnit | None) -> frozenset[Pair]:
+    # The failures that the rerun file discards. Only a pass there discards
+    # one, so with no rerun file none is discarded. Only the full run's
+    # failures are looked up in it, so the result there of a test that did not
+    # fail in the full run is ignored.
+    if rerun is None:
+        return frozenset()
+    return frozenset(pair for pair in failures if _passed_in(rerun, pair))
+
+
+def _passed_in(rerun: JUnit, pair: Pair) -> bool:
+    # A test passes in the rerun file only if none of its test cases there has
+    # a failure, an error or a skipped, which is what Result.passed says. A
+    # test that failed again, was skipped or is missing from the file, as the
+    # tests of a file that pytest could not collect are, did not pass.
+    result = rerun.results.get(pair)
+    return result is not None and result.passed
+
+
+def _verdict(failed: frozenset[Pair], selection: Selection) -> str:
+    # A run with no failed test is green. A red one is caught when the
+    # selection holds at least one of its failed tests, whatever the rule that
+    # picked it, and missed otherwise.
+    if not failed:
+        return "green"
+    if any(pair in selection for pair in failed):
+        return "caught"
+    return "missed"
+
+
+def _failed_left_out(
+    failed: frozenset[Pair], tests: list[Test], selection: Selection
+) -> tuple[Test, ...]:
+    # The failed tests that the selection does not hold, whether or not the
+    # run was caught, as their Tests, which hold the node id and the row that
+    # a record lists; match_tests gives a Test for every pair in the run.
+    # Rule 8: sorted where they are built, by pair, classname and then name
+    # by code point, whatever the order of the tests.
+    tests_by_pair = {test.pair: test for test in tests}
+    return tuple(
+        tests_by_pair[pair] for pair in sorted(failed) if pair not in selection
+    )
