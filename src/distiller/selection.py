@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from distiller.coverage_at_m import NodeId
+from distiller.coverage_at_m import Matrix, NodeId
 from distiller.git import RepoPath
 from distiller.junit import JUnit, Pair, Result
 
@@ -101,6 +101,24 @@ def judge(
         not_reproduced=not_reproduced,
         failed_left_out=_failed_left_out(failed, tests, selection),
     )
+
+
+def no_column(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]:
+    raise NotImplementedError
+
+
+def import_only_paths(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]:
+    raise NotImplementedError
+
+
+def row_counts(
+    rows: dict[NodeId, frozenset[RepoPath]], results: dict[Pair, Result]
+) -> tuple[int, int]:
+    raise NotImplementedError
+
+
+def durations(full: JUnit, selection: Selection) -> tuple[int, int]:
+    raise NotImplementedError
 
 
 def _dotted_path(path: str) -> str:
