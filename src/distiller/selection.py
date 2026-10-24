@@ -6,9 +6,12 @@ from distiller.junit import JUnit, Pair, Result
 
 # Pure rules, with no I/O: node ids turned into the pairs that pytest writes in
 # the JUnit, the run's tests matched to the rows of the coverage at M, the
-# tests that the all-affected selector picks, each with its reasons, and the
-# run's verdict, whether it is green, caught or missed, with the failures that
-# the rerun file discards and the failed tests that the selection leaves out.
+# tests that the all-affected selector picks, each with its reasons, the run's
+# verdict, whether it is green, caught or missed, with the failures that the
+# rerun file discards and the failed tests that the selection leaves out, and
+# the figures that an evaluated record holds besides: the changed paths with no
+# column and the import-only ones, how many tests have a row and how many of
+# those are not in the run, and the selected and full-suite durations.
 
 
 @dataclass(frozen=True)
@@ -104,21 +107,49 @@ def judge(
 
 
 def no_column(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]:
-    raise NotImplementedError
+    # A changed path that is neither a column nor import-only has no column,
+    # whatever floor pattern it matches: a file that coverage did not measure,
+    # that M never saw, or that coverage measured with no line recorded. The
+    # changed paths are taken as a set, as select takes them, so each path is
+    # listed once. Rule 8: sorted by code point, whatever the diff's order.
+    paths = frozenset(changed) - _columns(matrix.rows) - matrix.import_only
+    return sorted(paths)
 
 
 def import_only_paths(changed: list[RepoPath], matrix: Matrix) -> list[RepoPath]:
-    raise NotImplementedError
+    # The changed paths that the matrix has as import-only, whose lines were
+    # all recorded outside any test, and no other. As in no_column, each path
+    # is listed once, sorted by code point.
+    return sorted(frozenset(changed) & matrix.import_only)
 
 
 def row_counts(
     rows: dict[NodeId, frozenset[RepoPath]], results: dict[Pair, Result]
 ) -> tuple[int, int]:
-    raise NotImplementedError
+    # tests_with_row counts the node ids with a row, and
+    # tests_with_row_not_in_run those of them whose pair is not in the full
+    # run's JUnit, whatever their result there: a skipped test is in the run.
+    # Node ids are counted, not pairs, so two node ids with one pair are two
+    # tests with a row, both in the run or both not. An empty row is no row:
+    # its node id is in neither count, although match_tests still counts it
+    # among the node ids of its pair.
+    with_row = [node_id for node_id, row in rows.items() if row]
+    not_in_run = [node_id for node_id in with_row if pair_of(node_id) not in results]
+    return (len(with_row), len(not_in_run))
 
 
 def durations(full: JUnit, selection: Selection) -> tuple[int, int]:
-    raise NotImplementedError
+    # selected_ms sums the times of the selected tests, and full_ms those of
+    # every test in the full run, whatever its result. A Result's time is
+    # already the sum of its test cases' times, each rounded half up, and a
+    # testsuite element's time is never read. Only the full run's tests are
+    # looked up in the selection, so each selected test counts once, whatever
+    # its reasons, and a selected pair with no test case there adds nothing.
+    selected_ms = sum(
+        result.time_ms for pair, result in full.results.items() if pair in selection
+    )
+    full_ms = sum(result.time_ms for result in full.results.values())
+    return (selected_ms, full_ms)
 
 
 def _dotted_path(path: str) -> str:
@@ -297,3 +328,12 @@ def _failed_left_out(
     return tuple(
         tests_by_pair[pair] for pair in sorted(failed) if pair not in selection
     )
+
+
+def _columns(rows: dict[NodeId, frozenset[RepoPath]]) -> set[RepoPath]:
+    # A column is a file in at least one row, so an empty row makes none. Every
+    # row of the coverage at M counts, whether or not its node id is in the run.
+    columns: set[RepoPath] = set()
+    for row in rows.values():
+        columns.update(row)
+    return columns
