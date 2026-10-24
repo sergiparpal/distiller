@@ -67,6 +67,10 @@ def encode(record: Record) -> bytes:
     return line.encode("ascii")
 
 
+def decode(line: bytes) -> Record | None:
+    raise NotImplementedError
+
+
 def _evaluated_fields(record: EvaluatedRecord) -> dict[str, object]:
     # The first keys, then an evaluated run's own, in the SPEC's order, every
     # list sorted by code point whatever order the record holds it in (Rule 8).
