@@ -8,7 +8,7 @@ charset-normalizer==3.5.2
 click==8.5.0
 cyclonedx-python-lib==11.12.0
 distlib==0.4.3
-filelock==4.1.1
+filelock==4.2.1
 grimp==3.17
 identify==2.6.20
 idna==3.20
@@ -42,4 +42,4 @@ tomli==2.5.0
 tomli_w==1.2.0
 typing_extensions==4.16.0
 urllib3==2.8.0
-virtualenv==21.14.9
+virtualenv==21.14.10
