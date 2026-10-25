@@ -220,11 +220,11 @@ def test_an_unexpected_failure_is_one_line_that_names_only_its_class(
     assert WITNESS not in output.err
 
 
-# The walking skeleton's own behaviour: the evaluate and report tasks rewrite it.
+# The walking skeleton's own behaviour: the report tasks rewrite it. The
+# evaluate task replaced its evaluate case with tests/test_evaluate.py.
 @pytest.mark.parametrize(
     "argv",
     [
-        pytest.param(command_line("evaluate", REQUIRED), id="evaluate"),
         pytest.param(["report", "records.jsonl"], id="report"),
     ],
 )
