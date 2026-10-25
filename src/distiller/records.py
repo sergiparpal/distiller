@@ -54,6 +54,15 @@ class EvaluatedRecord:
 
 Record = EvaluatedRecord | RejectedRecord
 
+
+class NotARecord(Exception):  # noqa: N818
+    path: str
+    line_number: int
+
+    def __init__(self, path: str, line_number: int) -> None:
+        raise NotImplementedError
+
+
 # What json.loads gives for a line, which decode checks: an object, a list, a
 # string, a number, true or false, or null, each object and list holding more
 # of the same.
@@ -161,6 +170,24 @@ def decode(line: bytes) -> Record | None:  # None: not a record
     if record is None or encode(record) != line:
         return None
     return record
+
+
+def read_record_file(path: str) -> list[Record] | None:
+    raise NotImplementedError
+
+
+def has_evaluated(records: list[Record], key: RunKey) -> bool:
+    raise NotImplementedError
+
+
+def has_rejected(
+    records: list[Record], key: RunKey, reason: str, input_name: str
+) -> bool:
+    raise NotImplementedError
+
+
+def append_record(path: str, record: Record) -> None:
+    raise NotImplementedError
 
 
 def _evaluated_fields(record: EvaluatedRecord) -> dict[str, object]:
