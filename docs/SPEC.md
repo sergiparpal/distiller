@@ -397,7 +397,7 @@ A `--rootdir` that is not a usage error is normalized by `cli`, which drops its 
 1. `cli.main` parses the arguments and calls `evaluate.run`.
 2. `run` reads the record file, `None` being an empty one (`NotARecord`: `messages.not_a_record`, exit 1), then reads the full run's JUnit bytes and resolves H, which give the key. If an evaluated record has the key: `messages.already_recorded`, exit 0, nothing appended.
 3. It walks the problem order, one call per check, each returning a value or raising `Rejected`. For the coverage: M, then the file, read in full, then the ancestry, then the shared lines.
-4. With no problem: the diff, M's tree, `build_matrix`, `match_tests`, `floor_hits`, `select` and `judge` give the record, which is appended; exit 0.
+4. With no problem: the diff, M's tree, `build_matrix`, `match_tests`, `floor_hits`, `select` and `judge` give the record, which is appended, with nothing printed; exit 0.
 5. On `Rejected`: the rejected record is appended unless `has_rejected` finds it, and `messages.rejection` is printed; exit 3.
 6. Any other exception reaches `cli.main`: `messages.unexpected_failure`, exit 1.
 
