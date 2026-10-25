@@ -1,7 +1,10 @@
 import itertools
 import json
+import os
 import re
+import stat
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, cast
 
 from distiller.git import Commit, RepoPath
@@ -11,10 +14,16 @@ from distiller.selection import Test
 # The records that the tool appends to the record file, an evaluated run's and
 # a rejected run's, both with the run's key; the line that encode writes for
 # each: ASCII JSON with no spaces between tokens, its keys in the SPEC's order,
-# every list sorted by code point, and a newline at the end; and decode, which
+# every list sorted by code point, and a newline at the end; decode, which
 # takes a line of a record file back into its record only if the line is byte
 # for byte what encode writes for that record, and gives None for any other
-# line, whatever it holds, without raising.
+# line, whatever it holds, without raising; and the record file itself: read,
+# opened for reading only, into one record per line, with NotARecord for the
+# first line that is not one; searched for an evaluated run's record with a
+# run's key, or a rejected run's with its key, reason and input, whatever its
+# pr; and appended to with one write of a record's line, after whatever the
+# file holds, which is not read. Before each open, os.stat checks that
+# anything at the path is a regular file, since opening a FIFO blocks.
 
 
 @dataclass(frozen=True)
@@ -60,7 +69,11 @@ class NotARecord(Exception):  # noqa: N818
     line_number: int
 
     def __init__(self, path: str, line_number: int) -> None:
-        raise NotImplementedError
+        # The record file's path, as given on the command line, and the number
+        # of the line that is not a record, counting from 1.
+        super().__init__(path, line_number)
+        self.path = path
+        self.line_number = line_number
 
 
 # What json.loads gives for a line, which decode checks: an object, a list, a
@@ -173,21 +186,63 @@ def decode(line: bytes) -> Record | None:  # None: not a record
 
 
 def read_record_file(path: str) -> list[Record] | None:
-    raise NotImplementedError
+    # None: no file; raises NotARecord, or OSError if the file exists but
+    # cannot be read. Rule 3: the path is checked before the file is opened.
+    status = _status_of(path)
+    if status is None:
+        return None  # evaluate takes it as empty, and nothing is created
+    _check_regular_file(status)
+    data = Path(path).read_bytes()  # opened for reading only
+    # One record per line, in the file's order, so a line held twice gives its
+    # record twice. The first line that is not a record is the one named.
+    records: list[Record] = []
+    for line_number, line in enumerate(_lines_of(data), start=1):
+        record = decode(line)
+        if record is None:
+            raise NotARecord(path, line_number)
+        records.append(record)
+    return records
 
 
 def has_evaluated(records: list[Record], key: RunKey) -> bool:
-    raise NotImplementedError
+    # An evaluated run's record with the run's key, whatever its pr, which is
+    # not part of the key. A rejected run's record with that key is not one.
+    return any(
+        isinstance(record, EvaluatedRecord) and record.key == key for record in records
+    )
 
 
 def has_rejected(
     records: list[Record], key: RunKey, reason: str, input_name: str
 ) -> bool:
-    raise NotImplementedError
+    # A rejected run's record with the run's key, reason and input, whatever
+    # its pr, which is not part of the key.
+    return any(
+        isinstance(record, RejectedRecord)
+        and record.key == key
+        and record.reason == reason
+        and record.input_name == input_name
+        for record in records
+    )
 
 
 def append_record(path: str, record: Record) -> None:
-    raise NotImplementedError
+    # Raises OSError if it cannot append. The line is encoded before anything
+    # is opened, so a record that encode cannot write creates no file.
+    line = encode(record)
+    # Rule 3: the path is checked again before the append opens it, if
+    # something is there; if nothing is, the open creates the file.
+    status = _status_of(path)
+    if status is not None:
+        _check_regular_file(status)
+    # Rule 8: "ab" opens the file for writing only, with O_APPEND, so that the
+    # line goes after whatever the file holds, which nothing reads, and with
+    # O_CREAT, so that a missing file is created. The default buffer hands the
+    # system the whole line in one write. If the system writes only part of
+    # it, as when the disk fills, the buffer tries to write the rest and, if
+    # it cannot, raises OSError: the torn line stays, but the append fails.
+    with Path(path).open("ab") as file:
+        file.write(line)
 
 
 def _evaluated_fields(record: EvaluatedRecord) -> dict[str, object]:
@@ -507,3 +562,40 @@ def _left_out_test(entry: dict[str, Any]) -> Test:
         node_id=entry["node_id"],
         row=frozenset(entry["row"]),
     )
+
+
+def _status_of(path: str) -> os.stat_result | None:  # None: nothing there
+    # Rule 3's os.stat, which Path.stat runs. It follows a symbolic link to
+    # what the link names, so a link that names nothing is nothing there. Any
+    # other error, such as for a loop of links, a regular file used as a
+    # directory or a directory that the tool may not search, goes through as
+    # the OSError it is: the record file cannot be read or appended to.
+    try:
+        return Path(path).stat()
+    except FileNotFoundError:
+        return None  # nothing at the path, or a directory on it is missing
+
+
+def _check_regular_file(status: os.stat_result) -> None:
+    # Rule 3: only a regular file is opened, since opening a FIFO blocks, for
+    # reading until something opens it for writing and for writing until
+    # something opens it for reading. A directory, a FIFO, a device or a
+    # socket is there, but can be neither read nor appended to: any other
+    # failure, raised as a plain OSError.
+    if not stat.S_ISREG(status.st_mode):
+        message = "the record file is not a regular file"
+        raise OSError(message)
+
+
+def _lines_of(data: bytes) -> list[bytes]:
+    # Rule 7: the bytes cut after each \n only, not with splitlines(), which
+    # also cuts at a \r alone. Every piece but the last came before a \n,
+    # which it gets back, since decode takes a line with its newline.
+    pieces = data.split(b"\n")
+    lines = [piece + b"\n" for piece in pieces[:-1]]
+    # The last piece is what follows the last \n: nothing when the file is
+    # empty or ends in a newline, and then no line; anything else is a line
+    # that lacks its newline, which is not a record.
+    if pieces[-1] != b"":
+        lines.append(pieces[-1])
+    return lines
