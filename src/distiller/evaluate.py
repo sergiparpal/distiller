@@ -7,11 +7,11 @@ from distiller import coverage_at_m, floor, git, junit, messages, records, selec
 # The evaluate command, as "How a run goes" in the SPEC tells it: the record
 # file, read before any input; the run's key, from the full run's JUnit bytes
 # and H; the warning for a run already recorded; the inputs, taken in the SPEC's
-# problem order, where the first one that cannot be used rejects the run; the
-# evaluated record, built by the functions of the technical sheet's Interfaces
-# and appended with nothing printed; the rejected record, appended unless the
-# record file already holds it, and its message; and the exit code. Every text
-# that it writes to stderr comes from messages.
+# problem order, where the first problem rejects the run; the evaluated record,
+# built by the functions of the technical sheet's Interfaces and appended with
+# nothing printed; the rejected record, appended unless the record file already
+# holds it, and its message; and the exit code. Every text that it writes to
+# stderr comes from messages.
 
 
 # One field per option of the evaluate command, as given, except that rootdir
@@ -104,16 +104,22 @@ def _evaluated_record(
 ) -> records.EvaluatedRecord:  # raises Rejected
     # Step 3: the inputs in the SPEC's problem order, one call per check, each
     # giving a value or raising Rejected, so that the first problem decides the
-    # record: the checkout, H, the base branch, the coverage, the full run's
-    # JUnit, the rerun file and the floor configuration. Task 15 adds its own
-    # checks, each where the order puts it.
+    # record and no check, git command or read comes after it: the checkout, a
+    # git checkout and then not shallow; H; the base branch; the coverage; the
+    # full run's JUnit; the rerun file; and the floor configuration.
     _check_checkout(args.checkout)
+    _check_not_shallow(args.checkout)
     head = _checked_head(head_commit, args.head)
     merge_base = _merge_base(args.checkout, args.base, head)
-    # The coverage: M, resolved once (Rule 2), then the file, read in full.
+    # The coverage: M, resolved once (Rule 2), then the file, read in full,
+    # then M's ancestry, then the shared lines.
     coverage_commit = _coverage_commit(args.checkout, args.coverage_commit)
     raw = coverage_at_m.read_coverage(args.coverage)
+    _check_ancestry(args.checkout, coverage_commit, merge_base, args.coverage_commit)
+    _check_shared_lines(raw, args.coverage)
+    # The full run's JUnit: parsed, then checked for a collection error.
     full = _full_run(full_run_data, args.junit)
+    _check_no_collection_error(full, args.junit)
     rerun = _rerun(args.rerun)
     patterns = floor.read_floor(args.floor_config)
     # Step 4: the diff, from the merge-base of B and H to H, never against M;
@@ -159,6 +165,16 @@ def _check_checkout(checkout: str) -> None:  # raises Rejected
         raise _unusable(input_name="checkout", subject=checkout)
 
 
+def _check_not_shallow(checkout: str) -> None:  # raises Rejected
+    # A shallow checkout, as git rev-parse --is-shallow-repository reports it,
+    # even one that has every commit the run names: a shallow clone usually
+    # lacks M and the merge-base, so git cannot tell whether M is an ancestor.
+    if git.is_shallow(checkout):
+        raise messages.Rejected(
+            reason="missing-history", input_name="checkout", subject=checkout
+        )
+
+
 def _checked_head(head_commit: git.Commit | None, head_as_given: str) -> git.Commit:
     # H, as step 2 resolved it: None if it names no commit.
     if head_commit is None:
@@ -192,14 +208,52 @@ def _coverage_commit(checkout: str, coverage_commit: str) -> git.Commit:
     return commit
 
 
+def _check_ancestry(
+    checkout: str,
+    coverage_commit: git.Commit,
+    merge_base: git.Commit,
+    coverage_commit_as_given: str,
+) -> None:  # raises Rejected
+    # M must be the merge-base or one of its ancestors. git compares the two by
+    # their full commit ids (Rule 2), and the message names M as given.
+    if not git.is_ancestor(checkout, coverage_commit, merge_base):
+        raise messages.Rejected(
+            reason="coverage-not-ancestor",
+            input_name="coverage",
+            subject=coverage_commit_as_given,
+        )
+
+
+def _check_shared_lines(
+    raw: coverage_at_m.RawCoverage, path: str
+) -> None:  # raises Rejected
+    # Coverage in which no line was recorded for more than one test, as the
+    # sysmon core leaves it: the data file does not say which core recorded
+    # it. The message names the coverage file.
+    if not raw.has_shared_line:
+        raise messages.Rejected(
+            reason="no-shared-lines", input_name="coverage", subject=path
+        )
+
+
 def _full_run(full_run_data: bytes | None, path: str) -> junit.JUnit:
     # The bytes that step 2 read, None if the file is missing or cannot be
-    # read, parsed here: parse_junit raises Rejected for a file that is not
-    # well-formed, has a test case that cannot be used or holds pytest's
-    # internal error.
+    # read, parsed here: parse_junit raises Rejected for a file that declares
+    # an entity, is not well-formed, has a test case that cannot be used or
+    # holds pytest's internal error.
     if full_run_data is None:
         raise _unusable(input_name="junit", subject=path)
     return junit.parse_junit(full_run_data, "junit", path)
+
+
+def _check_no_collection_error(full: junit.JUnit, path: str) -> None:  # raises Rejected
+    # A full run's JUnit that holds a collection error: evaluated, the run would
+    # always count as caught, since the error's own test case is selected as
+    # unmeasured. A rerun file that holds one is used (note 39).
+    if full.has_collection_error:
+        raise messages.Rejected(
+            reason="collection-error", input_name="junit", subject=path
+        )
 
 
 def _rerun(path: str | None) -> junit.JUnit | None:  # None: no rerun file given
