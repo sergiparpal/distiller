@@ -1,16 +1,17 @@
 import hashlib
 import sys
 from dataclasses import dataclass
-from typing import cast
 
 from distiller import coverage_at_m, floor, git, junit, messages, records, selection
 
 # The evaluate command, as "How a run goes" in the SPEC tells it: the record
 # file, read before any input; the run's key, from the full run's JUnit bytes
 # and H; the warning for a run already recorded; the inputs, taken in the SPEC's
-# problem order; the evaluated record, built by the functions of the technical
-# sheet's Interfaces and appended with nothing printed; and the exit code.
-# Every text that it writes to stderr comes from messages.
+# problem order, where the first one that cannot be used rejects the run; the
+# evaluated record, built by the functions of the technical sheet's Interfaces
+# and appended with nothing printed; the rejected record, appended unless the
+# record file already holds it, and its message; and the exit code. Every text
+# that it writes to stderr comes from messages.
 
 
 # One field per option of the evaluate command, as given, except that rootdir
@@ -41,21 +42,30 @@ def run(args: RunArgs) -> int:  # prints its message; returns the exit code
         return 1
     # Rule 5: the full run's JUnit file is read once, into bytes, which give the
     # key's SHA-256 here and are parsed in step 3. read_junit gives None for a
-    # file that is missing or cannot be read, which task 14 rejects, with a key
-    # whose junit_sha256 is null: until then, cast tells pyright that the bytes
-    # are there, and checks nothing at run time.
-    full_run_data = cast(bytes, junit.read_junit(args.junit))
-    # Rule 2: H is resolved once, here, and every git command after this one
-    # gets its full commit id. resolve_commit gives None for an H that names no
-    # commit, which task 14 rejects, with a key whose head is H as given: cast
-    # as for the bytes.
-    head = cast(git.Commit, git.resolve_commit(args.checkout, args.head))
-    junit_sha256 = hashlib.sha256(full_run_data).hexdigest()
-    key = records.RunKey(head=head, junit_sha256=junit_sha256)
+    # file that is missing or cannot be read, which step 3 rejects where the
+    # problem order puts it.
+    full_run_data = junit.read_junit(args.junit)
+    # Rule 2: H is resolved once, here, and every later git command names
+    # commits by their full ids. resolve_commit gives None for an H that names
+    # no commit, as any H does at a path with no git repository, which step 3
+    # rejects.
+    head_commit = git.resolve_commit(args.checkout, args.head)
+    key = records.RunKey(
+        head=_key_head(args.head, head_commit),
+        junit_sha256=_sha256_of(full_run_data),
+    )
     if records.has_evaluated(recorded, key):
         print(messages.already_recorded(key.head, key.junit_sha256), file=sys.stderr)
         return 0
-    record = _evaluated_record(args, key, head, full_run_data)
+    try:
+        record = _evaluated_record(args, key, head_commit, full_run_data)
+    except messages.Rejected as error:
+        # Step 5, whether a check of step 3 or a reader raised it. The record
+        # goes before the message: if the append fails, its OSError reaches
+        # cli as any other failure, exit 1, and no message names the input.
+        _append_rejection(args, recorded, key, error)
+        print(messages.rejection(error), file=sys.stderr)
+        return 3
     # An evaluated run prints nothing and exits with 0, whatever its verdict.
     records.append_record(args.records, record)
     return 0
@@ -70,24 +80,40 @@ def _recorded_runs(path: str) -> list[records.Record]:
     return recorded
 
 
+def _key_head(head_as_given: str, head_commit: git.Commit | None) -> str:
+    # The key's head: H's full commit id, or H as given if git finds no commit
+    # by that name at the checkout's path, as at a path with no repository.
+    if head_commit is None:
+        return head_as_given
+    return head_commit
+
+
+def _sha256_of(full_run_data: bytes | None) -> str | None:
+    # The key's junit_sha256, None if there is no full-run JUnit file or it
+    # cannot be read. Hashing parses nothing (Rule 5).
+    if full_run_data is None:
+        return None
+    return hashlib.sha256(full_run_data).hexdigest()
+
+
 def _evaluated_record(
-    args: RunArgs, key: records.RunKey, head: git.Commit, full_run_data: bytes
-) -> records.EvaluatedRecord:
-    # Step 3: the inputs in the SPEC's problem order, one call each, which gives
-    # a value: the checkout, H, the base branch, the coverage, the full run's
-    # JUnit, the rerun file and the floor configuration. Tasks 14 and 15 add the
-    # checks that reject a run, each where the order puts it: the checkout has
-    # no call yet, and H was resolved in step 2. Until then, a Rejected that a
-    # reader raises reaches cli as any other failure.
+    args: RunArgs,
+    key: records.RunKey,
+    head_commit: git.Commit | None,
+    full_run_data: bytes | None,
+) -> records.EvaluatedRecord:  # raises Rejected
+    # Step 3: the inputs in the SPEC's problem order, one call per check, each
+    # giving a value or raising Rejected, so that the first problem decides the
+    # record: the checkout, H, the base branch, the coverage, the full run's
+    # JUnit, the rerun file and the floor configuration. Task 15 adds its own
+    # checks, each where the order puts it.
+    _check_checkout(args.checkout)
+    head = _checked_head(head_commit, args.head)
     merge_base = _merge_base(args.checkout, args.base, head)
     # The coverage: M, resolved once (Rule 2), then the file, read in full.
-    # resolve_commit gives None for an M that names no commit, which task 14
-    # rejects as an unusable coverage input: cast as for H.
-    coverage_commit = cast(
-        git.Commit, git.resolve_commit(args.checkout, args.coverage_commit)
-    )
+    coverage_commit = _coverage_commit(args.checkout, args.coverage_commit)
     raw = coverage_at_m.read_coverage(args.coverage)
-    full = junit.parse_junit(full_run_data, "junit", args.junit)
+    full = _full_run(full_run_data, args.junit)
     rerun = _rerun(args.rerun)
     patterns = floor.read_floor(args.floor_config)
     # Step 4: the diff, from the merge-base of B and H to H, never against M;
@@ -126,16 +152,54 @@ def _evaluated_record(
     )
 
 
+def _check_checkout(checkout: str) -> None:  # raises Rejected
+    # A path that is not inside a work tree: a directory with no repository,
+    # a repository with no work tree, a path that does not exist or a file.
+    if not git.is_checkout(checkout):
+        raise _unusable(input_name="checkout", subject=checkout)
+
+
+def _checked_head(head_commit: git.Commit | None, head_as_given: str) -> git.Commit:
+    # H, as step 2 resolved it: None if it names no commit.
+    if head_commit is None:
+        raise _unusable(input_name="head", subject=head_as_given)
+    return head_commit
+
+
 def _merge_base(checkout: str, base: str, head: git.Commit) -> git.Commit:
     # The base branch: B, the commit it stands for, resolved once (Rule 2), then
     # the merge-base of B and H, in that order, from their full commit ids:
     # with several best common ancestors, the order can change which one git
-    # prints (note 63). Each is None only for a base that task 14 rejects: one
-    # that names no commit, or whose commit shares no history with H. Until
-    # then, cast tells pyright that each is a commit, and checks nothing at run
-    # time.
-    base_commit = cast(git.Commit, git.resolve_commit(checkout, base))
-    return cast(git.Commit, git.merge_base(checkout, base_commit, head))
+    # prints (note 63). A base that names no commit cannot be used, and
+    # neither can one whose commit shares no history with H, so that the two
+    # have no merge-base.
+    base_commit = git.resolve_commit(checkout, base)
+    if base_commit is None:
+        raise _unusable(input_name="base", subject=base)
+    merge_base = git.merge_base(checkout, base_commit, head)
+    if merge_base is None:
+        raise _unusable(input_name="base", subject=base)
+    return merge_base
+
+
+def _coverage_commit(checkout: str, coverage_commit: str) -> git.Commit:
+    # M, resolved once (Rule 2), before the coverage file is read. An M that
+    # names no commit makes the coverage unusable, and the message names M as
+    # given, not the file.
+    commit = git.resolve_commit(checkout, coverage_commit)
+    if commit is None:
+        raise _unusable(input_name="coverage", subject=coverage_commit)
+    return commit
+
+
+def _full_run(full_run_data: bytes | None, path: str) -> junit.JUnit:
+    # The bytes that step 2 read, None if the file is missing or cannot be
+    # read, parsed here: parse_junit raises Rejected for a file that is not
+    # well-formed, has a test case that cannot be used or holds pytest's
+    # internal error.
+    if full_run_data is None:
+        raise _unusable(input_name="junit", subject=path)
+    return junit.parse_junit(full_run_data, "junit", path)
 
 
 def _rerun(path: str | None) -> junit.JUnit | None:  # None: no rerun file given
@@ -143,10 +207,36 @@ def _rerun(path: str | None) -> junit.JUnit | None:  # None: no rerun file given
         return None
     # Rule 5, as for the full run's file: read once, into bytes, which are
     # parsed. read_junit gives None for a rerun file that is missing or cannot
-    # be read, which task 14 rejects: until then, cast tells pyright that the
-    # bytes are there, and checks nothing at run time.
-    data = cast(bytes, junit.read_junit(path))
+    # be read.
+    data = junit.read_junit(path)
+    if data is None:
+        raise _unusable(input_name="rerun", subject=path)
     return junit.parse_junit(data, "rerun", path)
+
+
+def _unusable(input_name: str, subject: str) -> messages.Rejected:
+    # An input that cannot be used. The message names subject, a path or a
+    # name as given on the command line.
+    return messages.Rejected(
+        reason="unusable-input", input_name=input_name, subject=subject
+    )
+
+
+def _append_rejection(
+    args: RunArgs,
+    recorded: list[records.Record],
+    key: records.RunKey,
+    error: messages.Rejected,
+) -> None:
+    # The rejected record is appended unless the record file, as step 2 read
+    # it, already holds one with the run's key, reason and input, whatever its
+    # pr, which is not part of the key.
+    if records.has_rejected(recorded, key, error.reason, error.input_name):
+        return
+    record = records.RejectedRecord(
+        key=key, pr=args.pr, reason=error.reason, input_name=error.input_name
+    )
+    records.append_record(args.records, record)
 
 
 def _unmeasured_count(tests: list[selection.Test]) -> int:
