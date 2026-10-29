@@ -18,15 +18,16 @@ import pytest
 from distiller import evaluate
 
 # Each test lays out one run's inputs in tmp_path, its working directory, with
-# one input that cannot be used, evaluates the run against a git repository
-# that the module builds once, and watches the evaluation from outside: what it
-# returns, what it prints, what the record file holds after, and what the
-# inputs hold after. The tests call evaluate.run, so that an exception it
-# raises reaches the test: cli would turn it into exit 1 with nothing appended.
-# Only the tests of the exit code that the CI step sees run python -m
-# distiller. The repository, the coverage at M and K1's JUnit file are those of
-# tests/test_evaluate.py, so that K1's line and its commit ids hold here too;
-# the history adds a branch that shares no history with H.
+# one input that cannot be used or, in task 15's tests at the end, a problem of
+# another reason or two problems at once, evaluates the run against a git
+# repository that the module builds once, and watches the evaluation from
+# outside: what it returns, what it prints, what the record file holds after,
+# and what the inputs hold after. The tests call evaluate.run, so that an
+# exception it raises reaches the test: cli would turn it into exit 1 with
+# nothing appended. Only the tests of the exit code that the CI step sees run
+# python -m distiller. The repository, the coverage at M and K1's JUnit file
+# are those of tests/test_evaluate.py, so that K1's line and its commit ids
+# hold here too; the history adds a branch that shares no history with H.
 #
 # Where the SPEC leaves the rejections open, these tests follow the answers
 # given in task 14's tests phase, 2026-10-28: a run whose checkout is not a git
@@ -39,6 +40,22 @@ from distiller import evaluate
 # modification time and, if it is a regular file that can be read, its bytes;
 # and a message is checked only for what it names and for what it must not
 # quote. The record file is empty, 0 bytes long, unless a test says otherwise.
+#
+# Where the SPEC leaves the other rejections and the problem order open, task
+# 15's tests follow the answers given in its tests phase, 2026-10-29: a shallow
+# checkout is rejected with missing-history even when it has every commit that
+# the run names; a repository with no work tree, such as a clone's .git
+# directory, is not a git checkout; where the checkout is a shallow clone, H is
+# given by its full id, as $GITHUB_SHA gives it, so that the key holds it
+# whether or not it names a commit there; K5's clone is made with --depth 1 and
+# every branch, so that it has H and B but neither M nor the merge-base; K4
+# gives M as pr-7 and H by its full id, so that pr-7 in the message can only be
+# M; with two problems, the record is checked, and the message only where the
+# record cannot tell which problem decided it; the FIFOs that an external
+# entity names are laid out in the working directory and next to the JUnit
+# file; the no-shared-lines message names the coverage file too; no new test
+# runs python -m distiller; and a rerun file that holds a collection error is
+# used (note 39).
 
 # The real git, found before any test changes PATH, and the tool's source.
 GIT = shutil.which("git") or "git"
@@ -74,6 +91,10 @@ JUNIT = "./ci/junit.xml"
 RERUN = "./ci/rerun.xml"
 FLOOR_CONFIG = "./ci/floor.txt"
 RECORDS = "./ci/records.jsonl"
+
+# Where a test lays out a shallow clone of the fixture's checkout, as --checkout
+# gives it.
+SHALLOW_CLONE = "./shallow"
 
 # The input files, which no evaluation may change.
 INPUT_FILES = (COVERAGE, JUNIT, RERUN, FLOOR_CONFIG)
@@ -234,6 +255,9 @@ def build_history(directory: Path) -> Commits:
 # by its absolute path under it, as it does by default.
 RUNNER_ROOT = "/runner/work/shop/"
 
+# The lines recorded in each context, by file.
+LinesByContext = dict[str, dict[str, list[int]]]
+
 # The fixture's coverage at M, as tests/test_evaluate.py writes it: line 3 of
 # src/shop/tax.py ran for test_total and for test_vat, so the coverage is not
 # rejected as no-shared-lines.
@@ -254,16 +278,22 @@ COVERAGE_LINES = {
 }
 
 
-def write_coverage_at_m(path: Path) -> None:
-    """Write the fixture's coverage at M through coverage's public API."""
+def write_coverage(path: Path, lines: LinesByContext) -> None:
+    """Write a coverage file that holds these lines, each file recorded under
+    RUNNER_ROOT, through coverage's public API."""
     data = coverage.CoverageData(basename=path)
-    for context, lines_by_file in COVERAGE_LINES.items():
+    for context, lines_by_file in lines.items():
         data.set_context(context)
         data.add_lines(
             {RUNNER_ROOT + name: numbers for name, numbers in lines_by_file.items()}
         )
     data.write()
     data.close()
+
+
+def write_coverage_at_m(path: Path) -> None:
+    """Write the fixture's coverage at M through coverage's public API."""
+    write_coverage(path, COVERAGE_LINES)
 
 
 @dataclass(frozen=True)
@@ -322,8 +352,8 @@ def case(classname: str, name: str, time: str, *children: str) -> str:
     return f"<testcase {attributes}>{''.join(children)}</testcase>"
 
 
-def junit_file(suite_time: str, *testcases: str) -> bytes:
-    """A JUnit file as pytest writes it, around these test cases."""
+def junit_body(suite_time: str, *testcases: str) -> str:
+    """The testsuites element that pytest writes, around these test cases."""
     failures = sum("<failure" in testcase for testcase in testcases)
     errors = sum("<error" in testcase for testcase in testcases)
     suite = (
@@ -332,8 +362,13 @@ def junit_file(suite_time: str, *testcases: str) -> bytes:
         'timestamp="2026-10-10T12:00:00.000000+00:00" hostname="runner">'
     )
     cases = "".join(testcases)
-    text = f'<testsuites name="pytest tests">{suite}{cases}</testsuite></testsuites>'
-    return (XML_DECLARATION + text).encode()
+    return f'<testsuites name="pytest tests">{suite}{cases}</testsuite></testsuites>'
+
+
+def junit_file(suite_time: str, *testcases: str, doctype: str = "") -> bytes:
+    """A JUnit file as pytest writes it, around these test cases, after a
+    doctype if one is given."""
+    return (XML_DECLARATION + doctype + junit_body(suite_time, *testcases)).encode()
 
 
 # The fixture's tests as pytest writes them, with their JUnit times.
@@ -446,7 +481,11 @@ class Run:
     """A run's inputs, as they differ from K1's run.
 
     replaced names a path, from the working directory, and what is put there
-    once the inputs are laid out.
+    once the inputs are laid out. coverage_lines, when set, are what the
+    coverage file holds, written through coverage's API in place of its bytes.
+    shallow_depth, when set, is the depth of a shallow clone of the fixture's
+    checkout that is laid out at SHALLOW_CLONE. fifos names paths, from the
+    working directory, where FIFOs are laid out.
     """
 
     pr: int = 7
@@ -459,6 +498,9 @@ class Run:
     rerun: bytes | None = None  # None: no --rerun
     floor: bytes | None = None  # None: no --floor-config
     replaced: tuple[str, Callable[[Path], None]] | None = None
+    coverage_lines: LinesByContext | None = None
+    shallow_depth: int | None = None  # None: no shallow clone
+    fifos: tuple[str, ...] = ()
 
 
 # K1's run: a diff that modifies only templates/invoice.html, a full run of
@@ -480,14 +522,53 @@ def record_file(directory: Path) -> Path:
     return directory / RECORDS
 
 
+def git_output(*arguments: str) -> str:
+    """Run the real git as the test sets it up; return its stdout."""
+    result = subprocess.run(  # noqa: S603
+        [GIT, *arguments], capture_output=True, check=False
+    )
+    assert result.returncode == 0, os.fsdecode(result.stderr)
+    return os.fsdecode(result.stdout)
+
+
+def clone_shallow(source: Path, path: Path, depth: int) -> None:
+    """Clone source's repository at path with every branch, each cut to its
+    last depth commits.
+
+    git honours --depth only for a URL, such as file://. The clone must come out
+    shallow, as git rev-parse --is-shallow-repository reports it.
+    """
+    git_output(
+        "clone",
+        "--quiet",
+        "--depth",
+        str(depth),
+        "--no-single-branch",
+        source.as_uri(),
+        str(path),
+    )
+    shallow = git_output("-C", str(path), "rev-parse", "--is-shallow-repository")
+    assert shallow == "true\n", f"git made a clone that is not shallow: {shallow!r}"
+
+
+def write_coverage_file(run: Run, shop: Shop, path: Path) -> None:
+    """Write run's coverage file at path: its lines, its bytes, or else the
+    fixture's coverage at M."""
+    if run.coverage_lines is not None:
+        write_coverage(path, run.coverage_lines)
+    elif run.coverage is not None:
+        path.write_bytes(run.coverage)
+    else:
+        path.write_bytes(shop.coverage_data)
+
+
 def lay_out(
     run: Run, shop: Shop, directory: Path, records_before: bytes | None
 ) -> None:
     """Write run's inputs where the command line names them, from directory,
     and a record file that holds records_before, or none if it is None."""
     (directory / "ci").mkdir()
-    coverage_data = shop.coverage_data if run.coverage is None else run.coverage
-    (directory / COVERAGE).write_bytes(coverage_data)
+    write_coverage_file(run, shop, directory / COVERAGE)
     (directory / JUNIT).write_bytes(run.junit)
     if run.rerun is not None:
         (directory / RERUN).write_bytes(run.rerun)
@@ -495,6 +576,10 @@ def lay_out(
         (directory / FLOOR_CONFIG).write_bytes(run.floor)
     if records_before is not None:
         record_file(directory).write_bytes(records_before)
+    if run.shallow_depth is not None:
+        clone_shallow(shop.checkout, directory / SHALLOW_CLONE, run.shallow_depth)
+    for name in run.fifos:
+        os.mkfifo(directory / name)
     if run.replaced is not None:
         path, make = run.replaced
         make(directory / path)
@@ -754,8 +839,8 @@ NO_SHA256_COVERAGE_LINE = (
 
 @dataclass(frozen=True)
 class Rejection:
-    """A run with one input that cannot be used, the line its rejection
-    appends, and what its message names: the input's path, or a name as given.
+    """A run with one problem, the line its rejection appends, and what its
+    message names: the input's path, or a name as given.
 
     holds_canary is set when a file of the run holds CANARY, and line_number
     when the message names an invalid floor pattern's line.
@@ -1283,3 +1368,952 @@ def test_k8_python_m_distiller_names_the_coverage_file(
     shop: Shop, tmp_path: Path
 ) -> None:
     assert COVERAGE.encode() in python_m_distiller(shop, tmp_path).stderr
+
+
+# Task 15: the other rejections and the problem order
+#
+# The runs below are rejected for the five other reasons, or have two problems
+# at once, of which the first in the SPEC's order decides the record. Each is
+# K1's run but for what it changes.
+
+# M given as the merge-base's first 12 digits.
+MERGE_BASE_AS_GIVEN = MERGE_BASE[:12]
+
+
+# The coverage at M with no shared line
+
+# The fixture's coverage at M as the sysmon core leaves it: line 3 of
+# src/shop/tax.py is recorded only for test_total, the first test that ran it,
+# and test_vat keeps line 4, so no line is recorded for more than one test.
+SYSMON_LINES: LinesByContext = {**COVERAGE_LINES, f"{TEST_VAT}|run": {TAX: [4]}}
+
+# The fixture's coverage recorded without --cov-context=test: every line is in
+# the empty context, so no line is recorded for any test.
+NO_TEST_CONTEXT_LINES: LinesByContext = {
+    "": {
+        PRICING: [1, 2, 3, 4, 6, 7],
+        TAX: [1, 2, 3, 4],
+        DB: [1, 2, 3, 4],
+        REPORT: [1, 2, 3, 4],
+        ORDERS: [1, 2, 3],
+        CONSTANTS: [1, 2],
+    }
+}
+
+
+# JUnit files that declare entities
+
+# The external entity names a file by a relative path: a parser that resolved
+# it would look for it in the working directory, or next to the JUnit file, in
+# ./ci. A run whose file declares it lays out a FIFO at both, with
+# fifos=ENTITY_TARGETS: opening one for reading would block until something
+# opened it for writing, so fails_if_it_blocks would stop the evaluation. The
+# entities are named after the canary, as defusedxml's error names them.
+ENTITY_TARGETS = ("./canary.fifo", "./ci/canary.fifo")
+EXTERNAL_ENTITY = '<!DOCTYPE testsuites [<!ENTITY canary SYSTEM "canary.fifo">]>'
+
+# A doctype that declares an entity, which nothing uses.
+UNUSED_ENTITY = '<!DOCTYPE testsuites [<!ENTITY canary "never used">]>'
+
+
+def nested_entities(levels: int) -> str:
+    """A doctype whose entities each expand to ten of the one before, as in
+    billion laughs.
+
+    Kept small, so that a parser that expanded them all would still finish.
+    """
+    declarations = ['<!ENTITY canary0 "lol">']
+    for level in range(1, levels + 1):
+        ten_references = f"&canary{level - 1};" * 10
+        declarations.append(f'<!ENTITY canary{level} "{ten_references}">')
+    return f"<!DOCTYPE testsuites [{''.join(declarations)}]>"
+
+
+NESTED_ENTITIES = nested_entities(4)
+
+
+def passed_with_output(classname: str, name: str, time: str, output: str) -> str:
+    """A test case that passed, with captured output, which can refer to an
+    entity."""
+    return case(classname, name, time, f"<system-out>{output}</system-out>")
+
+
+# K6: K1's full run, with test_vat's output referring to an entity, and rerun
+# files in which test_render passed, with output that does.
+K6_EXTERNAL_JUNIT = junit_file(
+    SUITE_TIME,
+    TOTAL_PASSED,
+    passed_with_output("tests.test_tax", "test_vat", "1.000", "&canary;"),
+    RENDER_FAILED,
+    CREATE_PASSED,
+    doctype=EXTERNAL_ENTITY,
+)
+K6_NESTED_JUNIT = junit_file(
+    SUITE_TIME,
+    TOTAL_PASSED,
+    passed_with_output("tests.test_tax", "test_vat", "1.000", "&canary4;"),
+    RENDER_FAILED,
+    CREATE_PASSED,
+    doctype=NESTED_ENTITIES,
+)
+K6_EXTERNAL_RERUN = junit_file(
+    RERUN_SUITE_TIME,
+    passed_with_output("tests.test_report", "test_render", "5.000", "&canary;"),
+    doctype=EXTERNAL_ENTITY,
+)
+K6_NESTED_RERUN = junit_file(
+    RERUN_SUITE_TIME,
+    passed_with_output("tests.test_report", "test_render", "5.000", "&canary4;"),
+    doctype=NESTED_ENTITIES,
+)
+
+
+# JUnit files that hold a collection error
+
+# The test case that pytest writes for tests/test_report.py when it cannot
+# collect it, as in K9: an empty classname, and an error whose message is
+# collection failure and whose text names the module that the import missed.
+REPORT_COLLECTION_ERROR = case(
+    "",
+    "tests.test_report",
+    "0.000",
+    '<error message="collection failure">'
+    "ModuleNotFoundError: No module named 'canary'</error>",
+)
+
+# The session's time when pytest collected and ran nothing.
+COLLECTION_SUITE_TIME = "0.412"
+
+# K9's full run, in which pytest ran no test, and a full run with
+# --continue-on-collection-errors, in which the other three tests passed.
+K9_JUNIT = junit_file(COLLECTION_SUITE_TIME, REPORT_COLLECTION_ERROR)
+COLLECTION_ERROR_AMONG_TESTS_JUNIT = junit_file(
+    SUITE_TIME, TOTAL_PASSED, VAT_PASSED, REPORT_COLLECTION_ERROR, CREATE_PASSED
+)
+
+# A rerun file next to K1's full run, in which pytest could not collect
+# tests/test_report.py, test_render's file: test_render is not in it.
+COLLECTION_ERROR_RERUN = junit_file(COLLECTION_SUITE_TIME, REPORT_COLLECTION_ERROR)
+
+
+# JUnit files with two problems
+
+# Files that serve as the full run's JUnit file or as the rerun file. In one,
+# the parser meets an entity's declaration first, then elements that are never
+# closed; in the other, a byte that is not UTF-8 first, in a comment, then the
+# declaration.
+ENTITY_THEN_MALFORMED = (
+    XML_DECLARATION + UNUSED_ENTITY + "<testsuites><testsuite></testsuites>"
+).encode()
+MALFORMED_THEN_ENTITY = (
+    XML_DECLARATION.encode()
+    + b"<!-- \xff -->"
+    + (
+        UNUSED_ENTITY
+        + junit_body(SUITE_TIME, TOTAL_PASSED, VAT_PASSED, RENDER_FAILED, CREATE_PASSED)
+    ).encode()
+)
+
+# K1's full run, declaring an entity, with a test case that has no time; K9's,
+# with a test case that has no time; and a rerun file, declaring an entity, in
+# which test_render's test case has no time.
+ENTITY_AND_NO_TIME_JUNIT = junit_file(
+    SUITE_TIME,
+    TOTAL_PASSED,
+    VAT_PASSED,
+    RENDER_FAILED,
+    CREATE_PASSED,
+    NO_TIME_CANARY,
+    doctype=UNUSED_ENTITY,
+)
+NO_TIME_AND_COLLECTION_ERROR_JUNIT = junit_file(
+    COLLECTION_SUITE_TIME, REPORT_COLLECTION_ERROR, NO_TIME_CANARY
+)
+ENTITY_AND_NO_TIME_RERUN = junit_file(
+    RERUN_SUITE_TIME, RENDER_NO_TIME, doctype=UNUSED_ENTITY
+)
+
+
+# The lines
+
+# The lines of task 15's rejected runs, as the prose on records defines them:
+# each is pull request 7's, and holds HEAD for <H> and K1_SHA256 for <sha>
+# unless its comment says otherwise. K4's run appends K4_LINE, above.
+
+# K5: missing-history, with the checkout.
+SHALLOW_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"rejected","reason":"missing-history","input":"checkout"}\n'
+)
+
+# K6, junit: unsafe-xml, each key with the SHA-256 of its own JUnit file,
+# K6_EXTERNAL_JUNIT and K6_NESTED_JUNIT.
+EXTERNAL_ENTITY_JUNIT_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"e3646bc6cca31df4acf7c588a803a2e00e4542c225fccc9eb1b8124207d457ec",'
+    b'"pr":7,"verdict":"rejected","reason":"unsafe-xml","input":"junit"}\n'
+)
+NESTED_ENTITIES_JUNIT_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"05d097c248bc682d5eac03342424e288a0e6b4515235427fdde2b55d516cfaec",'
+    b'"pr":7,"verdict":"rejected","reason":"unsafe-xml","input":"junit"}\n'
+)
+
+# K6, rerun: the key holds the full run's SHA-256, whatever the rerun file
+# holds.
+UNSAFE_RERUN_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"rejected","reason":"unsafe-xml","input":"rerun"}\n'
+)
+
+# K9: collection-error, with the JUnit file, each key with the SHA-256 of its
+# own JUnit file, K9_JUNIT and COLLECTION_ERROR_AMONG_TESTS_JUNIT.
+K9_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"31b25a7ecb5495ccdaeab839cad4c260cd8f895ec271ef1e457c8c977d2ff852",'
+    b'"pr":7,"verdict":"rejected","reason":"collection-error","input":"junit"}\n'
+)
+COLLECTION_ERROR_AMONG_TESTS_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"6b8a7bb2cd270062e1fc5a3bae72dbe1b14fce2b444bd549445a46988fcf2248",'
+    b'"pr":7,"verdict":"rejected","reason":"collection-error","input":"junit"}\n'
+)
+
+# K12: no-shared-lines, with the coverage.
+NO_SHARED_LINES_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"rejected","reason":"no-shared-lines","input":"coverage"}\n'
+)
+
+
+# The runs rejected for the other reasons
+
+# K4: coverage recorded at H, given as its branch, while H is given by its full
+# id, so that pr-7 in a message can only be M.
+K4_RUN = Run(head=HEAD, coverage_commit="pr-7")
+
+# K5: a clone made with --depth 1 and every branch, which has H and B but not
+# their parents, so neither the merge-base nor M. H is given by its full id, as
+# $GITHUB_SHA gives it, so that the key holds it whether or not it names a
+# commit in the checkout.
+K5_RUN = Run(head=HEAD, checkout=SHALLOW_CLONE, shallow_depth=1)
+
+# K6: a full run and a rerun file that declare an external entity, with the
+# FIFOs that it names, and that nest entity expansions.
+K6_EXTERNAL_JUNIT_RUN = Run(junit=K6_EXTERNAL_JUNIT, fifos=ENTITY_TARGETS)
+K6_NESTED_JUNIT_RUN = Run(junit=K6_NESTED_JUNIT)
+K6_EXTERNAL_RERUN_RUN = Run(rerun=K6_EXTERNAL_RERUN, fifos=ENTITY_TARGETS)
+K6_NESTED_RERUN_RUN = Run(rerun=K6_NESTED_RERUN)
+
+# K9, and a full run whose collection error came among tests that ran.
+K9_RUN = Run(junit=K9_JUNIT)
+COLLECTION_ERROR_AMONG_TESTS_RUN = Run(junit=COLLECTION_ERROR_AMONG_TESTS_JUNIT)
+
+# K12, and coverage recorded without --cov-context=test.
+K12_RUN = Run(coverage_lines=SYSMON_LINES)
+NO_TEST_CONTEXT_RUN = Run(coverage_lines=NO_TEST_CONTEXT_LINES)
+
+# One rejection for each reason, K6's with each of its inputs.
+K4_REJECTION = Rejection("K4, coverage at H", K4_RUN, K4_LINE, "pr-7")
+K5_REJECTION = Rejection(
+    "K5, a clone made with --depth 1", K5_RUN, SHALLOW_LINE, SHALLOW_CLONE
+)
+K6_JUNIT_REJECTION = Rejection(
+    "K6, junit, an external entity",
+    K6_EXTERNAL_JUNIT_RUN,
+    EXTERNAL_ENTITY_JUNIT_LINE,
+    JUNIT,
+    holds_canary=True,
+)
+K6_RERUN_REJECTION = Rejection(
+    "K6, rerun, an external entity",
+    K6_EXTERNAL_RERUN_RUN,
+    UNSAFE_RERUN_LINE,
+    RERUN,
+    holds_canary=True,
+)
+K9_REJECTION = Rejection(
+    "K9, only a collection error", K9_RUN, K9_LINE, JUNIT, holds_canary=True
+)
+K12_REJECTION = Rejection(
+    "K12, coverage as the sysmon core leaves it",
+    K12_RUN,
+    NO_SHARED_LINES_LINE,
+    COVERAGE,
+)
+EACH_REASON = [
+    K4_REJECTION,
+    K5_REJECTION,
+    K6_JUNIT_REJECTION,
+    K6_RERUN_REJECTION,
+    K9_REJECTION,
+    K12_REJECTION,
+]
+
+OTHER_REJECTIONS = [
+    *EACH_REASON,
+    Rejection(
+        "K6, junit, nested entity expansions",
+        K6_NESTED_JUNIT_RUN,
+        NESTED_ENTITIES_JUNIT_LINE,
+        JUNIT,
+        holds_canary=True,
+    ),
+    Rejection(
+        "K6, rerun, nested entity expansions",
+        K6_NESTED_RERUN_RUN,
+        UNSAFE_RERUN_LINE,
+        RERUN,
+        holds_canary=True,
+    ),
+    Rejection(
+        "collection-error, among tests that ran",
+        COLLECTION_ERROR_AMONG_TESTS_RUN,
+        COLLECTION_ERROR_AMONG_TESTS_LINE,
+        JUNIT,
+        holds_canary=True,
+    ),
+    Rejection(
+        "no-shared-lines, coverage recorded without test contexts",
+        NO_TEST_CONTEXT_RUN,
+        NO_SHARED_LINES_LINE,
+        COVERAGE,
+    ),
+]
+
+# The same runs, with what each test of the table needs.
+OTHER_RUNS = [
+    pytest.param(rejection.run, id=rejection.name) for rejection in OTHER_REJECTIONS
+]
+OTHER_RUNS_AND_LINES = [
+    pytest.param(rejection.run, rejection.line, id=rejection.name)
+    for rejection in OTHER_REJECTIONS
+]
+OTHER_RUNS_AND_NAMES = [
+    pytest.param(rejection.run, rejection.named, id=rejection.name)
+    for rejection in OTHER_REJECTIONS
+]
+
+
+@pytest.mark.parametrize(("run", "line"), OTHER_RUNS_AND_LINES)
+def test_the_other_reasons_append_exactly_their_line(
+    run: Run, line: bytes, shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(run, b"", shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == line
+
+
+@pytest.mark.parametrize("run", OTHER_RUNS)
+def test_a_run_rejected_for_another_reason_exits_with_3(
+    run: Run, shop: Shop, tmp_path: Path
+) -> None:
+    assert evaluated(run, b"", shop, tmp_path) == 3
+
+
+@pytest.mark.parametrize(("run", "named"), OTHER_RUNS_AND_NAMES)
+def test_the_error_names_the_input_or_m_as_given(
+    run: Run,
+    named: str,
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    # K4's names M, K5's the checkout, K6's and K9's the JUnit or rerun file,
+    # and K12's the coverage file.
+    capfd.readouterr()
+
+    evaluated(run, b"", shop, tmp_path)
+
+    assert named in capfd.readouterr().err
+
+
+@pytest.mark.parametrize("run", OTHER_RUNS)
+def test_a_rejection_for_another_reason_prints_nothing_on_stdout(
+    run: Run, shop: Shop, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+) -> None:
+    capfd.readouterr()
+
+    evaluated(run, b"", shop, tmp_path)
+
+    assert capfd.readouterr().out == ""
+
+
+# What the no-shared-lines message says, as tests/test_messages.py checks it:
+# that the coverage at M must be recorded with --cov-context=test and
+# COVERAGE_CORE=ctrace, or that the suite's tests share no code.
+NO_SHARED_LINES_TEXTS = [
+    pytest.param("--cov-context=test", id="--cov-context=test"),
+    pytest.param("COVERAGE_CORE=ctrace", id="COVERAGE_CORE=ctrace"),
+    pytest.param("share no code", id="share no code"),
+]
+NO_SHARED_LINE_RUNS = [
+    pytest.param(K12_RUN, id="K12, coverage as the sysmon core leaves it"),
+    pytest.param(NO_TEST_CONTEXT_RUN, id="coverage recorded without test contexts"),
+]
+
+
+@pytest.mark.parametrize("text", NO_SHARED_LINES_TEXTS)
+@pytest.mark.parametrize("run", NO_SHARED_LINE_RUNS)
+def test_k12_the_message_says_how_the_coverage_at_m_must_be_recorded(
+    run: Run, text: str, shop: Shop, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+) -> None:
+    capfd.readouterr()
+
+    evaluated(run, b"", shop, tmp_path)
+
+    assert text in capfd.readouterr().err
+
+
+# M must be the merge-base or one of its ancestors
+
+# Coverage at a commit that is neither, besides K4's H: B, which main names in
+# the fixture's checkout, on the base branch after the merge-base; and a commit
+# that shares no history with H.
+NOT_AN_ANCESTOR = [
+    pytest.param(
+        Run(coverage_commit="main"), id="B, after the merge-base on the base branch"
+    ),
+    pytest.param(
+        Run(coverage_commit="unrelated"), id="a commit that shares no history with H"
+    ),
+]
+
+
+@pytest.mark.parametrize("run", NOT_AN_ANCESTOR)
+def test_coverage_at_a_commit_that_is_not_the_merge_base_or_an_ancestor_is_rejected(
+    run: Run, shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(run, b"", shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == K4_LINE
+
+
+# K1's line, but for coverage_commit, which holds the merge-base's id: the
+# coverage recorded at the merge-base itself, whose tree has M's paths.
+MERGE_BASE_AS_M_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"missed",'
+    b'"merge_base":"65269ed7f8ecfbb07005af16444ae310a68d5863",'
+    b'"coverage_commit":"65269ed7f8ecfbb07005af16444ae310a68d5863",'
+    b'"selected_ms":0,"full_ms":12000,'
+    b'"tests":4,"unmeasured":0,"tests_with_row":4,"tests_with_row_not_in_run":0,'
+    b'"floor_matched":false,"rerun_given":false,'
+    b'"not_reproduced":[],'
+    b'"failed_left_out":[{"pair":["tests.test_report","test_render"],'
+    b'"node_id":"tests/test_report.py::test_render",'
+    b'"row":["src/shop/pricing.py","src/shop/report.py"]}],'
+    b'"no_column":["templates/invoice.html"],'
+    b'"import_only":[]}\n'
+)
+
+
+def test_coverage_at_the_merge_base_itself_is_evaluated(
+    shop: Shop, tmp_path: Path
+) -> None:
+    # K1's M is one of the merge-base's ancestors; this M is the merge-base.
+    evaluated(Run(coverage_commit=MERGE_BASE_AS_GIVEN), b"", shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == MERGE_BASE_AS_M_LINE
+
+
+# A shallow checkout
+
+# A clone made with --depth 2 and every branch has H, B and the merge-base, which
+# is M in the runs that give it: in the fixture's checkout, the same commits are
+# evaluated, as test_coverage_at_the_merge_base_itself_is_evaluated shows.
+SHALLOW_WITH_EVERY_COMMIT_RUN = Run(
+    head=HEAD,
+    coverage_commit=MERGE_BASE_AS_GIVEN,
+    checkout=SHALLOW_CLONE,
+    shallow_depth=2,
+)
+
+
+def test_k5_a_shallow_checkout_is_rejected_even_with_every_commit_the_run_names(
+    shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(SHALLOW_WITH_EVERY_COMMIT_RUN, b"", shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == SHALLOW_LINE
+
+
+# A collection error in the rerun file
+
+# Note 39: a rerun file in which pytest could not collect test_render's file.
+# Only the full run's collection error is rejected: the rerun file's is a test
+# that did not fail in the full run, whose result is ignored (Edge 18), and
+# test_render, which is not in it, stays failed (Edge 16). The record is K1's
+# but for rerun_given.
+RERUN_WITH_A_COLLECTION_ERROR = Run(rerun=COLLECTION_ERROR_RERUN)
+K1_LINE_WITH_A_RERUN_FILE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"missed",'
+    b'"merge_base":"65269ed7f8ecfbb07005af16444ae310a68d5863",'
+    b'"coverage_commit":"6a174f7d9ac42221c89969c7aa68d12de15942f0",'
+    b'"selected_ms":0,"full_ms":12000,'
+    b'"tests":4,"unmeasured":0,"tests_with_row":4,"tests_with_row_not_in_run":0,'
+    b'"floor_matched":false,"rerun_given":true,'
+    b'"not_reproduced":[],'
+    b'"failed_left_out":[{"pair":["tests.test_report","test_render"],'
+    b'"node_id":"tests/test_report.py::test_render",'
+    b'"row":["src/shop/pricing.py","src/shop/report.py"]}],'
+    b'"no_column":["templates/invoice.html"],'
+    b'"import_only":[]}\n'
+)
+
+
+def test_a_rerun_file_that_holds_a_collection_error_is_used(
+    shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(RERUN_WITH_A_COLLECTION_ERROR, b"", shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == K1_LINE_WITH_A_RERUN_FILE
+
+
+def test_a_run_whose_rerun_file_holds_a_collection_error_exits_with_0(
+    shop: Shop, tmp_path: Path
+) -> None:
+    assert evaluated(RERUN_WITH_A_COLLECTION_ERROR, b"", shop, tmp_path) == 0
+
+
+# The problem order: runs with two problems
+
+
+@dataclass(frozen=True)
+class TwoProblems:
+    """A run with two problems, named the first in the problem order first, and
+    the line that the first one's rejection appends.
+
+    holds_canary is set when a file of the run holds CANARY.
+    """
+
+    name: str
+    run: Run
+    line: bytes
+    holds_canary: bool = False
+
+
+# The lines that only these runs append, each pull request 7's, with HEAD for
+# <H> and K1_SHA256 for <sha> unless its comment says otherwise.
+
+# unusable-input with the checkout, under a key that holds H's full id.
+NOT_A_CHECKOUT_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"rejected","reason":"unusable-input","input":"checkout"}\n'
+)
+
+# missing-history with the checkout, under a key that holds H as given, since
+# it names no commit.
+SHALLOW_NO_SUCH_HEAD_LINE = (
+    b'{"format":1,"head":"no-such-head",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"rejected","reason":"missing-history","input":"checkout"}\n'
+)
+
+# no-shared-lines with the coverage, under a key with no SHA-256, as the
+# evaluation cannot read a JUnit file; and under the SHA-256 of K6_NESTED_JUNIT.
+NO_SHARED_LINES_NO_SHA256_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":null,'
+    b'"pr":7,"verdict":"rejected","reason":"no-shared-lines","input":"coverage"}\n'
+)
+NO_SHARED_LINES_NESTED_ENTITIES_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"05d097c248bc682d5eac03342424e288a0e6b4515235427fdde2b55d516cfaec",'
+    b'"pr":7,"verdict":"rejected","reason":"no-shared-lines","input":"coverage"}\n'
+)
+
+# The full run's JUnit file's first problem, each key with the SHA-256 of its
+# own file: ENTITY_THEN_MALFORMED, MALFORMED_THEN_ENTITY,
+# ENTITY_AND_NO_TIME_JUNIT and NO_TIME_AND_COLLECTION_ERROR_JUNIT.
+ENTITY_THEN_MALFORMED_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"a76665fa44a2d51cbf11b9a7c9f6229536029fe92407a29800e5275d2af3408e",'
+    b'"pr":7,"verdict":"rejected","reason":"unsafe-xml","input":"junit"}\n'
+)
+MALFORMED_THEN_ENTITY_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"60ac44aacc8f5bfa6a96cf814c9e362a741f97812cdb7102e39758bdb29adeb3",'
+    b'"pr":7,"verdict":"rejected","reason":"unusable-input","input":"junit"}\n'
+)
+ENTITY_AND_NO_TIME_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"f78c145731c69b29f86bb097fac683865d685e483734cf0181674ff3c565600b",'
+    b'"pr":7,"verdict":"rejected","reason":"unsafe-xml","input":"junit"}\n'
+)
+NO_TIME_AND_COLLECTION_ERROR_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"85a258955c74ca8ed9134b11b834a908e9270f5bda615c96f8ef2f7e9bcaa5d2",'
+    b'"pr":7,"verdict":"rejected","reason":"unusable-input","input":"junit"}\n'
+)
+
+# A run whose M names no commit and which has no coverage file: both are
+# unusable-input with the coverage, so its line cannot tell which one decided
+# it, and a test of its own looks at the message.
+M_AND_COVERAGE_FILE_RUN = Run(
+    coverage_commit="no-such-commit", replaced=(COVERAGE, nothing)
+)
+
+# One run for each pair of neighbours in the problem order, the order within
+# one input included. The clone made with --depth 2 has H, B and the
+# merge-base, which is M in these runs, so that a run laid out with it has no
+# problem but the checkout's and its second one.
+TWO_PROBLEMS = [
+    TwoProblems(
+        "not a git checkout, then shallow: a shallow clone's .git directory",
+        Run(
+            head=HEAD,
+            coverage_commit=MERGE_BASE_AS_GIVEN,
+            checkout=SHALLOW_CLONE + "/.git",
+            shallow_depth=2,
+        ),
+        NOT_A_CHECKOUT_LINE,
+    ),
+    TwoProblems(
+        "shallow, then an H that names no commit",
+        Run(
+            head="no-such-head",
+            coverage_commit=MERGE_BASE_AS_GIVEN,
+            checkout=SHALLOW_CLONE,
+            shallow_depth=2,
+        ),
+        SHALLOW_NO_SUCH_HEAD_LINE,
+    ),
+    TwoProblems(
+        "an H, then a base, that name no commit",
+        Run(head="no-such-head", base="origin/no-such-branch"),
+        NO_SUCH_HEAD_LINE,
+    ),
+    TwoProblems(
+        "a base that shares no history with H, then an M that names no commit",
+        Run(base="unrelated", coverage_commit="no-such-commit"),
+        BASE_LINE,
+    ),
+    TwoProblems(
+        "an M that names no commit, then no coverage file",
+        M_AND_COVERAGE_FILE_RUN,
+        COVERAGE_LINE,
+    ),
+    TwoProblems(
+        "no coverage file, then coverage at H",
+        Run(head=HEAD, coverage_commit="pr-7", replaced=(COVERAGE, nothing)),
+        COVERAGE_LINE,
+    ),
+    TwoProblems(
+        "coverage at H, then no shared line",
+        Run(head=HEAD, coverage_commit="pr-7", coverage_lines=SYSMON_LINES),
+        K4_LINE,
+    ),
+    TwoProblems(
+        "no shared line, then no JUnit file",
+        Run(coverage_lines=SYSMON_LINES, replaced=(JUNIT, nothing)),
+        NO_SHARED_LINES_NO_SHA256_LINE,
+    ),
+    TwoProblems(
+        "no shared line, then a JUnit file it may not read",
+        Run(coverage_lines=SYSMON_LINES, replaced=(JUNIT, a_file_it_may_not_read)),
+        NO_SHARED_LINES_NO_SHA256_LINE,
+    ),
+    # Not neighbours: the JUnit file is read in step 2, for the key, but parsed
+    # only in its place in the order.
+    TwoProblems(
+        "no shared line, then a JUnit file that nests entity expansions",
+        Run(coverage_lines=SYSMON_LINES, junit=K6_NESTED_JUNIT),
+        NO_SHARED_LINES_NESTED_ENTITIES_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "junit, an entity declared, then elements never closed",
+        Run(junit=ENTITY_THEN_MALFORMED),
+        ENTITY_THEN_MALFORMED_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "junit, a byte that is not UTF-8, then an entity declared",
+        Run(junit=MALFORMED_THEN_ENTITY),
+        MALFORMED_THEN_ENTITY_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "junit, an entity declared, then a test case with no time",
+        Run(junit=ENTITY_AND_NO_TIME_JUNIT),
+        ENTITY_AND_NO_TIME_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "junit, a test case with no time, then a collection error",
+        Run(junit=NO_TIME_AND_COLLECTION_ERROR_JUNIT),
+        NO_TIME_AND_COLLECTION_ERROR_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "junit, a collection error, then no rerun file",
+        Run(junit=K9_JUNIT, rerun=K2_RERUN, replaced=(RERUN, nothing)),
+        K9_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "junit, a collection error, then a rerun file it may not read",
+        Run(junit=K9_JUNIT, rerun=K2_RERUN, replaced=(RERUN, a_file_it_may_not_read)),
+        K9_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "rerun, an entity declared, then elements never closed",
+        Run(rerun=ENTITY_THEN_MALFORMED),
+        UNSAFE_RERUN_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "rerun, a byte that is not UTF-8, then an entity declared",
+        Run(rerun=MALFORMED_THEN_ENTITY),
+        RERUN_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "rerun, an entity declared, then test_render with no time",
+        Run(rerun=ENTITY_AND_NO_TIME_RERUN),
+        UNSAFE_RERUN_LINE,
+        holds_canary=True,
+    ),
+    TwoProblems(
+        "rerun, test_render with no time, then an invalid floor pattern",
+        Run(rerun=RENDER_NO_TIME_RERUN, floor=CANARY_PATTERN_FLOOR),
+        RERUN_LINE,
+        holds_canary=True,
+    ),
+]
+TWO_PROBLEM_RUNS_AND_LINES = [
+    pytest.param(problems.run, problems.line, id=problems.name)
+    for problems in TWO_PROBLEMS
+]
+
+
+@pytest.mark.parametrize(("run", "line"), TWO_PROBLEM_RUNS_AND_LINES)
+def test_the_first_problem_in_the_order_decides_the_record(
+    run: Run, line: bytes, shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(run, b"", shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == line
+
+
+def test_with_an_m_that_names_no_commit_and_no_coverage_file_the_message_names_m(
+    shop: Shop, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+) -> None:
+    # How a run goes, step 3: M, then the file. Read first, the missing file
+    # would give the same line, with a message that names the file.
+    capfd.readouterr()
+
+    evaluated(M_AND_COVERAGE_FILE_RUN, b"", shop, tmp_path)
+
+    assert "no-such-commit" in capfd.readouterr().err
+
+
+# Every run of task 15 that is rejected, for what holds whatever its problems.
+TASK_15_RUNS = [
+    *OTHER_RUNS,
+    *(pytest.param(problems.run, id=problems.name) for problems in TWO_PROBLEMS),
+]
+TASK_15_RUNS_THAT_HOLD_THE_CANARY = [
+    *(
+        pytest.param(rejection.run, id=rejection.name)
+        for rejection in OTHER_REJECTIONS
+        if rejection.holds_canary
+    ),
+    *(
+        pytest.param(problems.run, id=problems.name)
+        for problems in TWO_PROBLEMS
+        if problems.holds_canary
+    ),
+]
+
+
+@pytest.mark.parametrize("run", TASK_15_RUNS)
+def test_task_15s_rejections_leave_the_inputs_as_they_were(
+    run: Run, shop: Shop, tmp_path: Path
+) -> None:
+    # Byte for byte, as task 14's test_the_inputs_are_left_as_they_were checks.
+    lay_out(run, shop, tmp_path, b"")
+    make_inputs_old(tmp_path)
+    before = state_of_inputs(tmp_path)
+
+    evaluate_run(run, shop)
+
+    assert state_of_inputs(tmp_path) == before
+
+
+@pytest.mark.parametrize("run", TASK_15_RUNS_THAT_HOLD_THE_CANARY)
+def test_nothing_printed_quotes_a_file_or_what_an_entity_names(
+    run: Run, shop: Shop, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+) -> None:
+    # The entities are named after the canary, the collection error's text
+    # names it, and so do a test case with no time and an invalid pattern.
+    capfd.readouterr()
+
+    evaluated(run, b"", shop, tmp_path)
+
+    output = capfd.readouterr()
+    assert CANARY not in output.out + output.err
+
+
+# A rejection for another reason, already recorded
+
+# Each reason's run with a record file that already holds its rejection, with
+# the same key, reason and input: nothing is appended, and the run is rejected
+# again.
+ALREADY_REJECTED_FOR_EACH_REASON = [
+    pytest.param(rejection, id=rejection.name) for rejection in EACH_REASON
+]
+
+
+@pytest.mark.parametrize("rejection", ALREADY_REJECTED_FOR_EACH_REASON)
+def test_the_other_reasons_already_recorded_leave_the_record_file_as_it_was(
+    rejection: Rejection, shop: Shop, tmp_path: Path
+) -> None:
+    lay_out(rejection.run, shop, tmp_path, rejection.line)
+    os.utime(record_file(tmp_path), ns=(0, 0))  # an old time, which a write replaces
+
+    evaluate_run(rejection.run, shop)
+
+    assert record_file(tmp_path).read_bytes() == rejection.line
+    assert record_file(tmp_path).stat().st_mtime_ns == 0
+
+
+@pytest.mark.parametrize("rejection", ALREADY_REJECTED_FOR_EACH_REASON)
+def test_the_other_reasons_already_recorded_exit_with_3(
+    rejection: Rejection, shop: Shop, tmp_path: Path
+) -> None:
+    assert evaluated(rejection.run, rejection.line, shop, tmp_path) == 3
+
+
+@pytest.mark.parametrize("rejection", ALREADY_REJECTED_FOR_EACH_REASON)
+def test_the_other_reasons_already_recorded_name_their_input_again(
+    rejection: Rejection,
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    capfd.readouterr()
+
+    evaluated(rejection.run, rejection.line, shop, tmp_path)
+
+    assert rejection.named in capfd.readouterr().err
+
+
+# A rejection that K1's full run never gets, under its key: unsafe-xml with the
+# JUnit file.
+UNSAFE_JUNIT_LINE_UNDER_K1S_KEY = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"402eb2fb1acba1cf0816f586edb02a4fec58e729489904a6ec18a8b13600a2ec",'
+    b'"pr":7,"verdict":"rejected","reason":"unsafe-xml","input":"junit"}\n'
+)
+
+# A record file that holds a rejection with the run's key and another reason,
+# another input or both: the run's rejected record goes after it. Task 14's
+# evaluation rejected K5's run for its base (note 62).
+APPENDED_AFTER_ANOTHER_REJECTION = [
+    pytest.param(
+        K4_RUN, COVERAGE_LINE, K4_LINE, id="K4, after unusable-input with the coverage"
+    ),
+    pytest.param(
+        K12_RUN, K4_LINE, NO_SHARED_LINES_LINE, id="K12, after coverage-not-ancestor"
+    ),
+    pytest.param(
+        K6_EXTERNAL_RERUN_RUN,
+        UNSAFE_JUNIT_LINE_UNDER_K1S_KEY,
+        UNSAFE_RERUN_LINE,
+        id="K6, rerun, after unsafe-xml with the JUnit file",
+    ),
+    pytest.param(
+        K5_RUN, BASE_LINE, SHALLOW_LINE, id="K5, after unusable-input with the base"
+    ),
+]
+
+
+@pytest.mark.parametrize(("run", "recorded", "line"), APPENDED_AFTER_ANOTHER_REJECTION)
+def test_a_rejection_with_the_same_key_and_another_reason_or_input_goes_after_it(
+    run: Run, recorded: bytes, line: bytes, shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(run, recorded, shop, tmp_path)
+
+    assert record_file(tmp_path).read_bytes() == recorded + line
+
+
+# A run already evaluated
+
+# K9's run as the evaluation recorded it before task 15 rejected a collection
+# error (note 62): caught, since the error's own test case is selected as
+# unmeasured.
+K9_EVALUATED_LINE = (
+    b'{"format":1,"head":"f5dc5ccbd62964df83d34c5dd3cb9b598fc3e51f",'
+    b'"junit_sha256":'
+    b'"31b25a7ecb5495ccdaeab839cad4c260cd8f895ec271ef1e457c8c977d2ff852",'
+    b'"pr":7,"verdict":"caught",'
+    b'"merge_base":"65269ed7f8ecfbb07005af16444ae310a68d5863",'
+    b'"coverage_commit":"6a174f7d9ac42221c89969c7aa68d12de15942f0",'
+    b'"selected_ms":0,"full_ms":0,'
+    b'"tests":1,"unmeasured":1,"tests_with_row":4,"tests_with_row_not_in_run":4,'
+    b'"floor_matched":false,"rerun_given":false,'
+    b'"not_reproduced":[],"failed_left_out":[],'
+    b'"no_column":["templates/invoice.html"],'
+    b'"import_only":[]}\n'
+)
+
+# A record file that holds the run's evaluated record: How a run goes, step 2,
+# finds the key before step 3 checks anything, so the run is not rejected.
+ALREADY_EVALUATED = [
+    pytest.param(K4_RUN, K1_LINE, id="K4's run, under K1's key"),
+    pytest.param(K5_RUN, K1_LINE, id="K5's run, under K1's key"),
+    pytest.param(
+        K6_EXTERNAL_RERUN_RUN,
+        K1_LINE,
+        id="K6's run with an unsafe rerun file, under K1's key",
+    ),
+    pytest.param(K12_RUN, K1_LINE, id="K12's run, under K1's key"),
+    pytest.param(K9_RUN, K9_EVALUATED_LINE, id="K9's run, evaluated before task 15"),
+]
+
+
+@pytest.mark.parametrize(("run", "recorded"), ALREADY_EVALUATED)
+def test_a_run_already_evaluated_is_not_rejected_for_another_reason(
+    run: Run, recorded: bytes, shop: Shop, tmp_path: Path
+) -> None:
+    lay_out(run, shop, tmp_path, recorded)
+    os.utime(record_file(tmp_path), ns=(0, 0))
+
+    evaluate_run(run, shop)
+
+    assert record_file(tmp_path).read_bytes() == recorded
+    assert record_file(tmp_path).stat().st_mtime_ns == 0
+
+
+@pytest.mark.parametrize(("run", "recorded"), ALREADY_EVALUATED)
+def test_a_run_already_evaluated_exits_with_0_whatever_its_problem(
+    run: Run, recorded: bytes, shop: Shop, tmp_path: Path
+) -> None:
+    assert evaluated(run, recorded, shop, tmp_path) == 0
