@@ -218,25 +218,3 @@ def test_an_unexpected_failure_is_one_line_that_names_only_its_class(
     assert output.out == ""
     assert output.err == "distiller: unexpected failure: CanaryError\n"
     assert WITNESS not in output.err
-
-
-# The walking skeleton's own behaviour: the report tasks rewrite it. The
-# evaluate task replaced its evaluate case with tests/test_evaluate.py.
-@pytest.mark.parametrize(
-    "argv",
-    [
-        pytest.param(["report", "records.jsonl"], id="report"),
-    ],
-)
-def test_the_commands_are_not_implemented_yet(
-    argv: list[str],
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    monkeypatch.chdir(tmp_path)
-
-    assert cli.main(argv) == 1
-    output = capsys.readouterr()
-    assert output.out == ""
-    assert output.err == "distiller: unexpected failure: NotImplementedError\n"
