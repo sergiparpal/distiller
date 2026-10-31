@@ -9,7 +9,7 @@ examples. -->
 
 ## Bet
 - Hypothesis: on sergiparpal/adaptive-policy-compilation, an all-affected, file-level selector would cut at least 25% of the full suite's test time across its PRs.
-- Appetite: 3 weeks, ends 2026-10-31
+- Appetite: 3 weeks, ended 2026-10-31; renewed once, on 2026-10-31, with no scope cut, to 2026-11-14, after the agent subscription lapsed on 2026-10-26.
 - Kill signal: at the end of the appetite, the savings measured on sergiparpal/adaptive-policy-compilation are below 25%, or Slice 1 does not run end to end in its CI.
 
 ## Problem
