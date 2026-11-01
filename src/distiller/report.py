@@ -1,19 +1,32 @@
+import json
 import math
+import sys
+from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
-from typing import cast
 
-from distiller import records
+from distiller import messages, records
 
-# The report command, as far as task 16 goes: the record files, read in the
-# order given, all of them before anything is written; each run's key counted
-# once, however many lines or record files hold its record, with the rejected
-# runs in no figure; and the report on stdout, one line for each of these: the
-# miss rate, k missed PRs out of n PRs with a red run, with the red runs and the
-# one-sided 95% Clopper-Pearson upper bound; the savings, with the sentence that
-# they are an upper bound; and the sentence that the figures belong to the
-# all-affected selector. Every percentage is computed with Decimal and rounded
-# half up to one decimal (Rule 10). The report holds only fixed words and
-# numbers, so it is ASCII: Clopper-Pearson is written with a hyphen.
+# The report command, as far as task 17 goes. The record files are read in the
+# order given, all of them before anything is written, and the first one that
+# does not exist, cannot be read or holds a line that is not a record stops the
+# report: one line on stderr that names it, nothing on stdout and exit 1. Each
+# run's key is counted once, however many lines or record files hold its
+# record. A key whose evaluated records differ is a conflict, and neither a
+# conflict nor a rejected run counts in any figure. The report on stdout has
+# one line for each of these: the miss rate, k missed PRs out of n PRs with a
+# red run, with the red runs and the one-sided 95% Clopper-Pearson upper bound;
+# the savings, with the sentence that they are an upper bound; and the sentence
+# that the figures belong to the all-affected selector. Then come two lists,
+# each under a heading and saying so when it has no entry: the conflicts, each
+# key with the record files that hold it, and the rejected runs, counted under
+# each reason and input for the keys that no evaluated record has. Every
+# percentage is computed with Decimal and rounded half up to one decimal (Rule
+# 10). Every list is sorted where it is built, by code point (Rule 8), so that
+# the report depends neither on the order of the record files and of their
+# lines nor on a set's. Keys and record files are written with the json.dumps
+# of records.encode, escapes included, and the rest is fixed words, numbers and
+# the reasons and inputs that a record allows, so the report is ASCII:
+# Clopper-Pearson is written with a hyphen.
 
 # An evaluated run is red when it is caught or missed, and green otherwise.
 _RED_VERDICTS = ("caught", "missed")
@@ -39,18 +52,51 @@ _FIGURES_BELONG_TO_THE_ALL_AFFECTED_SELECTOR = (
     "them, such as a set cover over the same rows, misses at least as often."
 )
 
+# The heading of each list, and the words that say it has no entry, Report
+# 13's "no rejected run" among them.
+_CONFLICTS_HEADING = (
+    "Conflicts, keys whose evaluated records differ, left out of every figure:"
+)
+_NO_CONFLICT = "no conflict"
+_REJECTED_RUNS_HEADING = (
+    "Rejected runs, left out of every figure, each counted under every reason "
+    "and input it was rejected for:"
+)
+_NO_REJECTED_RUN = "no rejected run"
+
+# Each entry of a list goes on a line of its own, after two spaces.
+_INDENT = "  "
+
+
+# A line of a record file: its record, and the path of the file that holds it,
+# as given on the command line. A line held twice gives two equal ones.
+@dataclass(frozen=True)
+class _RecordLine:
+    record: records.Record
+    path: str
+
 
 def run(paths: list[str]) -> int:  # the report on stdout
-    # Every record file is read, and every line of the report built, before
-    # anything is written, so that a failure leaves stdout empty.
-    recorded = _read_record_files(paths)
-    runs = _evaluated_runs(recorded)
-    lines = [
-        _miss_rate_line(runs),
-        _savings_line(runs),
-        _FIGURES_BELONG_TO_THE_ALL_AFFECTED_SELECTOR,
-    ]
-    for line in lines:
+    # The paragraph after "How a run goes": the record files are read in the
+    # order given, all of them before anything is written, and the first
+    # problem stops the report with exit 1, before the files after it are
+    # read. Unlike evaluate, the report never takes a record file that does
+    # not exist as empty: a mistyped path would drop its runs without a
+    # warning.
+    record_lines: list[_RecordLine] = []
+    for path in paths:
+        try:
+            lines_of_file = _records_in(path)
+        except records.NotARecord as error:
+            print(messages.not_a_record(error.path, error.line_number), file=sys.stderr)
+            return 1
+        if lines_of_file is None:
+            print(messages.unreadable_record_file(path), file=sys.stderr)
+            return 1
+        record_lines.extend(lines_of_file)
+    # Every line of the report is built before the first is written, so that
+    # an error while building it leaves stdout empty too.
+    for line in _report_lines(record_lines):
         print(line)
     return 0
 
@@ -79,48 +125,91 @@ def clopper_pearson_upper(k: int, n: int) -> float | None:
     return high
 
 
-def _read_record_files(paths: list[str]) -> list[records.Record]:
-    # The record files in the order given, and each file's records in its
-    # lines' order.
-    recorded: list[records.Record] = []
-    for path in paths:
-        recorded.extend(_records_in(path))
-    return recorded
+def _records_in(path: str) -> list[_RecordLine] | None:
+    # None: the record file does not exist or cannot be read. read_record_file
+    # gives None for a path with no file and raises OSError for a file that
+    # exists but cannot be read, such as a directory, a FIFO or a file that
+    # the tool may not read; the report's message is the same for both.
+    # NotARecord, for a line that is not a record, goes through to run. Each
+    # record keeps the path of its file, which a conflict names.
+    try:
+        recorded = records.read_record_file(path)
+    except OSError:
+        return None
+    if recorded is None:
+        return None
+    return [_RecordLine(record=record, path=path) for record in recorded]
 
 
-def _records_in(path: str) -> list[records.Record]:
-    # read_record_file raises NotARecord for a line that is not a record and
-    # OSError for a file that exists but cannot be read, and gives None for a
-    # path with no file. Task 17 names the file in a message of its own for
-    # each; until then, both errors reach cli as any other failure, and cast
-    # tells pyright that the records are there, and checks nothing at run
-    # time: a None makes extend raise TypeError, which reaches cli too.
-    return cast(list[records.Record], records.read_record_file(path))
+def _report_lines(record_lines: list[_RecordLine]) -> list[str]:
+    # The figures, over the runs that count, and the sentence on the selector
+    # they belong to; then the two lists of what no figure counts, the
+    # conflicts and the rejected runs.
+    evaluated = _evaluated_records_by_key(record_lines)
+    runs, conflicts = _runs_and_conflicts(evaluated)
+    return [
+        _miss_rate_line(runs),
+        _savings_line(runs),
+        _FIGURES_BELONG_TO_THE_ALL_AFFECTED_SELECTOR,
+        *_conflict_lines(conflicts, _record_files_by_key(record_lines)),
+        *_rejected_run_lines(_rejected_counts(record_lines, evaluated)),
+    ]
 
 
-def _evaluated_runs(recorded: list[records.Record]) -> list[records.EvaluatedRecord]:
-    # Every figure counts each key once, even when its record is held by several
-    # lines or record files: the records are grouped by key, and a set holds a
-    # record once however many lines hold it. A rejected run counts in no
-    # figure, so its record is left out here.
+def _evaluated_records_by_key(
+    record_lines: list[_RecordLine],
+) -> dict[records.RunKey, set[records.EvaluatedRecord]]:
+    # Each key that an evaluated record has, with its evaluated records, each
+    # once however many lines or record files hold it: a set holds equal
+    # records once, and two records are equal only if every field is, pr
+    # included. A rejected record adds nothing here.
     records_by_key: dict[records.RunKey, set[records.EvaluatedRecord]] = {}
-    for record in recorded:
+    for record_line in record_lines:
+        record = record_line.record
         if isinstance(record, records.EvaluatedRecord):
             records_of_key = records_by_key.setdefault(record.key, set())
             records_of_key.add(record)
-    return [_only_record(records_of_key) for records_of_key in records_by_key.values()]
+    return records_by_key
+
+
+def _runs_and_conflicts(
+    evaluated: dict[records.RunKey, set[records.EvaluatedRecord]],
+) -> tuple[list[records.EvaluatedRecord], list[records.RunKey]]:
+    # The runs that the figures count, one for each key with a single
+    # evaluated record, and the conflicts, the keys with more, both in key
+    # order, the order of the conflicts' list.
+    runs: list[records.EvaluatedRecord] = []
+    conflicts: list[records.RunKey] = []
+    for key in sorted(evaluated, key=_key_order):
+        record = _only_record(evaluated[key])
+        if record is None:
+            conflicts.append(key)
+        else:
+            runs.append(record)
+    return runs, conflicts
 
 
 def _only_record(
     records_of_key: set[records.EvaluatedRecord],
-) -> records.EvaluatedRecord:
-    # The one evaluated record of a key. Two that differ are a conflict, which
-    # task 17 leaves out of every figure and lists with its record files. Until
-    # then, unpacking a set of two or more records into one name raises
-    # ValueError, which reaches cli as any other failure: no report then
-    # depends on which of the two records came first.
+) -> records.EvaluatedRecord | None:  # None: a conflict
+    # The one evaluated record of a key. Two or more that differ are a
+    # conflict, which no figure counts: choosing one of them would make the
+    # report depend on the order of the files, or on which one a set gives
+    # first.
+    if len(records_of_key) > 1:
+        return None
     [record] = records_of_key
     return record
+
+
+def _key_order(key: records.RunKey) -> tuple[str, int, str]:
+    # The SPEC's order of runs: by head and then by junit_sha256, with null
+    # first, each string by code point, which is Python's order for str. After
+    # the head comes 0 for a null junit_sha256 and 1 for a SHA-256, so that
+    # null comes first, and then the SHA-256 itself, which orders the others.
+    if key.junit_sha256 is None:
+        return (key.head, 0, "")
+    return (key.head, 1, key.junit_sha256)
 
 
 def _miss_rate_line(runs: list[records.EvaluatedRecord]) -> str:
@@ -173,6 +262,110 @@ def _savings_line(runs: list[records.EvaluatedRecord]) -> str:
         f"Test time: savings of {_percent_text(savings)} of the full suite's "
         f"time; {_SAVINGS_ARE_AN_UPPER_BOUND}."
     )
+
+
+def _conflict_lines(
+    conflicts: list[records.RunKey], record_files: dict[records.RunKey, set[str]]
+) -> list[str]:
+    # The conflicts under their heading, in key order, as _runs_and_conflicts
+    # gives them, each with the record files that hold a record of its key.
+    entries = [_conflict_entry(key, record_files[key]) for key in conflicts]
+    return _list_lines(_CONFLICTS_HEADING, entries, _NO_CONFLICT)
+
+
+def _conflict_entry(key: records.RunKey, paths: set[str]) -> str:
+    # "conflict: <key> in <record files>": the key as its records' lines write
+    # it, and the record files as a JSON list of strings, as a record writes a
+    # list of paths, sorted by code point, each once. Paths compare as given,
+    # so a file given twice is named once, while ./a.jsonl and a.jsonl would
+    # be two names.
+    return f"conflict: {_key_text(key)} in {_json_text(sorted(paths))}"
+
+
+def _key_text(key: records.RunKey) -> str:
+    # The key as its records' lines write it, "head":...,"junit_sha256":...,
+    # each value with the json.dumps of records.encode, so with the same
+    # escapes, and null for a junit_sha256 of None.
+    head = _json_text(key.head)
+    junit_sha256 = _json_text(key.junit_sha256)
+    return f'"head":{head},"junit_sha256":{junit_sha256}'
+
+
+def _json_text(value: str | list[str] | None) -> str:
+    # Rule 7: the json.dumps that records.encode writes a line with, with no
+    # spaces between tokens and the default ensure_ascii, which writes every
+    # character outside printable ASCII as an escape: a control character in
+    # a key or a path never reaches the terminal or a log unescaped.
+    return json.dumps(value, separators=(",", ":"))
+
+
+def _record_files_by_key(
+    record_lines: list[_RecordLine],
+) -> dict[records.RunKey, set[str]]:
+    # The record files that hold a record of each key, evaluated or rejected,
+    # each path once.
+    files_by_key: dict[records.RunKey, set[str]] = {}
+    for record_line in record_lines:
+        files_of_key = files_by_key.setdefault(record_line.record.key, set())
+        files_of_key.add(record_line.path)
+    return files_by_key
+
+
+def _rejected_run_lines(counts: dict[tuple[str, str], int]) -> list[str]:
+    # The counts of rejected runs under their heading, sorted by reason and
+    # then input, as pairs of strings compare.
+    entries = [_rejected_entry(pair, counts[pair]) for pair in sorted(counts)]
+    return _list_lines(_REJECTED_RUNS_HEADING, entries, _NO_REJECTED_RUN)
+
+
+def _rejected_entry(pair: tuple[str, str], number: int) -> str:
+    # "<n> run[s] rejected for <reason> with <input>", in the singular only
+    # for 1. decode allows only the SPEC's reasons and inputs, which are
+    # ASCII words with nothing to escape.
+    reason, input_name = pair
+    return f"{_count(number, 'run')} rejected for {reason} with {input_name}"
+
+
+def _rejected_counts(
+    record_lines: list[_RecordLine],
+    evaluated: dict[records.RunKey, set[records.EvaluatedRecord]],
+) -> dict[tuple[str, str], int]:
+    # How many keys are counted under each pair of reason and input. A key
+    # that an evaluated record has, a conflict's included, is never counted as
+    # rejected. Any other key counts once under each pair that its rejected
+    # records give, so the counts can add up to more than the number of keys
+    # rejected (open question 9).
+    counts: dict[tuple[str, str], int] = {}
+    for key, pairs in _rejections_by_key(record_lines).items():
+        if key in evaluated:
+            continue
+        for pair in pairs:
+            counts[pair] = counts.get(pair, 0) + 1
+    return counts
+
+
+def _rejections_by_key(
+    record_lines: list[_RecordLine],
+) -> dict[records.RunKey, set[tuple[str, str]]]:
+    # The pairs of reason and input that each key's rejected records give,
+    # each pair once, whatever the records' pr, which is not part of the key,
+    # and however many lines or record files hold them.
+    pairs_by_key: dict[records.RunKey, set[tuple[str, str]]] = {}
+    for record_line in record_lines:
+        record = record_line.record
+        if isinstance(record, records.RejectedRecord):
+            pairs_of_key = pairs_by_key.setdefault(record.key, set())
+            pairs_of_key.add((record.reason, record.input_name))
+    return pairs_by_key
+
+
+def _list_lines(heading: str, entries: list[str], when_empty: str) -> list[str]:
+    # A list under its heading, each entry on a line of its own after two
+    # spaces, or a single line with the words that say it has no entry.
+    if not entries:
+        return [heading, _INDENT + when_empty]
+    indented = [_INDENT + entry for entry in entries]
+    return [heading, *indented]
 
 
 def _bound_percent(bound: float) -> str:
