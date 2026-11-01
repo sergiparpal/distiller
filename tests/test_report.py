@@ -54,6 +54,38 @@ from distiller import cli, records, report, selection
 # has to escape is this task's, since the SPEC's sentence on escaping names
 # pairs, node ids and paths, not the key. The order of the list of failed
 # tests left out is task 18's.
+#
+# Where the SPEC leaves the rest of the report open, these tests follow the
+# answers given in task 18's tests phase, 2026-11-01. One form for each figure,
+# in the singular only for 1. The floor and no-column rates always show their
+# counts, as Report 5 and 6 do: "floor rate of <p>%: <k> PR[s] out of <n>" and
+# "no-column rate of <p>%: <k> PR[s] out of <n>". The shares: "<p>% of tests
+# treated as unmeasured" and "<p>% of the tests with a row were not in their
+# run". With a zero denominator each of the four is 0 out of 0, as the miss
+# rate is: "floor rate: 0 PRs out of 0", "no-column rate: 0 PRs out of 0", "0
+# out of 0 tests treated as unmeasured" and "0 out of 0 tests with a row were
+# not in their run". Saying "no floor rate" could be read as a floor that never
+# matched, and with few PRs a reader needs to see how many each rate comes
+# from. The reruns: "the failures of <r> red run[s] were not confirmed by a
+# rerun" and "<f> failures were discarded as not reproduced", "1 failure was"
+# for 1, then "order-dependent failures can hide in that count", without the
+# SPEC's section number, whose sign is not ASCII. A failure discarded counts in
+# its run, so a pair discarded in two runs counts twice. The list of failed
+# tests left out names each run by its key, written as a conflict's, and by its
+# pull request, "PR <n>": a pull request can have several runs, and it holds the
+# diff's paths, which a record does not. Next to them go the run's "paths with
+# no column <list>" and "import-only paths <list>", each a JSON list of strings
+# that is empty for none, and each failed test as its record's line writes it
+# in failed_left_out, with "its row has none of the diff's paths, and no other
+# rule picked it". With no entry, "no failed test left out". A run that left
+# out no failed test shows none of its paths, so Report 16's run is K1's, and a
+# conflict's failed tests left out are not listed, since a conflict counts in
+# no figure. Within a run, a record's line holds the failed tests by pair and
+# each list of paths by path, so no record file can give them in another order:
+# those tests tell the order that the report keeps from the orders that another
+# comparison would give. The escape tests put a newline, an escape character
+# and an n with a tilde in each field that the report writes: the first two are
+# ASCII, so only the n can show a report that is not.
 
 # The fixture's merge-base and M, as tests/test_records.py writes them.
 MERGE_BASE = "9d1e3f5a7b2c4d6e8f0a1b3c5d7e9f2a4b6c8d0e"
@@ -293,6 +325,251 @@ NO_REJECTED_RUN = "no rejected run"
 NO_CONFLICT = "no conflict"
 
 
+# The recorded runs of Report 5 to 12 and 16
+
+# evaluated's runs change only templates/invoice.html, as K1's does: a path with
+# no column, and no floor match. The runs below change other paths.
+
+
+def floor_matched_run(run: int, pr: int) -> records.EvaluatedRecord:
+    """Run r<run>'s green record, for pull request pr, whose diff changes
+    uv.lock: a path with no column that matches the floor, which selected the
+    whole 12.0 s suite."""
+    return dataclasses.replace(
+        evaluated(run, pr, "green", selected_ms=12000),
+        floor_matched=True,
+        no_column=("uv.lock",),
+    )
+
+
+def tax_only_run(run: int, pr: int) -> records.EvaluatedRecord:
+    """Run r<run>'s green record, for pull request pr, whose diff changes only
+    src/shop/tax.py, a column: test_total and test_vat, 3.0 s, are selected,
+    and no changed path lacks a column."""
+    return dataclasses.replace(
+        evaluated(run, pr, "green", selected_ms=3000), no_column=()
+    )
+
+
+def with_tests(
+    record: records.EvaluatedRecord,
+    *,
+    tests: int,
+    unmeasured: int,
+    tests_with_row: int,
+    not_in_run: int,
+) -> records.EvaluatedRecord:
+    """record with these counts: the run's tests and how many of them are
+    unmeasured, and the tests with a row in its coverage and how many of those
+    are not in the run."""
+    return dataclasses.replace(
+        record,
+        tests=tests,
+        unmeasured=unmeasured,
+        tests_with_row=tests_with_row,
+        tests_with_row_not_in_run=not_in_run,
+    )
+
+
+def given_a_rerun(
+    record: records.EvaluatedRecord, *not_reproduced: tuple[str, str]
+) -> records.EvaluatedRecord:
+    """record, given a rerun file in which these of its failed tests passed,
+    in pair order, as its line holds them."""
+    return dataclasses.replace(record, rerun_given=True, not_reproduced=not_reproduced)
+
+
+# Report 5: all 3 runs of PR 1 matched the floor, and the single runs of PRs 2,
+# 3 and 4 did not.
+REPORT_5: list[records.Record] = [
+    floor_matched_run(1, 1),
+    floor_matched_run(2, 1),
+    floor_matched_run(3, 1),
+    evaluated(4, 2, "green"),
+    evaluated(5, 3, "green"),
+    evaluated(6, 4, "green"),
+]
+
+# Report 6: the run of PR 1 changed only templates/invoice.html, the run of PR 2
+# templates/invoice.html and uv.lock, which matched the floor, and the runs of
+# PRs 3 and 4 only src/shop/tax.py.
+REPORT_6: list[records.Record] = [
+    evaluated(1, 1, "green"),
+    dataclasses.replace(
+        floor_matched_run(2, 2), no_column=("templates/invoice.html", "uv.lock")
+    ),
+    tax_only_run(3, 3),
+    tax_only_run(4, 4),
+]
+
+# Report 7: two runs of four tests each, one of which had one unmeasured test,
+# test_create, added after M, so that the coverage of that run has three tests
+# with a row.
+REPORT_7: list[records.Record] = [
+    with_tests(
+        evaluated(1, 1, "green"),
+        tests=4,
+        unmeasured=1,
+        tests_with_row=3,
+        not_in_run=0,
+    ),
+    with_tests(
+        evaluated(2, 2, "green"),
+        tests=4,
+        unmeasured=0,
+        tests_with_row=4,
+        not_in_run=0,
+    ),
+]
+
+# Report 8: two runs, each evaluated against coverage in which four tests have a
+# row, where one of those four, test_vat, is not in the second run: deleted at
+# H, as in Edge 7, so that the second run has three tests.
+REPORT_8: list[records.Record] = [
+    with_tests(
+        evaluated(1, 1, "green"),
+        tests=4,
+        unmeasured=0,
+        tests_with_row=4,
+        not_in_run=0,
+    ),
+    with_tests(
+        evaluated(2, 2, "green"),
+        tests=3,
+        unmeasured=0,
+        tests_with_row=4,
+        not_in_run=1,
+    ),
+]
+
+# Report 9: a missed run whose diff changes only templates/invoice.html and in
+# which test_render failed: K1's record, with r1's key.
+K1_RUN = evaluated(1, 7, "missed")
+
+
+def missed_run_with(
+    key: records.RunKey, *left_out: selection.Test
+) -> records.EvaluatedRecord:
+    """K1's run with this key, which left out these failed tests, in pair
+    order, as its line holds them."""
+    return dataclasses.replace(K1_RUN, key=key, failed_left_out=left_out)
+
+
+# Report 10: a caught run in which test_render also failed without being
+# selected, as in Verdict 3: its diff changes src/shop/tax.py, and test_vat and
+# test_render failed.
+REPORT_10_RUN = dataclasses.replace(
+    tax_only_run(2, 8), verdict="caught", failed_left_out=(K1_TEST_RENDER,)
+)
+
+# Report 11: 5 red runs, 2 of them, r1 and r2, without a rerun file.
+REPORT_11: list[records.Record] = [
+    evaluated(1, 1, "caught"),
+    evaluated(2, 2, "missed"),
+    given_a_rerun(evaluated(3, 3, "caught")),
+    given_a_rerun(evaluated(4, 4, "caught")),
+    given_a_rerun(evaluated(5, 5, "missed")),
+]
+
+# Report 12: 3 failed tests passed in their rerun files: test_render in r1,
+# green, as in K2, and test_total and test_vat in r2, which another failure made
+# caught.
+RENDER_PAIR = ("tests.test_report", "test_render")
+TOTAL_PAIR = ("tests.test_pricing", "test_total")
+VAT_PAIR = ("tests.test_tax", "test_vat")
+REPORT_12: list[records.Record] = [
+    given_a_rerun(evaluated(1, 1, "green"), RENDER_PAIR),
+    given_a_rerun(evaluated(2, 2, "caught"), TOTAL_PAIR, VAT_PAIR),
+]
+
+# Report 16: a run in which a changed path with no column has a newline and an
+# escape character in its name. The report shows a run's paths only next to the
+# failed tests that it left out, so the run is K1's.
+REPORT_16_RUN = dataclasses.replace(K1_RUN, no_column=("templates/new\nline\x1b.html",))
+
+# The words of Report 5 to 12, in the form that every test of these figures,
+# this list and these sentences takes.
+REPORT_5_FLOOR_RATE = "floor rate of 25%: 1 PR out of 4"
+REPORT_6_NO_COLUMN_RATE = "no-column rate of 25%: 1 PR out of 4"
+REPORT_7_UNMEASURED_SHARE = "12.5% of tests treated as unmeasured"
+REPORT_8_NOT_IN_RUN_SHARE = "12.5% of the tests with a row were not in their run"
+REPORT_11_NOT_CONFIRMED = "the failures of 2 red runs were not confirmed by a rerun"
+REPORT_12_DISCARDED = "3 failures were discarded as not reproduced"
+ORDER_DEPENDENT_FAILURES = "order-dependent failures can hide in that count"
+WHY_IT_WAS_LEFT_OUT = (
+    "its row has none of the diff's paths, and no other rule picked it"
+)
+NO_FAILED_TEST_LEFT_OUT = "no failed test left out"
+
+# A rate or a share with a zero denominator: 0 out of 0, as the miss rate.
+FLOOR_RATE_0_OUT_OF_0 = "floor rate: 0 PRs out of 0"
+NO_COLUMN_RATE_0_OUT_OF_0 = "no-column rate: 0 PRs out of 0"
+UNMEASURED_0_OUT_OF_0 = "0 out of 0 tests treated as unmeasured"
+NOT_IN_RUN_0_OUT_OF_0 = "0 out of 0 tests with a row were not in their run"
+
+# The words that show a rate or a share as a percentage, which a zero
+# denominator never gives.
+A_FLOOR_RATE = "floor rate of"
+A_NO_COLUMN_RATE = "no-column rate of"
+AN_UNMEASURED_SHARE = "% of tests treated as unmeasured"
+A_NOT_IN_RUN_SHARE = "% of the tests with a row were not in their run"
+
+# The report writes pairs, node ids and paths as JSON strings, as a record's
+# line does. These helpers write those with nothing to escape.
+
+
+def json_string(text: str) -> str:
+    """text as a JSON string, for text with nothing to escape."""
+    return '"' + text + '"'
+
+
+def json_list(items: list[str]) -> str:
+    """A JSON list of these items, each already written as JSON."""
+    return "[" + ",".join(items) + "]"
+
+
+def left_out_entry(test: selection.Test) -> str:
+    """A failed test left out, as its record's line writes it in
+    failed_left_out: its pair, its node id and its row, sorted by path."""
+    assert test.node_id is not None
+    assert test.row is not None
+    pair = json_list([json_string(name) for name in test.pair])
+    node_id = json_string(test.node_id)
+    row = json_list([json_string(path) for path in sorted(test.row)])
+    return '{"pair":' + pair + ',"node_id":' + node_id + ',"row":' + row + "}"
+
+
+def paths_with_no_column(written: str) -> str:
+    """The words that show a run's paths with no column, written as a JSON
+    list, next to the failed tests that it left out."""
+    return "paths with no column " + written
+
+
+def import_only_paths(written: str) -> str:
+    """The words that show a run's import-only paths, written as a JSON list,
+    next to the failed tests that it left out."""
+    return "import-only paths " + written
+
+
+# test_render, left out in Report 9 and 10, as K1's line writes it.
+K1_LEFT_OUT_ENTRY = (
+    '{"pair":["tests.test_report","test_render"],'
+    '"node_id":"tests/test_report.py::test_render",'
+    '"row":["src/shop/pricing.py","src/shop/report.py"]}'
+)
+
+# A backslash. Every escape made of a backslash, u and four hex digits is built
+# from it: typed in one piece in a Write or Edit call, such an escape lands in
+# the file as the character it stands for (CLAUDE.md).
+BACKSLASH = "\\"
+
+
+def u_escape(hex_digits: str) -> str:
+    """How a JSON string writes a character outside printable ASCII that has no
+    short escape: a backslash, u and these four hex digits."""
+    return BACKSLASH + "u" + hex_digits
+
+
 # A conflict's words
 
 
@@ -436,6 +713,115 @@ def test_report_15_shows(
     words: str, working_directory: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     assert shows(report_of(REPORT_15, working_directory, capsys), words)
+
+
+def test_report_5_shows_a_floor_rate_of_25_percent(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # 1 PR out of 4, not 3 runs out of 6.
+    assert shows(report_of([REPORT_5], working_directory, capsys), REPORT_5_FLOOR_RATE)
+
+
+def test_report_6_shows_a_no_column_rate_of_25_percent(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # PR 2's paths with no column came with a floor match: counted, they would
+    # give 2 PRs out of 4.
+    assert shows(
+        report_of([REPORT_6], working_directory, capsys), REPORT_6_NO_COLUMN_RATE
+    )
+
+
+def test_report_7_shows_12_5_percent_of_tests_treated_as_unmeasured(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # 1 out of 8 tests. Divided by the tests with a row, 1 out of 7, 14.3%.
+    assert shows(
+        report_of([REPORT_7], working_directory, capsys), REPORT_7_UNMEASURED_SHARE
+    )
+
+
+def test_report_8_shows_12_5_percent_of_the_tests_with_a_row_not_in_their_run(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # 1 out of 8 tests with a row. Divided by the runs' tests, 1 out of 7,
+    # 14.3%.
+    assert shows(
+        report_of([REPORT_8], working_directory, capsys), REPORT_8_NOT_IN_RUN_SHARE
+    )
+
+
+@pytest.mark.parametrize(
+    "words",
+    [
+        pytest.param(K1_LEFT_OUT_ENTRY, id="test_render, as its record writes it"),
+        pytest.param(WHY_IT_WAS_LEFT_OUT, id="why it was left out"),
+        pytest.param(
+            paths_with_no_column('["templates/invoice.html"]'),
+            id="its run's paths with no column",
+        ),
+        pytest.param(import_only_paths("[]"), id="its run's import-only paths, none"),
+        pytest.param(key_as_its_line_writes_it(K1_RUN), id="its run's key"),
+        pytest.param("PR 7", id="its run's pull request"),
+    ],
+)
+def test_report_9_lists_test_render_with_why_it_was_left_out(
+    words: str, working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert shows(report_of([[K1_RUN]], working_directory, capsys), words)
+
+
+@pytest.mark.parametrize(
+    "words",
+    [
+        pytest.param(K1_LEFT_OUT_ENTRY, id="test_render, as its record writes it"),
+        pytest.param(WHY_IT_WAS_LEFT_OUT, id="why it was left out"),
+        pytest.param(
+            paths_with_no_column("[]"), id="its run's paths with no column, none"
+        ),
+        pytest.param(import_only_paths("[]"), id="its run's import-only paths, none"),
+        pytest.param(key_as_its_line_writes_it(REPORT_10_RUN), id="its run's key"),
+        pytest.param("PR 8", id="its run's pull request"),
+    ],
+)
+def test_report_10_lists_a_caught_runs_failed_test_left_out_the_same_way(
+    words: str, working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert shows(report_of([[REPORT_10_RUN]], working_directory, capsys), words)
+
+
+def test_report_11_says_the_failures_of_2_red_runs_were_not_confirmed(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert shows(
+        report_of([REPORT_11], working_directory, capsys), REPORT_11_NOT_CONFIRMED
+    )
+
+
+@pytest.mark.parametrize(
+    "words",
+    [
+        pytest.param(REPORT_12_DISCARDED, id="the failures discarded"),
+        pytest.param(ORDER_DEPENDENT_FAILURES, id="what can hide in that count"),
+    ],
+)
+def test_report_12_says_3_failures_were_discarded_as_not_reproduced(
+    words: str, working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert shows(report_of([REPORT_12], working_directory, capsys), words)
+
+
+def test_report_16_writes_a_newline_and_an_escape_character_escaped(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # The JSON list of the run's paths with no column: the newline as a
+    # backslash and n, and the escape character as a backslash, u and 001b.
+    written = '["templates/new' + BACKSLASH + "nline" + u_escape("001b") + '.html"]'
+
+    assert shows(
+        report_of([[REPORT_16_RUN]], working_directory, capsys),
+        paths_with_no_column(written),
+    )
 
 
 # Report 17 is the first of the problems under "A record file that the report
@@ -901,7 +1287,7 @@ CONFLICT_WITH_A_HEAD_TO_ESCAPE = conflicting_records(KEY_WITH_A_HEAD_TO_ESCAPE)
             conflict(R2_MISSED, ["records-1.jsonl"]),
             id="two records that differ only in their pr",
         ),
-        # No test of task 18 looks at how the report writes a key.
+        # Task 18's tests look at a key only in the list of failed tests left out.
         pytest.param(
             [CONFLICT_WITH_A_HEAD_TO_ESCAPE],
             conflict(CONFLICT_WITH_A_HEAD_TO_ESCAPE[0], ["records-1.jsonl"]),
@@ -1048,6 +1434,1159 @@ def test_rejected_counts_are_sorted_by_reason_then_input(
     text = report_of([recorded], working_directory, capsys)
 
     assert comes_before(text, first, second)
+
+
+# The floor and no-column rates
+
+
+def test_the_no_column_rate_counts_pull_requests_not_runs(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Report 6 has a single run for each PR. Here all 3 runs of PR 1 changed
+    # only templates/invoice.html, and the single runs of PRs 2, 3 and 4 only
+    # src/shop/tax.py: counting runs would give 3 out of 6.
+    recorded: list[records.Record] = [
+        evaluated(1, 1, "green"),
+        evaluated(2, 1, "green"),
+        evaluated(3, 1, "green"),
+        tax_only_run(4, 2),
+        tax_only_run(5, 3),
+        tax_only_run(6, 4),
+    ]
+
+    assert shows(
+        report_of([recorded], working_directory, capsys), REPORT_6_NO_COLUMN_RATE
+    )
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        # Only the first of PR 1's three runs matched the floor: asked of every
+        # run, the rate would give 0 PRs, and counting runs 1 out of 6.
+        pytest.param(
+            [
+                [
+                    floor_matched_run(1, 1),
+                    evaluated(2, 1, "green"),
+                    evaluated(3, 1, "green"),
+                    evaluated(4, 2, "green"),
+                    evaluated(5, 3, "green"),
+                    evaluated(6, 4, "green"),
+                ]
+            ],
+            REPORT_5_FLOOR_RATE,
+            id="the floor rate",
+        ),
+        # Only the first of PR 1's three runs had a path with no column and no
+        # floor match: the second had no path with no column, and the third a
+        # floor match.
+        pytest.param(
+            [
+                [
+                    evaluated(1, 1, "green"),
+                    tax_only_run(2, 1),
+                    floor_matched_run(3, 1),
+                    tax_only_run(4, 2),
+                    tax_only_run(5, 3),
+                    tax_only_run(6, 4),
+                ]
+            ],
+            REPORT_6_NO_COLUMN_RATE,
+            id="the no-column rate",
+        ),
+    ],
+)
+def test_a_pr_counts_in_a_rate_when_one_of_its_runs_does(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+def test_the_no_column_rate_asks_for_both_conditions_in_one_run(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # PR 1's first run had a path with no column but a floor match, and its
+    # second run neither: taken over the PR's runs together, PR 1 would count
+    # too, 2 PRs out of 2.
+    recorded: list[records.Record] = [
+        floor_matched_run(1, 1),
+        tax_only_run(2, 1),
+        evaluated(3, 2, "green"),
+    ]
+
+    assert shows(
+        report_of([recorded], working_directory, capsys),
+        "no-column rate of 50%: 1 PR out of 2",
+    )
+
+
+def test_an_import_only_path_is_not_a_path_with_no_column(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Report 6 and the run of PR 5, which changed only src/shop/constants.py,
+    # an import-only path, as in Selection 15. Taken as a path with no column,
+    # it would give 2 PRs out of 5.
+    import_only_run = dataclasses.replace(
+        evaluated(5, 5, "green"),
+        no_column=(),
+        import_only=("src/shop/constants.py",),
+    )
+
+    assert shows(
+        report_of([[*REPORT_6, import_only_run]], working_directory, capsys),
+        "no-column rate of 20%: 1 PR out of 5",
+    )
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        pytest.param(
+            [
+                [
+                    floor_matched_run(1, 1),
+                    floor_matched_run(2, 2),
+                    evaluated(3, 3, "green"),
+                    evaluated(4, 4, "green"),
+                ]
+            ],
+            "floor rate of 50%: 2 PRs out of 4",
+            id="the floor rate",
+        ),
+        pytest.param(
+            [
+                [
+                    evaluated(1, 1, "green"),
+                    evaluated(2, 2, "green"),
+                    tax_only_run(3, 3),
+                    tax_only_run(4, 4),
+                ]
+            ],
+            "no-column rate of 50%: 2 PRs out of 4",
+            id="the no-column rate",
+        ),
+    ],
+)
+def test_a_rates_prs_are_in_the_plural_but_for_1(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # Report 5 and 6 show 1 PR, in the singular.
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+# The unmeasured and not-in-run shares
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        # 1 out of 10 tests: the mean of the two runs' shares, 25% and 0%,
+        # would give 12.5%, and counting runs 1 out of 2.
+        pytest.param(
+            [
+                [
+                    with_tests(
+                        evaluated(1, 1, "green"),
+                        tests=4,
+                        unmeasured=1,
+                        tests_with_row=3,
+                        not_in_run=0,
+                    ),
+                    with_tests(
+                        evaluated(2, 2, "green"),
+                        tests=6,
+                        unmeasured=0,
+                        tests_with_row=6,
+                        not_in_run=0,
+                    ),
+                ]
+            ],
+            "10% of tests treated as unmeasured",
+            id="the unmeasured share",
+        ),
+        # 1 out of 10 tests with a row: the mean of the two runs' shares, 0%
+        # and 16.7%, would give 8.3%, and counting runs 1 out of 2.
+        pytest.param(
+            [
+                [
+                    with_tests(
+                        evaluated(1, 1, "green"),
+                        tests=4,
+                        unmeasured=0,
+                        tests_with_row=4,
+                        not_in_run=0,
+                    ),
+                    with_tests(
+                        evaluated(2, 2, "green"),
+                        tests=5,
+                        unmeasured=0,
+                        tests_with_row=6,
+                        not_in_run=1,
+                    ),
+                ]
+            ],
+            "10% of the tests with a row were not in their run",
+            id="the not-in-run share",
+        ),
+    ],
+)
+def test_a_share_counts_tests_not_runs(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+# Reruns
+
+
+def test_a_green_run_has_no_failure_for_a_rerun_to_confirm(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Report 11 and two green runs without a rerun file: counted, they would
+    # give 4.
+    recorded: list[records.Record] = [
+        *REPORT_11,
+        evaluated(6, 6, "green"),
+        evaluated(7, 7, "green"),
+    ]
+
+    assert shows(
+        report_of([recorded], working_directory, capsys), REPORT_11_NOT_CONFIRMED
+    )
+
+
+def test_a_failure_discarded_counts_in_each_run(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # test_render passed in the rerun files of two runs: counting each pair
+    # once would give 1.
+    recorded: list[records.Record] = [
+        given_a_rerun(evaluated(1, 1, "green"), RENDER_PAIR),
+        given_a_rerun(evaluated(2, 2, "green"), RENDER_PAIR),
+    ]
+
+    assert shows(
+        report_of([recorded], working_directory, capsys),
+        "2 failures were discarded as not reproduced",
+    )
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        pytest.param(
+            [ONE_CAUGHT_RUN],
+            "the failures of 1 red run were not confirmed by a rerun",
+            id="1 red run",
+        ),
+        pytest.param(
+            [REPORT_3],
+            "the failures of 0 red runs were not confirmed by a rerun",
+            id="0 red runs",
+        ),
+        pytest.param(
+            [[given_a_rerun(evaluated(1, 1, "green"), RENDER_PAIR)]],
+            "1 failure was discarded as not reproduced",
+            id="1 failure",
+        ),
+        pytest.param(
+            [REPORT_1], "0 failures were discarded as not reproduced", id="0 failures"
+        ),
+    ],
+)
+def test_the_rerun_counts_are_in_the_singular_for_1_and_shown_with_0(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+@pytest.mark.parametrize(
+    "record_files",
+    [
+        pytest.param([REPORT_11], id="Report 11"),
+        pytest.param(
+            [[*REPORT_11, REPORT_11[2]]], id="a confirmed red run's line twice"
+        ),
+        pytest.param([[*REPORT_11, REJECTED_OF_PR_5]], id="and a rejected run"),
+    ],
+)
+def test_the_miss_rate_still_shows_its_red_runs_next_to_the_reruns(
+    record_files: list[list[records.Record]],
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # The sentence on reruns holds "<n> red run[s]", which task 16's tests
+    # look for in the miss rate: in their reports no red run has a rerun file,
+    # so the sentence holds their number too. Here it holds 2, so only the
+    # miss rate can show 5.
+    assert shows(report_of(record_files, working_directory, capsys), "5 red runs")
+
+
+# Each key once, evaluated runs only and no conflict, in the new figures. In the
+# two rates, a key whose record is there twice is still one PR, so no rate can
+# count it twice: the rates count PRs.
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        # Counted twice, the run with an unmeasured test would give 2 out of 12.
+        pytest.param(
+            [[*REPORT_7, REPORT_7[0]]],
+            REPORT_7_UNMEASURED_SHARE,
+            id="unmeasured, a line twice",
+        ),
+        pytest.param(
+            [REPORT_7, [REPORT_7[0]]],
+            REPORT_7_UNMEASURED_SHARE,
+            id="unmeasured, in two files",
+        ),
+        # Counted twice, the run without test_vat would give 2 out of 12.
+        pytest.param(
+            [[*REPORT_8, REPORT_8[1]]],
+            REPORT_8_NOT_IN_RUN_SHARE,
+            id="not in their run, a line twice",
+        ),
+        pytest.param(
+            [REPORT_8, [REPORT_8[1]]],
+            REPORT_8_NOT_IN_RUN_SHARE,
+            id="not in their run, in two files",
+        ),
+        # Counted twice, r1 would give 3.
+        pytest.param(
+            [[*REPORT_11, REPORT_11[0]]],
+            REPORT_11_NOT_CONFIRMED,
+            id="not confirmed, a line twice",
+        ),
+        pytest.param(
+            [REPORT_11, [REPORT_11[0]]],
+            REPORT_11_NOT_CONFIRMED,
+            id="not confirmed, in two files",
+        ),
+        # Counted twice, r2 would give 5.
+        pytest.param(
+            [[*REPORT_12, REPORT_12[1]]],
+            REPORT_12_DISCARDED,
+            id="discarded, a line twice",
+        ),
+        pytest.param(
+            [REPORT_12, [REPORT_12[1]]],
+            REPORT_12_DISCARDED,
+            id="discarded, in two files",
+        ),
+    ],
+)
+def test_each_key_counts_once_in_the_shares_and_the_rerun_counts(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        # PR 5 has only a rejected run: taken as an evaluated PR, it would give
+        # 1 PR out of 5.
+        pytest.param(
+            [[*REPORT_5, REJECTED_OF_PR_5]], REPORT_5_FLOOR_RATE, id="the floor rate"
+        ),
+        pytest.param(
+            [[*REPORT_6, REJECTED_OF_PR_5]],
+            REPORT_6_NO_COLUMN_RATE,
+            id="the no-column rate",
+        ),
+        # A rejected record holds no tests and no rerun file, so a report that
+        # counted one could only fail on it.
+        pytest.param(
+            [[*REPORT_7, REJECTED_OF_PR_5]],
+            REPORT_7_UNMEASURED_SHARE,
+            id="the unmeasured share",
+        ),
+        pytest.param(
+            [[*REPORT_8, REJECTED_OF_PR_5]],
+            REPORT_8_NOT_IN_RUN_SHARE,
+            id="the not-in-run share",
+        ),
+        # Taken as red, a rejected run would give 3.
+        pytest.param(
+            [[*REPORT_11, REJECTED_OF_PR_5]],
+            REPORT_11_NOT_CONFIRMED,
+            id="the red runs not confirmed",
+        ),
+        pytest.param(
+            [[*REPORT_12, REJECTED_OF_PR_5]],
+            REPORT_12_DISCARDED,
+            id="the failures discarded",
+        ),
+    ],
+)
+def test_rejected_runs_count_in_no_new_figure(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+def conflict_of(record: records.EvaluatedRecord) -> list[records.Record]:
+    """Two evaluated records with the key of record that differ: record, and
+    record evaluated against coverage from another commit, as r2 in Report
+    15."""
+    return [record, dataclasses.replace(record, coverage_commit=OTHER_M)]
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        # Counted, the conflict of PR 5 would give 2 PRs out of 5.
+        pytest.param(
+            [[*REPORT_5, *conflict_of(floor_matched_run(20, 5))]],
+            REPORT_5_FLOOR_RATE,
+            id="the floor rate",
+        ),
+        pytest.param(
+            [[*REPORT_6, *conflict_of(evaluated(20, 5, "green"))]],
+            REPORT_6_NO_COLUMN_RATE,
+            id="the no-column rate",
+        ),
+        # Counted, either of its records would give 5 out of 12.
+        pytest.param(
+            [
+                [
+                    *REPORT_7,
+                    *conflict_of(
+                        with_tests(
+                            evaluated(20, 5, "green"),
+                            tests=4,
+                            unmeasured=4,
+                            tests_with_row=0,
+                            not_in_run=0,
+                        )
+                    ),
+                ]
+            ],
+            REPORT_7_UNMEASURED_SHARE,
+            id="the unmeasured share",
+        ),
+        pytest.param(
+            [
+                [
+                    *REPORT_8,
+                    *conflict_of(
+                        with_tests(
+                            evaluated(20, 5, "green"),
+                            tests=0,
+                            unmeasured=0,
+                            tests_with_row=4,
+                            not_in_run=4,
+                        )
+                    ),
+                ]
+            ],
+            REPORT_8_NOT_IN_RUN_SHARE,
+            id="the not-in-run share",
+        ),
+        # Counted, either of its records would give 3.
+        pytest.param(
+            [[*REPORT_11, *conflict_of(evaluated(20, 5, "caught"))]],
+            REPORT_11_NOT_CONFIRMED,
+            id="the red runs not confirmed",
+        ),
+        # Counted, either of its records would give 4.
+        pytest.param(
+            [
+                [
+                    *REPORT_12,
+                    *conflict_of(given_a_rerun(evaluated(20, 5, "green"), RENDER_PAIR)),
+                ]
+            ],
+            REPORT_12_DISCARDED,
+            id="the failures discarded",
+        ),
+    ],
+)
+def test_conflicts_count_in_no_new_figure(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+# The new figures with a zero denominator
+
+# Record files with no evaluated run that the figures count.
+NO_RUN_TO_COUNT = [
+    pytest.param(NO_EVALUATED_RUN_ONLY_REJECTED, id="only rejected runs"),
+    pytest.param(NO_EVALUATED_RUN_AN_EMPTY_FILE, id="an empty record file"),
+    pytest.param(
+        [[R2_MISSED], [R2_CAUGHT_AGAINST_OTHER_COVERAGE]], id="only a conflict"
+    ),
+]
+
+
+@pytest.mark.parametrize("record_files", NO_RUN_TO_COUNT)
+@pytest.mark.parametrize(
+    "words",
+    [
+        pytest.param(FLOOR_RATE_0_OUT_OF_0, id="the floor rate"),
+        pytest.param(NO_COLUMN_RATE_0_OUT_OF_0, id="the no-column rate"),
+        pytest.param(UNMEASURED_0_OUT_OF_0, id="the unmeasured share"),
+        pytest.param(NOT_IN_RUN_0_OUT_OF_0, id="the not-in-run share"),
+    ],
+)
+def test_with_no_run_to_count_each_rate_and_share_is_0_out_of_0(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+@pytest.mark.parametrize("record_files", NO_RUN_TO_COUNT)
+@pytest.mark.parametrize(
+    "words",
+    [
+        pytest.param(A_FLOOR_RATE, id="the floor rate"),
+        pytest.param(A_NO_COLUMN_RATE, id="the no-column rate"),
+        pytest.param(AN_UNMEASURED_SHARE, id="the unmeasured share"),
+        pytest.param(A_NOT_IN_RUN_SHARE, id="the not-in-run share"),
+    ],
+)
+def test_with_no_run_to_count_no_rate_or_share_is_a_percentage(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # Each case has its twin in
+    # test_with_no_run_to_count_each_rate_and_share_is_0_out_of_0.
+    assert words not in report_of(record_files, working_directory, capsys)
+
+
+# Two green runs whose JUnit files held no test, as a file that is not a JUnit
+# file gives (Rule 5's known limits): every test with a row is not in its run.
+NO_TEST: list[list[records.Record]] = [
+    [
+        with_tests(
+            evaluated(1, 1, "green"),
+            tests=0,
+            unmeasured=0,
+            tests_with_row=4,
+            not_in_run=4,
+        ),
+        with_tests(
+            evaluated(2, 2, "green"),
+            tests=0,
+            unmeasured=0,
+            tests_with_row=4,
+            not_in_run=4,
+        ),
+    ]
+]
+
+# Two runs evaluated against coverage in which no test has a row: every test
+# is unmeasured.
+NO_TEST_WITH_A_ROW: list[list[records.Record]] = [
+    [
+        with_tests(
+            evaluated(1, 1, "green"),
+            tests=4,
+            unmeasured=4,
+            tests_with_row=0,
+            not_in_run=0,
+        ),
+        with_tests(
+            evaluated(2, 2, "green"),
+            tests=4,
+            unmeasured=4,
+            tests_with_row=0,
+            not_in_run=0,
+        ),
+    ]
+]
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        pytest.param(NO_TEST, UNMEASURED_0_OUT_OF_0, id="no test in the runs"),
+        pytest.param(
+            NO_TEST_WITH_A_ROW, NOT_IN_RUN_0_OUT_OF_0, id="no test with a row"
+        ),
+    ],
+)
+def test_a_share_with_no_test_to_count_is_0_out_of_0(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        pytest.param(NO_TEST, AN_UNMEASURED_SHARE, id="no test in the runs"),
+        pytest.param(NO_TEST_WITH_A_ROW, A_NOT_IN_RUN_SHARE, id="no test with a row"),
+    ],
+)
+def test_a_share_with_no_test_to_count_is_not_a_percentage(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # Each case has its twin in test_a_share_with_no_test_to_count_is_0_out_of_0.
+    assert words not in report_of(record_files, working_directory, capsys)
+
+
+# The new percentages, as Rule 10 writes them
+
+# PRs 2 to 16, one run each, that changed only src/shop/tax.py. With PR 1, 1 PR
+# out of 16 is 6.25%: Rule 10 rounds the tie half up, to 6.3%, while a float
+# formatted with one decimal takes it to the even digit, 6.2%.
+PRS_2_TO_16_TAX_ONLY: list[records.Record] = [
+    tax_only_run(pr, pr) for pr in range(2, 17)
+]
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        pytest.param(
+            [[floor_matched_run(1, 1), *PRS_2_TO_16_TAX_ONLY]],
+            "floor rate of 6.3%: 1 PR out of 16",
+            id="the floor rate",
+        ),
+        pytest.param(
+            [[evaluated(1, 1, "green"), *PRS_2_TO_16_TAX_ONLY]],
+            "no-column rate of 6.3%: 1 PR out of 16",
+            id="the no-column rate",
+        ),
+        pytest.param(
+            [
+                [
+                    with_tests(
+                        evaluated(1, 1, "green"),
+                        tests=16,
+                        unmeasured=1,
+                        tests_with_row=15,
+                        not_in_run=0,
+                    )
+                ]
+            ],
+            "6.3% of tests treated as unmeasured",
+            id="the unmeasured share",
+        ),
+        pytest.param(
+            [
+                [
+                    with_tests(
+                        evaluated(1, 1, "green"),
+                        tests=15,
+                        unmeasured=0,
+                        tests_with_row=16,
+                        not_in_run=1,
+                    )
+                ]
+            ],
+            "6.3% of the tests with a row were not in their run",
+            id="the not-in-run share",
+        ),
+    ],
+)
+def test_a_tie_in_a_new_percentage_rounds_half_up(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+# The failed tests left out
+
+
+@pytest.mark.parametrize(
+    "record_files",
+    [
+        pytest.param([REPORT_3], id="only green runs"),
+        pytest.param([ONE_CAUGHT_RUN], id="a caught run that left none out"),
+        pytest.param(NO_EVALUATED_RUN_AN_EMPTY_FILE, id="no run"),
+    ],
+)
+def test_an_empty_list_of_failed_tests_left_out_says_so(
+    record_files: list[list[records.Record]],
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(
+        report_of(record_files, working_directory, capsys), NO_FAILED_TEST_LEFT_OUT
+    )
+
+
+def test_a_list_of_failed_tests_left_out_with_an_entry_does_not_say_it_has_none(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Its twins are in test_an_empty_list_of_failed_tests_left_out_says_so.
+    text = report_of([[K1_RUN]], working_directory, capsys)
+
+    assert NO_FAILED_TEST_LEFT_OUT not in text
+
+
+def test_a_runs_import_only_paths_are_shown_next_to_its_failed_tests_left_out(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Report 9's run has none; this one has src/shop/constants.py, as in
+    # Selection 15.
+    run = dataclasses.replace(K1_RUN, import_only=("src/shop/constants.py",))
+
+    assert shows(
+        report_of([[run]], working_directory, capsys),
+        import_only_paths('["src/shop/constants.py"]'),
+    )
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        pytest.param("docs/guide.md", id="a path with no column"),
+        pytest.param("src/shop/constants.py", id="an import-only path"),
+    ],
+)
+def test_a_run_that_left_out_no_failed_test_shows_none_of_its_paths(
+    path: str, working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # K1's run shows its own paths. Next to it, a green run whose diff changed
+    # docs/guide.md and src/shop/constants.py.
+    green_run = dataclasses.replace(
+        evaluated(2, 8, "green"),
+        no_column=("docs/guide.md",),
+        import_only=("src/shop/constants.py",),
+    )
+    text = report_of([[K1_RUN, green_run]], working_directory, capsys)
+
+    assert path not in text
+
+
+@pytest.mark.parametrize(
+    ("record_files", "times"),
+    [
+        pytest.param([[K1_RUN, K1_RUN]], 1, id="its run's line twice"),
+        pytest.param([[K1_RUN], [K1_RUN]], 1, id="its run in two record files"),
+        pytest.param(
+            [[R1_REJECTED_FOR_ITS_COVERAGE, K1_RUN]], 1, id="its run's key rejected"
+        ),
+        # A conflict counts in no figure, so its failed tests left out are not
+        # listed either.
+        pytest.param(
+            [[K1_RUN, *conflict_of(evaluated(20, 5, "missed"))]],
+            1,
+            id="and a conflict that left it out",
+        ),
+        pytest.param(
+            [[K1_RUN, evaluated(2, 8, "missed")]], 2, id="left out by two runs"
+        ),
+    ],
+)
+def test_a_failed_test_left_out_is_listed_once_for_each_run_that_counts(
+    record_files: list[list[records.Record]],
+    times: int,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    text = report_of(record_files, working_directory, capsys)
+
+    assert text.count(K1_LEFT_OUT_ENTRY) == times
+
+
+# The order of the failed tests left out
+
+# Two failed tests left out: by pair, test_create's comes first.
+LEFT_OUT_CREATE = selection.Test(
+    pair=("tests.api.test_orders", "test_create"),
+    node_id="tests/api/test_orders.py::test_create",
+    row=frozenset({"src/shop/orders.py"}),
+)
+LEFT_OUT_VAT = selection.Test(
+    pair=("tests.test_tax", "test_vat"),
+    node_id="tests/test_tax.py::test_vat",
+    row=frozenset({"src/shop/tax.py"}),
+)
+
+# Keys whose heads differ in a letter beyond ASCII. By code point, z (U+007A)
+# comes before the n with a tilde (U+00F1); escaped, the n starts with a
+# backslash, U+005C, which comes before z.
+TARIFA_AZUL = records.RunKey(head="tarifa azul", junit_sha256=junit_sha256(1))
+TARIFA_ANO = records.RunKey(head="tarifa a\xf1o", junit_sha256=junit_sha256(1))
+
+
+@pytest.mark.parametrize(
+    ("first", "second"),
+    [
+        # Sorted by junit_sha256 first, the second would come first.
+        pytest.param(
+            R1_HEAD_WITH_R5_SHA256,
+            R2_HEAD_WITH_R3_SHA256,
+            id="by head, whatever the junit_sha256",
+        ),
+        pytest.param(
+            R1_HEAD_WITH_R3_SHA256, R1_HEAD_WITH_R5_SHA256, id="then by junit_sha256"
+        ),
+        # Sorted as the text null, it would come after the hex digits.
+        pytest.param(R1_HEAD_WITH_NO_SHA256, R1_HEAD_WITH_R3_SHA256, id="null first"),
+        pytest.param(TARIFA_AZUL, TARIFA_ANO, id="by code point, not as escaped"),
+    ],
+)
+def test_the_failed_tests_left_out_are_sorted_by_their_runs_key(
+    first: records.RunKey,
+    second: records.RunKey,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # The run with the first key left out test_vat, whose pair comes second,
+    # and its line comes second: neither the order of the lines nor that of
+    # the pairs is the order of the keys.
+    first_run = missed_run_with(first, LEFT_OUT_VAT)
+    second_run = missed_run_with(second, LEFT_OUT_CREATE)
+    text = report_of([[second_run, first_run]], working_directory, capsys)
+
+    assert comes_before(
+        text, left_out_entry(LEFT_OUT_VAT), left_out_entry(LEFT_OUT_CREATE)
+    )
+
+
+def pieces_of(run: records.EvaluatedRecord) -> list[str]:
+    """The words that show a run in the list of failed tests left out: its key,
+    its pull request, its paths with no column and each failed test that it
+    left out. For a run whose paths have nothing to escape."""
+    no_column = json_list([json_string(path) for path in run.no_column])
+    left_out = [left_out_entry(test) for test in run.failed_left_out]
+    return [
+        key_as_its_line_writes_it(run),
+        f"PR {run.pr}",
+        paths_with_no_column(no_column),
+        *left_out,
+    ]
+
+
+def all_come_before(text: str, firsts: list[str], seconds: list[str]) -> bool:
+    """Whether text shows all these words, and each of firsts, wherever it is,
+    comes before each of seconds, wherever it is."""
+    every_one_shown = all(shows(text, words) for words in [*firsts, *seconds])
+    if not every_one_shown:
+        return False
+    last_of_firsts = max(text.rindex(words) for words in firsts)
+    first_of_seconds = min(text.index(words) for words in seconds)
+    return last_of_firsts < first_of_seconds
+
+
+def test_each_run_in_the_list_shows_its_own_key_pr_paths_and_test(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # The run with the smaller key is of PR 31 and left out test_vat, and its
+    # line comes second: sorted by pull request, by the order of the lines or
+    # by pair, the other run would come first. In the other tests with several
+    # runs in the list, every run is of PR 7: this one also tells a report that
+    # shows each run with its own key, pull request and paths from one that
+    # shows the first run's for both.
+    first_run = dataclasses.replace(
+        missed_run_with(R1_HEAD_WITH_R3_SHA256, LEFT_OUT_VAT),
+        pr=31,
+        no_column=("docs/a.md",),
+    )
+    second_run = dataclasses.replace(
+        missed_run_with(R2_HEAD_WITH_R3_SHA256, LEFT_OUT_CREATE),
+        pr=13,
+        no_column=("docs/b.md",),
+    )
+    text = report_of([[second_run, first_run]], working_directory, capsys)
+
+    assert all_come_before(text, pieces_of(first_run), pieces_of(second_run))
+
+
+# A test in a class and a test of its module, as in tests/test_records.py: by
+# the whole classname, the module's comes first; by node id, by name, or by the
+# classname joined to the name, as tests.test_x.TestB.test_c, the class's would.
+LEFT_OUT_OF_THE_MODULE = selection.Test(
+    pair=("tests.test_x", "test_z"),
+    node_id="tests/test_x.py::test_z",
+    row=frozenset({"src/shop/tax.py"}),
+)
+LEFT_OUT_IN_A_CLASS = selection.Test(
+    pair=("tests.test_x.TestB", "test_c"),
+    node_id="tests/test_x.py::TestB::test_c",
+    row=frozenset({"src/shop/tax.py"}),
+)
+
+# Tests in directories whose names differ in a letter beyond ASCII, in code
+# point order: escaped, the second would come first.
+LEFT_OUT_IN_TARIFA_AZUL = selection.Test(
+    pair=("tests.tarifa azul.test_x", "test_m"),
+    node_id="tests/tarifa azul/test_x.py::test_m",
+    row=frozenset({"src/shop/tax.py"}),
+)
+LEFT_OUT_IN_TARIFA_ANO = selection.Test(
+    pair=("tests.tarifa a\xf1o.test_x", "test_m"),
+    node_id="tests/tarifa a\xf1o/test_x.py::test_m",
+    row=frozenset({"src/shop/tax.py"}),
+)
+
+
+@pytest.mark.parametrize(
+    ("left_out", "first", "second"),
+    [
+        pytest.param(
+            (LEFT_OUT_OF_THE_MODULE, LEFT_OUT_IN_A_CLASS),
+            '["tests.test_x","test_z"]',
+            '["tests.test_x.TestB","test_c"]',
+            id="by the whole classname",
+        ),
+        pytest.param(
+            (LEFT_OUT_IN_TARIFA_AZUL, LEFT_OUT_IN_TARIFA_ANO),
+            '["tests.tarifa azul.test_x","test_m"]',
+            '["tests.tarifa a' + u_escape("00f1") + 'o.test_x","test_m"]',
+            id="by code point, not as escaped",
+        ),
+    ],
+)
+def test_a_runs_failed_tests_left_out_are_sorted_by_pair(
+    left_out: tuple[selection.Test, ...],
+    first: str,
+    second: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # Each test is shown by its pair. A record's line holds them by pair
+    # already, so no record file can give them in another order: the report
+    # keeps that order, and sorts them by nothing else.
+    run = missed_run_with(K1_RUN.key, *left_out)
+    text = report_of([[run]], working_directory, capsys)
+
+    assert comes_before(text, first, second)
+
+
+# Paths whose names differ in a letter beyond ASCII, in code point order, and
+# the JSON list of them: escaped, the second would come first.
+AZUL_THEN_ANO = ("src/shop/tarifa azul.py", "src/shop/tarifa a\xf1o.py")
+AZUL_THEN_ANO_WRITTEN = (
+    '["src/shop/tarifa azul.py","src/shop/tarifa a' + u_escape("00f1") + 'o.py"]'
+)
+
+
+@pytest.mark.parametrize(
+    ("run", "words"),
+    [
+        pytest.param(
+            missed_run_with(
+                K1_RUN.key,
+                dataclasses.replace(K1_TEST_RENDER, row=frozenset(AZUL_THEN_ANO)),
+            ),
+            '"row":' + AZUL_THEN_ANO_WRITTEN,
+            id="a failed test's row",
+        ),
+        pytest.param(
+            dataclasses.replace(K1_RUN, no_column=AZUL_THEN_ANO),
+            paths_with_no_column(AZUL_THEN_ANO_WRITTEN),
+            id="its run's paths with no column",
+        ),
+        pytest.param(
+            dataclasses.replace(K1_RUN, import_only=AZUL_THEN_ANO),
+            import_only_paths(AZUL_THEN_ANO_WRITTEN),
+            id="its run's import-only paths",
+        ),
+    ],
+)
+def test_a_runs_paths_are_sorted_by_code_point(
+    run: records.EvaluatedRecord,
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # A record's line holds each list of paths by path already, as it holds
+    # the failed tests left out by pair.
+    assert shows(report_of([[run]], working_directory, capsys), words)
+
+
+# Escapes
+
+# Characters that the report writes escaped: a newline, an escape character
+# that starts a terminal colour code, and an n with a tilde. The first two are
+# ASCII, so only the n can show a report that is not ASCII.
+TO_ESCAPE = "\n\x1b[31m\xf1"
+# How a JSON string writes them, as a record's line does: the newline as its
+# short escape, the other two as a backslash, u and four hex digits.
+TO_ESCAPE_WRITTEN = BACKSLASH + "n" + u_escape("001b") + "[31m" + u_escape("00f1")
+
+
+def is_printable_ascii_with_line_ends(text: str) -> bool:
+    """Whether text holds only printable ASCII, from space to ~, and the
+    newlines that end its lines: no other control character, and nothing
+    beyond ASCII."""
+    return all(" " <= character <= "~" or character == "\n" for character in text)
+
+
+# K1's run with the characters in one of the fields that the list of failed
+# tests left out writes.
+WITH_A_CLASSNAME_TO_ESCAPE = missed_run_with(
+    K1_RUN.key,
+    dataclasses.replace(
+        K1_TEST_RENDER, pair=("tests.test_report" + TO_ESCAPE, "test_render")
+    ),
+)
+WITH_A_NAME_TO_ESCAPE = missed_run_with(
+    K1_RUN.key,
+    dataclasses.replace(
+        K1_TEST_RENDER, pair=("tests.test_report", "test_render" + TO_ESCAPE)
+    ),
+)
+WITH_A_NODE_ID_TO_ESCAPE = missed_run_with(
+    K1_RUN.key,
+    dataclasses.replace(
+        K1_TEST_RENDER, node_id="tests/test_report.py::test_render" + TO_ESCAPE
+    ),
+)
+WITH_A_ROW_TO_ESCAPE = missed_run_with(
+    K1_RUN.key,
+    dataclasses.replace(
+        K1_TEST_RENDER,
+        row=frozenset({"src/shop/pricing.py", "src/shop/report.py" + TO_ESCAPE}),
+    ),
+)
+WITH_NO_COLUMN_TO_ESCAPE = dataclasses.replace(
+    K1_RUN, no_column=("templates/invoice.html" + TO_ESCAPE,)
+)
+WITH_IMPORT_ONLY_TO_ESCAPE = dataclasses.replace(
+    K1_RUN, import_only=("src/shop/constants.py" + TO_ESCAPE,)
+)
+WITH_A_HEAD_TO_ESCAPE = dataclasses.replace(
+    K1_RUN,
+    key=records.RunKey(head="pr-7" + TO_ESCAPE, junit_sha256=junit_sha256(1)),
+)
+
+
+@pytest.mark.parametrize(
+    ("run", "written"),
+    [
+        pytest.param(
+            WITH_A_CLASSNAME_TO_ESCAPE,
+            '"tests.test_report' + TO_ESCAPE_WRITTEN + '"',
+            id="a classname",
+        ),
+        pytest.param(
+            WITH_A_NAME_TO_ESCAPE, '"test_render' + TO_ESCAPE_WRITTEN + '"', id="a name"
+        ),
+        pytest.param(
+            WITH_A_NODE_ID_TO_ESCAPE,
+            '"tests/test_report.py::test_render' + TO_ESCAPE_WRITTEN + '"',
+            id="a node id",
+        ),
+        pytest.param(
+            WITH_A_ROW_TO_ESCAPE,
+            '"src/shop/report.py' + TO_ESCAPE_WRITTEN + '"',
+            id="a path in a row",
+        ),
+        pytest.param(
+            WITH_NO_COLUMN_TO_ESCAPE,
+            '"templates/invoice.html' + TO_ESCAPE_WRITTEN + '"',
+            id="a path with no column",
+        ),
+        pytest.param(
+            WITH_IMPORT_ONLY_TO_ESCAPE,
+            '"src/shop/constants.py' + TO_ESCAPE_WRITTEN + '"',
+            id="an import-only path",
+        ),
+        pytest.param(
+            WITH_A_HEAD_TO_ESCAPE, '"pr-7' + TO_ESCAPE_WRITTEN + '"', id="a head"
+        ),
+    ],
+)
+def test_each_field_of_the_list_is_written_as_a_json_string(
+    run: records.EvaluatedRecord,
+    written: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of([[run]], working_directory, capsys), written)
+
+
+@pytest.mark.parametrize(
+    "run",
+    [
+        pytest.param(WITH_A_CLASSNAME_TO_ESCAPE, id="a classname"),
+        pytest.param(WITH_A_NAME_TO_ESCAPE, id="a name"),
+        pytest.param(WITH_A_NODE_ID_TO_ESCAPE, id="a node id"),
+        pytest.param(WITH_A_ROW_TO_ESCAPE, id="a path in a row"),
+        pytest.param(WITH_NO_COLUMN_TO_ESCAPE, id="a path with no column"),
+        pytest.param(WITH_IMPORT_ONLY_TO_ESCAPE, id="an import-only path"),
+        pytest.param(WITH_A_HEAD_TO_ESCAPE, id="a head"),
+        pytest.param(REPORT_16_RUN, id="Report 16's path with no column"),
+    ],
+)
+def test_with_characters_to_escape_in_the_list_the_report_is_printable_ascii(
+    run: records.EvaluatedRecord,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # Each case has its twin in
+    # test_each_field_of_the_list_is_written_as_a_json_string, or, for Report
+    # 16, in test_report_16_writes_a_newline_and_an_escape_character_escaped.
+    assert is_printable_ascii_with_line_ends(
+        report_of([[run]], working_directory, capsys)
+    )
+
+
+# A record file whose name holds the characters, with one of the records of
+# r2's conflict.
+RECORD_FILE_TO_ESCAPE = "records" + TO_ESCAPE + ".jsonl"
+
+
+def report_of_a_conflict_in_a_record_file_to_escape(
+    directory: Path, capsys: pytest.CaptureFixture[str]
+) -> str:
+    """What report.run writes for r2's conflict, with its records in
+    RECORD_FILE_TO_ESCAPE and in records.jsonl."""
+    write_record_file(directory / RECORD_FILE_TO_ESCAPE, [R2_MISSED])
+    write_record_file(directory / "records.jsonl", [R2_CAUGHT_AGAINST_OTHER_COVERAGE])
+    report.run([RECORD_FILE_TO_ESCAPE, "records.jsonl"])
+    return capsys.readouterr().out
+
+
+def test_a_conflicts_record_file_is_written_as_a_json_string(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    text = report_of_a_conflict_in_a_record_file_to_escape(working_directory, capsys)
+
+    assert shows(text, '"records' + TO_ESCAPE_WRITTEN + '.jsonl"')
+
+
+def test_with_a_record_file_to_escape_the_report_is_printable_ascii(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    text = report_of_a_conflict_in_a_record_file_to_escape(working_directory, capsys)
+
+    assert is_printable_ascii_with_line_ends(text)
 
 
 # A record file that the report cannot use
@@ -1242,6 +2781,58 @@ def test_invariants_1_two_reports_are_byte_identical_in_any_order_of_files_and_l
     # reversed.
     write_record_file(working_directory / "a.jsonl", list(reversed(INVARIANTS_1_A)))
     write_record_file(working_directory / "b.jsonl", list(reversed(INVARIANTS_1_B)))
+    second = report_through_python_m(["b.jsonl", "a.jsonl"], "1", working_directory)
+
+    assert first == second
+
+
+# Invariants 1 for the list of failed tests left out: runs under keys that share
+# their head, one with a null junit_sha256; runs that left out two tests, or
+# whose paths go beyond ASCII; runs of the rates, the shares and the reruns; and
+# a conflict with a record in each file.
+INVARIANTS_1_CONFLICT = conflict_of(evaluated(20, 9, "missed"))
+INVARIANTS_1_LEFT_OUT_A: list[records.Record] = [
+    missed_run_with(R1_HEAD_WITH_R3_SHA256, LEFT_OUT_CREATE),
+    floor_matched_run(11, 11),
+    dataclasses.replace(
+        missed_run_with(R1_HEAD_WITH_R5_SHA256, LEFT_OUT_VAT), no_column=AZUL_THEN_ANO
+    ),
+    with_tests(
+        evaluated(12, 12, "caught"),
+        tests=4,
+        unmeasured=1,
+        tests_with_row=3,
+        not_in_run=0,
+    ),
+    missed_run_with(
+        R2_HEAD_WITH_R3_SHA256, LEFT_OUT_OF_THE_MODULE, LEFT_OUT_IN_A_CLASS
+    ),
+    INVARIANTS_1_CONFLICT[0],
+]
+INVARIANTS_1_LEFT_OUT_B: list[records.Record] = [
+    missed_run_with(R1_HEAD_WITH_NO_SHA256, LEFT_OUT_VAT),
+    given_a_rerun(evaluated(13, 13, "green"), RENDER_PAIR),
+    INVARIANTS_1_CONFLICT[1],
+    tax_only_run(14, 14),
+    missed_run_with(R1_HEAD_WITH_R3_SHA256, LEFT_OUT_CREATE),
+]
+
+
+def test_invariants_1_holds_for_the_failed_tests_left_out(
+    working_directory: Path,
+) -> None:
+    write_record_file(working_directory / "a.jsonl", INVARIANTS_1_LEFT_OUT_A)
+    write_record_file(working_directory / "b.jsonl", INVARIANTS_1_LEFT_OUT_B)
+    first = report_through_python_m(["a.jsonl", "b.jsonl"], "0", working_directory)
+
+    # The same records, the record files in the other order and their lines
+    # reversed.
+    write_record_file(
+        working_directory / "a.jsonl", list(reversed(INVARIANTS_1_LEFT_OUT_A))
+    )
+    write_record_file(
+        working_directory / "b.jsonl", list(reversed(INVARIANTS_1_LEFT_OUT_B))
+    )
     second = report_through_python_m(["b.jsonl", "a.jsonl"], "1", working_directory)
 
     assert first == second
