@@ -43,3 +43,7 @@ It is not packaged. It needs Python 3.12, the pinned requirements in `requiremen
 - `docs/SPEC.md`: the specification, with the Bet.
 - `docs/DECISIONS.md`: the decisions, D-001 to D-007.
 - `TASKS.md`: the tasks, and the notes from the pilot.
+
+## License
+
+MIT; see `LICENSE`.
