@@ -1,6 +1,7 @@
 {
   "idleCompaction": false,
   "permissions": {
+    "ask": ["Bash(git push *)"],
     "defaultMode": "acceptEdits",
     "blockReadsOutsideWorkingDirectories": true,
     "allow": [
@@ -29,7 +30,6 @@
       "Edit(/.claude/stop-state.json)",
       "Read(.env)",
       "Read(.env.*)",
-      "Bash(git push *)",
       "Bash(git -C * push*)",
       "Bash(git -c * push*)",
       "Bash(gh *)",
