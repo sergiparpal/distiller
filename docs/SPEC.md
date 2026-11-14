@@ -11,6 +11,7 @@ examples. -->
 - Hypothesis: on sergiparpal/adaptive-policy-compilation, an all-affected, file-level selector would cut at least 25% of the full suite's test time across its PRs.
 - Appetite: 3 weeks, ended 2026-10-31; renewed once, on 2026-10-31, with no scope cut, to 2026-11-14, after the agent subscription lapsed on 2026-10-26.
 - Kill signal: at the end of the appetite, the savings measured on sergiparpal/adaptive-policy-compilation are below 25%, or Slice 1 does not run end to end in its CI.
+- Outcome: killed on 2026-11-14 (D-007). At the end of the appetite, the savings measured on sergiparpal/adaptive-policy-compilation were 16.8%, over 97 runs of 53 PRs, below 25%; Slice 1 ran end to end in its CI.
 
 ## Problem
 Teams whose pull-request CI is dominated by the test suite. As the suite grows, every PR waits for all of it and CI time becomes the bottleneck of the feedback loop: developers wait, and the platform or DevEx team that owns CI pays for the minutes. Today they run the full suite on every PR, keep hand-written per-directory rules, or buy a predictive service that ranks tests but cannot say why a given test did not run. None of these tells a team, from its own history, how often running fewer tests would have let a real failure through, and nobody hands a selector authority without that number.
