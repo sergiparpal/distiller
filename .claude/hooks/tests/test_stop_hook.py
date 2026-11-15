@@ -88,6 +88,17 @@ if shown:
 sys.exit(1 if shown else 0)
 """
 
+# Runs inside the sandbox as make verify: git starts although Stop was given
+# git configuration in its environment.
+GIT_CONFIG_PROBE = """\
+import subprocess, sys
+
+status = subprocess.run(["git", "status", "--short"], capture_output=True,
+                        text=True, check=False)
+print(status.stderr, end="")
+sys.exit(status.returncode)
+"""
+
 
 def git(repo: Path, *arguments: str) -> str:
     return subprocess.run(
@@ -475,6 +486,20 @@ def test_the_checks_run_offline_hidden_and_without_credentials(
     assert (repo / "written-inside.txt").exists()
     assert not outside.exists()
     assert (repo / ".claude/settings.local.json").read_text() == "canary"
+
+
+def test_the_checks_run_git_when_the_environment_holds_git_config(repo: Path) -> None:
+    (repo / "probe.py").write_text(GIT_CONFIG_PROBE, encoding="utf-8")
+    (repo / "Makefile").write_text("verify:\n\t@python3 probe.py\n", encoding="utf-8")
+    git_config = {
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "safe.directory",
+        "GIT_CONFIG_VALUE_0": str(repo),
+    }
+
+    result = stop(repo, environment=git_config)
+
+    assert (result.returncode, result.stdout) == (0, "")
 
 
 def test_the_checks_cannot_write_what_runs_outside_the_sandbox(repo: Path) -> None:

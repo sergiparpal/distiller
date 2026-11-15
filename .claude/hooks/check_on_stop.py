@@ -43,6 +43,10 @@ MAX_BLOCKS = 2
 DEADLINE = int(os.environ.get("STOP_HOOK_DEADLINE_SECONDS", "540"))
 OUTPUT_LINES = 40
 CREDENTIAL_WORDS = ("TOKEN", "KEY", "SECRET")
+# git reads GIT_CONFIG_COUNT pairs of GIT_CONFIG_KEY_<n> and GIT_CONFIG_VALUE_<n>.
+# The keys' names hold KEY, and a count left without its keys stops git, so the
+# three go together.
+GIT_ENVIRONMENT_CONFIG = ("GIT_CONFIG_COUNT", "GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_")
 HOW_OUT = (
     "Fix it and stop again. If a test looks wrong, or the same failure survives "
     "two attempts, write the test name, the SPEC example and your reason to "
@@ -263,12 +267,14 @@ def sandboxed(repo: Repo, command: list[str]) -> list[str]:
     return [*arguments, *command]
 
 
+def is_kept(name: str) -> bool:
+    if name.startswith(GIT_ENVIRONMENT_CONFIG):
+        return False
+    return not any(word in name.upper() for word in CREDENTIAL_WORDS)
+
+
 def clean_environment() -> dict[str, str]:
-    return {
-        name: value
-        for name, value in os.environ.items()
-        if not any(word in name.upper() for word in CREDENTIAL_WORDS)
-    }
+    return {name: value for name, value in os.environ.items() if is_kept(name)}
 
 
 def blocks_so_far(repo: Repo, data: dict[str, object]) -> int:
