@@ -1,10 +1,10 @@
 {
   "idleCompaction": false,
   "permissions": {
-    "ask": ["Bash(git push *)"],
     "defaultMode": "acceptEdits",
     "blockReadsOutsideWorkingDirectories": true,
     "allow": [
+      "Bash(git push *)",
       "Bash(make check)",
       "Bash(make verify)",
       "Bash(make test)",
