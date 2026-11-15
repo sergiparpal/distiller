@@ -10,6 +10,8 @@ behind something that runs outside the sandbox later.
 - tests phase: make format lint types, because red tests are expected there;
 - any other phase: make verify, which is make check without pip-audit;
 - implement phase: the frozen files must also match the commit in .claude/phase;
+- tests phase: what configures the checks must also match the commit there, and so
+  must the root pyproject.toml, all but [tool.importlinter];
 - every phase: no path in .claude/tests-phase.log may lie inside src/.
 
 What the agent can fix blocks the stop (exit 2) twice per turn; the third
@@ -22,11 +24,13 @@ import os
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from typing import NoReturn, cast
 
 from phase import (
     FROZEN_PATHSPECS,
+    TESTS_PHASE_PATHSPECS,
     Phase,
     PhaseError,
     Repo,
@@ -106,8 +110,8 @@ def phase_and_unfixable_problems(repo: Repo) -> tuple[Phase | None, list[str]]:
         phase = read_phase(repo)
     except PhaseError as error:
         return None, [str(error), *problems]
-    if phase.name == "implement":
-        problems += commit_problems(repo, phase.commit)
+    if phase.name in ("tests", "implement"):
+        problems += commit_problems(repo, phase)
     return phase, problems
 
 
@@ -144,9 +148,10 @@ def is_clean(line: str, repo: Repo) -> bool:
     return True
 
 
-def commit_problems(repo: Repo, commit: str | None) -> list[str]:
+def commit_problems(repo: Repo, phase: Phase) -> list[str]:
+    commit = phase.commit
     if commit is None:
-        return [".claude/phase says implement but names no commit."]
+        return [f".claude/phase says {phase.name} but names no commit."]
     found = run_sandboxed(
         repo,
         [
@@ -165,7 +170,11 @@ def commit_problems(repo: Repo, commit: str | None) -> list[str]:
 
 
 def frozen_report(repo: Repo, phase: Phase) -> str | None:
-    if phase.name != "implement" or phase.commit is None:
+    if phase.commit is None:
+        return None
+    if phase.name == "tests":
+        return tests_phase_report(repo, phase.commit)
+    if phase.name != "implement":
         return None
     changed = git_lines(
         repo, ["diff", "--name-only", phase.commit, "--", *FROZEN_PATHSPECS]
@@ -183,13 +192,77 @@ def frozen_report(repo: Repo, phase: Phase) -> str | None:
     return "\n".join(lines)
 
 
-def new_frozen_files(repo: Repo) -> list[str]:
+def tests_phase_report(repo: Repo, commit: str) -> str | None:
+    changed = git_lines(
+        repo, ["diff", "--name-only", commit, "--", *TESTS_PHASE_PATHSPECS]
+    )
+    added = new_frozen_files(repo, TESTS_PHASE_PATHSPECS)
+    pyproject = pyproject_change(repo, commit)
+    if not changed and not added and pyproject is None:
+        return None
+    header = (
+        f"What configures the checks differs from {commit}, where the tests phase "
+        "began:"
+    )
+    lines = [header]
+    if changed:
+        lines.append(f"  restore with: git checkout {commit} -- {' '.join(changed)}")
+    if added:
+        lines.append(f"  delete, as they are new: {' '.join(added)}")
+    if pyproject is not None:
+        lines.append(f"  {pyproject}")
+    return "\n".join(lines)
+
+
+def pyproject_change(repo: Repo, commit: str) -> str | None:
+    # The tests phase may add the import-linter contract of a new module, and
+    # nothing else, to the root pyproject.toml: pytest, coverage, ruff and pyright
+    # read their settings from it too.
+    before = run_sandboxed(
+        repo, ["git", "show", f"{commit}:pyproject.toml"], timeout=60
+    )
+    current = repo.root / "pyproject.toml"
+    had_it = before.returncode == 0
+    has_it = current.is_file()
+    if had_it != has_it:
+        return (
+            f"pyproject.toml was added or removed since {commit}, and only its "
+            "[tool.importlinter] may change"
+        )
+    if not had_it:
+        return None
+    try:
+        old = tomllib.loads(before.stdout)
+        new = tomllib.loads(current.read_text(encoding="utf-8"))
+    except tomllib.TOMLDecodeError as error:
+        return f"pyproject.toml is not valid TOML: {error}"
+    if without_import_contracts(old) == without_import_contracts(new):
+        return None
+    return (
+        f"pyproject.toml differs from {commit} outside [tool.importlinter]: "
+        f"restore it with git checkout {commit} -- pyproject.toml, then add only "
+        "the import-linter contract"
+    )
+
+
+def without_import_contracts(settings: dict[str, object]) -> dict[str, object]:
+    tool = settings.get("tool")
+    if not isinstance(tool, dict):
+        return settings
+    tools = cast("dict[str, object]", tool)
+    kept = {name: value for name, value in tools.items() if name != "importlinter"}
+    return {**settings, "tool": kept}
+
+
+def new_frozen_files(
+    repo: Repo, pathspecs: tuple[str, ...] = FROZEN_PATHSPECS
+) -> list[str]:
     # Only the root .gitignore may hide a new file: it is frozen, so a change to it
     # shows in git diff. Nested .gitignore files and .git/info/exclude do not.
     arguments = ["ls-files", "--others"]
     if (repo.root / ".gitignore").is_file():
         arguments.append("--exclude-from=.gitignore")
-    return git_lines(repo, [*arguments, "--", *FROZEN_PATHSPECS])
+    return git_lines(repo, [*arguments, "--", *pathspecs])
 
 
 def git_lines(repo: Repo, arguments: list[str]) -> list[str]:

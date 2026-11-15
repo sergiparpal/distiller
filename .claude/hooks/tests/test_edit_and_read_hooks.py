@@ -175,6 +175,69 @@ def test_an_unknown_phase_blocks_every_edit(repo: Path) -> None:
     assert "neither 'tests' nor 'implement <commit>'" in result.stderr
 
 
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "scripts/check_characters.py",
+        "scripts/new.py",
+        "Makefile",
+        "pytest.ini",
+        ".coveragerc",
+        "pyrightconfig.json",
+        ".pre-commit-config.yaml",
+        "conftest.py",
+        "tests/conftest.py",
+        "tests/deep/conftest.py",
+        "tests/pyproject.toml",
+        "tests/ruff.toml",
+        "tests/.gitignore",
+        "src/pyproject.toml",
+        "src/pkg/ruff.toml",
+        ".gitattributes",
+        ".gitignore",
+    ],
+)
+def test_the_tests_phase_freezes_what_configures_the_checks(
+    repo: Path, relative: str
+) -> None:
+    set_phase(repo, "tests 0123abc\n")
+    call = tool_call(repo, "Edit", file_path=str(repo / relative))
+
+    result = run_hook("freeze_tests.py", repo, call)
+
+    assert result.returncode == 2
+    assert "is frozen in the tests phase" in result.stderr
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "tests/test_core.py",
+        "tests/test_new.py",
+        "tests/deep/test_new.py",
+        "pyproject.toml",
+        "src/pkg/new.py",
+        "docs/SPEC.md",
+    ],
+)
+def test_the_tests_phase_lets_tests_and_the_contract_be_written(
+    repo: Path, relative: str
+) -> None:
+    set_phase(repo, "tests 0123abc\n")
+    call = tool_call(repo, "Write", file_path=str(repo / relative), content="x")
+
+    result = run_hook("freeze_tests.py", repo, call)
+
+    assert (result.returncode, result.stderr) == (0, "")
+
+
+def test_the_tests_phase_with_no_commit_still_freezes(repo: Path) -> None:
+    set_phase(repo, "tests\n")
+    call = tool_call(repo, "Edit", file_path=str(repo / "Makefile"))
+
+    assert run_hook("freeze_tests.py", repo, call).returncode == 2
+
+
 # guard_reads.py: PreToolUse on Read, Grep, Glob, Bash, WebFetch and MCP tools
 
 

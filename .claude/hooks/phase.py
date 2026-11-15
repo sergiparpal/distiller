@@ -2,7 +2,9 @@
 
 The user sets .claude/phase by hand, never the agent:
 - no file, or an empty one: no phase;
-- "tests": write tests from docs/SPEC.md without reading src/;
+- "tests <commit>": write tests from docs/SPEC.md without reading src/, and
+  without changing what <commit> holds of the files that configure the checks
+  (TESTS_PHASE_PATHSPECS; in the root pyproject.toml, all but [tool.importlinter]);
 - "implement <commit>": make the tests of <commit> pass without changing what
   that commit froze (FROZEN_PATHSPECS).
 """
@@ -51,6 +53,17 @@ FROZEN_PATHSPECS = (
     *FROZEN_AT_ROOT,
     *(f":(glob)**/{name}" for name in FROZEN_ANYWHERE),
 )
+# The tests phase writes tests/ and, in the root pyproject.toml, the import-linter
+# contract of a new module, so neither is frozen there; what configures the tools
+# stays frozen in every directory, tests/ included. Stop compares the root
+# pyproject.toml on its own, all but [tool.importlinter].
+TESTS_PHASE_DIRECTORIES = ("scripts",)
+TESTS_PHASE_PATHSPECS = (
+    *TESTS_PHASE_DIRECTORIES,
+    *FROZEN_AT_ROOT,
+    *(f":(glob)**/{name}" for name in FROZEN_ANYWHERE),
+    ":(exclude)pyproject.toml",
+)
 
 
 @dataclass(frozen=True)
@@ -81,7 +94,7 @@ class Repo:
 @dataclass(frozen=True)
 class Phase:
     name: str | None  # None, "tests" or "implement"
-    commit: str | None  # the tests commit, only for "implement"
+    commit: str | None  # "tests": where the phase began; "implement": the tests commit
 
 
 class PhaseError(Exception):
@@ -108,6 +121,8 @@ def read_phase(repo: Repo) -> Phase:
             return Phase(None, None)
         case ["tests"]:
             return Phase("tests", None)
+        case ["tests", commit]:
+            return Phase("tests", commit)
         case ["implement"]:
             return Phase("implement", None)
         case ["implement", commit]:
@@ -125,6 +140,16 @@ def is_frozen(path: Path, repo: Repo) -> bool:
         return False
     in_a_frozen_directory = any(
         is_inside(path, repo.root / name) for name in FROZEN_DIRECTORIES
+    )
+    at_the_root = path.parent == repo.root and path.name in FROZEN_AT_ROOT
+    return in_a_frozen_directory or at_the_root or path.name in FROZEN_ANYWHERE
+
+
+def is_frozen_in_tests(path: Path, repo: Repo) -> bool:
+    if not is_inside(path, repo.root) or path == repo.root / "pyproject.toml":
+        return False
+    in_a_frozen_directory = any(
+        is_inside(path, repo.root / name) for name in TESTS_PHASE_DIRECTORIES
     )
     at_the_root = path.parent == repo.root and path.name in FROZEN_AT_ROOT
     return in_a_frozen_directory or at_the_root or path.name in FROZEN_ANYWHERE

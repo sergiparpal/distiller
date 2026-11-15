@@ -141,6 +141,12 @@ def implement(repo: Path) -> str:
     return sha
 
 
+def begin_tests_phase(repo: Path) -> str:
+    sha = git(repo, "rev-parse", "HEAD")
+    set_phase(repo, f"tests {sha}\n")
+    return sha
+
+
 def stop(
     repo: Path,
     prompt: str | None = "prompt-1",
@@ -254,19 +260,126 @@ def test_a_hung_check_counts_as_red(repo: Path) -> None:
 
 
 def test_the_tests_phase_expects_red_tests(repo: Path) -> None:
-    set_phase(repo, "tests\n")
+    set_phase(repo, "tests HEAD\n")
     (repo / "RED").touch()
 
     assert stop(repo).returncode == 0
 
 
 def test_the_tests_phase_checks_format_lint_and_types(repo: Path) -> None:
-    set_phase(repo, "tests\n")
+    set_phase(repo, "tests HEAD\n")
     (repo / "LINT-RED").touch()
 
     reason = blocks(stop(repo))
 
     assert "`make format lint types` is red" in reason
+
+
+def test_the_tests_phase_needs_the_commit_it_began_at(repo: Path) -> None:
+    set_phase(repo, "tests\n")
+
+    assert "says tests but names no commit" in ends_turn(stop(repo))
+
+
+def test_the_tests_phase_lets_tests_and_stubs_be_added(repo: Path) -> None:
+    begin_tests_phase(repo)
+    (repo / "tests/test_new.py").write_text("VALUE = 3\n", encoding="utf-8")
+    (repo / "src/pkg/new.py").write_text("VALUE = 3\n", encoding="utf-8")
+    commit(repo, "the new tests")
+
+    result = stop(repo)
+
+    assert (result.returncode, result.stdout) == (0, "")
+
+
+@pytest.mark.parametrize("relative", ["Makefile", ".gitignore"])
+def test_the_tests_phase_catches_a_changed_file_that_configures_the_checks(
+    repo: Path, relative: str
+) -> None:
+    sha = begin_tests_phase(repo)
+    with (repo / relative).open("a", encoding="utf-8") as frozen:
+        frozen.write("\n# changed through Bash\n")
+
+    reason = blocks(stop(repo))
+
+    assert f"restore with: git checkout {sha} -- {relative}" in reason
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "scripts/new.py",
+        "pytest.ini",
+        ".coveragerc",
+        "conftest.py",
+        "tests/conftest.py",
+        "tests/pyproject.toml",
+        "tests/ruff.toml",
+        "src/pkg/ruff.toml",
+        ".gitattributes",
+    ],
+)
+def test_the_tests_phase_catches_a_new_file_that_configures_the_checks(
+    repo: Path, relative: str
+) -> None:
+    begin_tests_phase(repo)
+    (repo / relative).parent.mkdir(parents=True, exist_ok=True)
+    (repo / relative).write_text("VALUE = 4\n", encoding="utf-8")
+
+    reason = blocks(stop(repo))
+
+    assert f"delete, as they are new: {relative}" in reason
+
+
+def test_the_tests_phase_catches_a_file_committed_during_the_phase(repo: Path) -> None:
+    begin_tests_phase(repo)
+    (repo / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
+    commit(repo, "configure pytest")
+
+    assert "pytest.ini" in blocks(stop(repo))
+
+
+def test_the_tests_phase_lets_the_import_linter_contract_change(repo: Path) -> None:
+    begin_tests_phase(repo)
+    contract = (
+        "\n[[tool.importlinter.contracts]]\n"
+        'name = "pkg imports no network module"\n'
+        'type = "forbidden"\n'
+        'source_modules = ["pkg"]\n'
+        'forbidden_modules = ["socket"]\n'
+    )
+    with (repo / "pyproject.toml").open("a", encoding="utf-8") as settings:
+        settings.write(contract)
+
+    result = stop(repo)
+
+    assert (result.returncode, result.stdout) == (0, "")
+
+
+def test_the_tests_phase_catches_pyproject_changed_outside_import_linter(
+    repo: Path,
+) -> None:
+    sha = begin_tests_phase(repo)
+    with (repo / "pyproject.toml").open("a", encoding="utf-8") as settings:
+        settings.write('addopts = "-p no:cacheprovider"\n')
+
+    reason = blocks(stop(repo))
+
+    assert f"pyproject.toml differs from {sha} outside [tool.importlinter]" in reason
+
+
+def test_the_tests_phase_catches_a_pyproject_that_is_not_toml(repo: Path) -> None:
+    begin_tests_phase(repo)
+    (repo / "pyproject.toml").write_text("[tool.pytest\n", encoding="utf-8")
+
+    assert "pyproject.toml is not valid TOML" in blocks(stop(repo))
+
+
+def test_the_tests_phase_catches_a_removed_pyproject(repo: Path) -> None:
+    begin_tests_phase(repo)
+    (repo / "pyproject.toml").unlink()
+
+    assert "pyproject.toml was added or removed" in blocks(stop(repo))
 
 
 # The implement phase
@@ -422,7 +535,7 @@ def test_a_broken_phase_file_ends_the_turn(
     assert expected in ends_turn(stop(repo))
 
 
-@pytest.mark.parametrize("phase", [None, "tests\n", "implement HEAD\n"])
+@pytest.mark.parametrize("phase", [None, "tests HEAD\n", "implement HEAD\n"])
 def test_a_log_that_read_src_ends_the_turn_in_every_phase(
     repo: Path, phase: str | None
 ) -> None:
