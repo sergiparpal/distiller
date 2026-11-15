@@ -12,7 +12,7 @@ Defects found and not yet fixed.
 
 ### To decide
 Inputs that real tools or users can give and whose handling the SPEC does not settle.
-- **Note 53.** A path swapped for a FIFO between `os.stat` and the open would still block `read_record_file` or `append_record`, as it would `read_junit` and `read_floor`. Opening with `O_NONBLOCK` and then checking with `os.fstat`, instead of Rule 3's `os.stat` first, would not block: a FIFO opened that way for reading opens at once, and one opened for writing with no reader fails with `ENXIO` (checked on Linux, 2026-10-25). Found in task 12's tests phase, 2026-10-25.
+- **Note 53.** A path swapped for a FIFO between `os.stat` and the open would still block `read_record_file` or `append_record`, as it would `read_junit` and `read_floor`. Opening with `O_NONBLOCK` and then checking with `os.fstat`, instead of Rule 3's `os.stat` first, would not block: a FIFO opened that way for reading opens at once, and one opened for writing with no reader fails with `ENXIO` (checked on Linux, 2026-10-25). Found in task 12's tests phase, 2026-10-25. Decided on 2026-11-15 in 00e2aab, as the user chose: Rule 3 lists it as a known limit, kept as it is; opening with `O_NONBLOCK` stays an option.
 
 ### To check again
 Claims not verified yet, and behaviour to check again when a tool is upgraded.
