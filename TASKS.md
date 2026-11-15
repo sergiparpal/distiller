@@ -9,7 +9,6 @@ What someone still has to do or decide.
 
 ### To fix
 Defects found and not yet fixed.
-- **Note 3.** In the tests phase nothing stops the agent from creating the files that implement freezes (pytest.ini, ruff.toml, .gitattributes and the rest of `FROZEN_AT_ROOT` and `FROZEN_ANYWHERE` in `.claude/hooks/phase.py`); one that enters the tests commit becomes implement's reference. Fixed on 2026-11-15 in 2bff724 (D-008): `.claude/phase` says `tests <commit>`, and in that phase `freeze_tests.py` and Stop keep `TESTS_PHASE_PATHSPECS` as that commit has them, and the root `pyproject.toml` too, all but `[tool.importlinter]`.
 
 ### To decide
 Inputs that real tools or users can give and whose handling the SPEC does not settle.
@@ -91,6 +90,7 @@ What a tests or implement session needs to know about the tools.
 ## Resolved
 
 Notes whose point is settled, kept for the record.
+- **Note 3.** In the tests phase nothing stops the agent from creating the files that implement freezes (pytest.ini, ruff.toml, .gitattributes and the rest of `FROZEN_AT_ROOT` and `FROZEN_ANYWHERE` in `.claude/hooks/phase.py`); one that enters the tests commit becomes implement's reference. Fixed on 2026-11-15 in 2bff724 (D-008): `.claude/phase` says `tests <commit>`, and in that phase `freeze_tests.py` and Stop keep `TESTS_PHASE_PATHSPECS` as that commit has them, and the root `pyproject.toml` too, all but `[tool.importlinter]`.
 - **Note 4.** `.git/info/` could be written from the agent's Bash, and git does not track it: `.git/info/attributes` outranks every `.gitattributes`, and `.git/info/exclude` hides untracked files from `scripts/check_characters.py`. Done in fbb10d9: `"Edit(/.git/info/**)"` is among the deny rules of `.claude/settings.json`. With the rules for .venv, .git/hooks and .git/config, the Bash sandbox made those read-only; the same holds for .git/info: on 2026-11-15, `test -w`, an access check that writes nothing, gave `.git/info` and `.git/info/exclude` as not writable from the sandbox, as it did `.git/hooks` and `.git/config`.
 - **Note 5.** `clean_environment` in the Stop hook drops `GIT_CONFIG_KEY_n`, whose names hold KEY, but keeps `GIT_CONFIG_COUNT`, so git fails inside Stop's bwrap wherever that variable is set. The Bash sandbox sets it, which is why the implement-phase Stop tests fail there. Fixed on 2026-11-15 in 1022631: `clean_environment` drops `GIT_CONFIG_COUNT`, `GIT_CONFIG_KEY_n` and `GIT_CONFIG_VALUE_n` together, and `test_the_checks_run_git_when_the_environment_holds_git_config` runs git inside Stop's sandbox with them set. In today's agent sandbox the Stop tests fail before git runs, since no bwrap can start there (note 89).
 - **Note 6.** `rev-parse --verify --quiet --end-of-options NAME^{commit}` exits with 128, not 1, for some names that name no commit, such as `HEAD@{99}` with a shorter reflog (run with git 2.43.0, 2026-10-18); the SPEC's "Checked" lists only 1. `git.resolve_commit` gives `None` for any failure, and no test pins the 128 case. Task 14's tests pin it end to end, with `HEAD@{99}` as an H that names no commit, and the SPEC's "Checked" lists 128 since then (2026-10-28).
