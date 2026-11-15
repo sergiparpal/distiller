@@ -2,15 +2,17 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
+import sys
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import coverage
 import pytest
 
-from distiller import cli, evaluate
+from distiller import cli, evaluate, messages
 
 # Each test lays out one run's inputs in tmp_path, its working directory,
 # evaluates the run against a git repository that the module builds once, and
@@ -635,6 +637,59 @@ def test_k3_the_warning_names_the_runs_key_as_the_record_holds_it(
     assert K1_SHA256 in output.err
 
 
+# K3 with another pull request or another M (note 59): the key holds neither,
+# so the run is still the one already recorded.
+
+
+def with_another_pr(args: evaluate.RunArgs) -> evaluate.RunArgs:
+    return replace(args, pr=8)
+
+
+def with_the_merge_base_as_m(args: evaluate.RunArgs) -> evaluate.RunArgs:
+    # An M that the evaluation could use: K1's M is one of its ancestors.
+    return replace(args, coverage_commit=MERGE_BASE[:12])
+
+
+OTHER_PR_OR_M = [
+    pytest.param(with_another_pr, id="another pull request"),
+    pytest.param(with_the_merge_base_as_m, id="the merge-base as M"),
+]
+
+
+@pytest.mark.parametrize("change", OTHER_PR_OR_M)
+def test_k3_a_run_already_recorded_is_not_appended_again_with_another_pr_or_m(
+    change: Callable[[evaluate.RunArgs], evaluate.RunArgs],
+    shop: Shop,
+    tmp_path: Path,
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    record_file(tmp_path).write_bytes(K1_LINE)
+    os.utime(record_file(tmp_path), ns=(0, 0))
+
+    code = evaluate.run(change(run_args(K1_RUN, shop)))
+
+    assert code == 0
+    assert record_file(tmp_path).read_bytes() == K1_LINE
+    assert record_file(tmp_path).stat().st_mtime_ns == 0
+
+
+@pytest.mark.parametrize("change", OTHER_PR_OR_M)
+def test_k3_with_another_pr_or_m_the_warning_is_that_the_run_is_already_recorded(
+    change: Callable[[evaluate.RunArgs], evaluate.RunArgs],
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    record_file(tmp_path).write_bytes(K1_LINE)
+    capfd.readouterr()
+
+    evaluate.run(change(run_args(K1_RUN, shop)))
+
+    warning = messages.already_recorded(HEAD, K1_SHA256) + "\n"
+    assert capfd.readouterr() == ("", warning)
+
+
 # K7 and the exit codes
 
 
@@ -717,6 +772,24 @@ def test_the_record_file_is_read_before_any_input(
     assert 2 in numbers_in(output.err)
 
 
+# A record file whose lines 2 and 4 are not records (note 49): the error names
+# the first such line.
+TWO_LINES_THAT_ARE_NOT_RECORDS = (
+    K4_LINE + b"not a record\n" + OTHER_RUNS_LINE + b"nor this one\n"
+)
+
+
+def test_with_several_lines_that_are_not_records_the_error_names_the_first(
+    shop: Shop, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+) -> None:
+    capfd.readouterr()
+
+    evaluated(K1_RUN, TWO_LINES_THAT_ARE_NOT_RECORDS, shop, tmp_path)
+
+    numbers = numbers_in(capfd.readouterr().err)
+    assert (2 in numbers, 4 in numbers) == (True, False)
+
+
 # What an evaluated run prints
 
 
@@ -759,6 +832,26 @@ def test_selection_12_a_deleted_file_selects_through_ms_tree(
     evaluated(DELETED_REPORT_RUN, b"", shop, tmp_path)
 
     assert only_record(tmp_path)["selected_ms"] == 5000
+
+
+def test_the_checkouts_head_and_its_work_tree_change_nothing(
+    shop: Shop, tmp_path: Path
+) -> None:
+    # A copy of the fixture's checkout with pr-58 checked out, which is neither
+    # H nor B, templates/invoice.html changed in the work tree, and a file that
+    # git does not track (note 58). The diff and M's tree come from commits
+    # named by their ids, so K1's run still gives K1's line.
+    copy = tmp_path / "copy"
+    shutil.copytree(shop.checkout, copy, symlinks=True)
+    builder = Builder(copy, environment_for_git(tmp_path / "home", tmp_path))
+    builder.git("switch", "--quiet", "pr-58")
+    (copy / INVOICE).write_text("<p>Invoice, not committed</p>\n", encoding="utf-8")
+    (copy / "untracked.py").write_text("X = 1\n", encoding="utf-8")
+    lay_out(K1_RUN, shop, tmp_path)
+
+    evaluate.run(replace(run_args(K1_RUN, shop), checkout=str(copy)))
+
+    assert record_file(tmp_path).read_bytes() == K1_LINE
 
 
 # The record's fields
@@ -849,6 +942,57 @@ def test_edge_6_and_7_count_the_tests_of_the_run_and_the_tests_with_a_row(
     assert {key: record[key] for key in expected} == expected
 
 
+# A skipped test (note 41): one of the run's tests, whatever its result, and
+# unmeasured when it has no row, as the unmeasured share takes in skipped tests
+# (Report 8). Both runs are K1's, but for the skip.
+SKIPPED = (
+    '<skipped type="pytest.skip" message="no VAT here">'
+    "tests/test_tax.py:3: no VAT here</skipped>"
+)
+SKIPPED_VAT_RUN = Run(
+    pr=7,
+    head="pr-7",
+    junit=junit_file(
+        SUITE_TIME,
+        TOTAL_PASSED,
+        case("tests.test_tax", "test_vat", "0.001", SKIPPED),
+        RENDER_FAILED,
+        CREATE_PASSED,
+    ),
+)
+# test_rounding, which has no row, as in Selection 7, skipped.
+SKIPPED_ROUNDING_RUN = Run(
+    pr=7,
+    head="pr-7",
+    junit=junit_file(
+        SUITE_TIME,
+        TOTAL_PASSED,
+        VAT_PASSED,
+        case("tests.test_tax", "test_rounding", "0.001", SKIPPED),
+        RENDER_FAILED,
+        CREATE_PASSED,
+    ),
+)
+SKIPPED_TESTS = [
+    pytest.param(SKIPPED_VAT_RUN, {"tests": 4}, id="test_vat skipped, tests"),
+    pytest.param(SKIPPED_VAT_RUN, {"unmeasured": 0}, id="test_vat skipped, unmeasured"),
+    pytest.param(SKIPPED_ROUNDING_RUN, {"tests": 5}, id="test_rounding skipped, tests"),
+    pytest.param(
+        SKIPPED_ROUNDING_RUN, {"unmeasured": 1}, id="test_rounding skipped, unmeasured"
+    ),
+]
+
+
+@pytest.mark.parametrize(("run", "expected"), SKIPPED_TESTS)
+def test_a_skipped_test_counts_among_the_tests_and_with_no_row_as_unmeasured(
+    run: Run, expected: dict[str, object], shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(run, b"", shop, tmp_path)
+
+    record = only_record(tmp_path)
+    assert {key: record[key] for key in expected} == expected
+
+
 # The full run whose test_vat and test_render have two test cases each: every
 # count and every list of the run's tests takes each pair once.
 EACH_PAIR_ONCE = [
@@ -907,6 +1051,71 @@ def test_invariant_1_two_evaluations_of_the_same_inputs_give_byte_identical_reco
     second = record_file_after_evaluating_in(tmp_path / "second", shop, monkeypatch)
 
     assert first == second
+
+
+# Invariant 1 across processes (note 56): two evaluations in one process share
+# its hash seed, so they cannot show an order that changes from one process to
+# the next, such as a set's. Each run below has three entries in a list of its
+# record: three failures not reproduced, or three failed tests left out.
+
+# The tool's code, which these tests run as the CI step does, and how long
+# python -m distiller may run.
+SRC = Path(__file__).resolve().parent.parent / "src"
+PROCESS_SECONDS = 60
+
+# The hash seeds of the processes: each orders a set of strings its own way.
+HASH_SEEDS = ("0", "1", "2", "3", "4", "5")
+
+# K1's diff with a full run in which test_total, test_render and test_create
+# failed, and a rerun file in which all three passed.
+THREE_PASSED_RERUN = junit_file(
+    RERUN_SUITE_TIME, TOTAL_PASSED, RENDER_PASSED, CREATE_PASSED
+)
+NOT_REPRODUCED_RUN = Run(
+    pr=7, head="pr-7", junit=THREE_FAILED_JUNIT, rerun=THREE_PASSED_RERUN
+)
+
+
+def record_file_from_a_process(
+    run: Run, hash_seed: str, shop: Shop, directory: Path
+) -> bytes:
+    """The record file's bytes after python -P -m distiller evaluated run from
+    directory, with an empty record file, in a process with this
+    PYTHONHASHSEED."""
+    directory.mkdir()
+    lay_out(run, shop, directory)
+    record_file(directory).write_bytes(b"")
+    command = [sys.executable, "-P", "-m", "distiller", *command_line(run, shop)]
+    if run.rerun is not None:
+        command += ["--rerun", RERUN]
+    result = subprocess.run(  # noqa: S603
+        command,
+        cwd=directory,
+        env={**os.environ, "PYTHONPATH": str(SRC), "PYTHONHASHSEED": hash_seed},
+        capture_output=True,
+        check=False,
+        timeout=PROCESS_SECONDS,
+    )
+    assert result.returncode == 0, os.fsdecode(result.stderr)
+    return record_file(directory).read_bytes()
+
+
+@pytest.mark.parametrize(
+    "run",
+    [
+        pytest.param(NOT_REPRODUCED_RUN, id="three failures not reproduced"),
+        pytest.param(INVARIANT_RUN, id="three failed tests left out"),
+    ],
+)
+def test_invariant_1_processes_with_other_hash_seeds_give_byte_identical_records(
+    run: Run, shop: Shop, tmp_path: Path
+) -> None:
+    record_files = [
+        record_file_from_a_process(run, seed, shop, tmp_path / f"seed-{seed}")
+        for seed in HASH_SEEDS
+    ]
+
+    assert record_files == [record_files[0]] * len(HASH_SEEDS)
 
 
 # Any other failure
@@ -998,3 +1207,207 @@ def test_a_record_file_that_cannot_be_read_is_any_other_failure(
     output = capfd.readouterr()
     assert (code, output.out) == (1, "")
     assert output.err in UNEXPECTED_OS_ERROR_LINES
+
+
+# A record file behind a symbolic link (note 52): os.stat follows the link, so
+# the record file is read and appended to through it, the link staying a link;
+# the append creates the file that a link to no file names; and a link that
+# os.stat cannot follow to a regular file, such as a loop of links or a link
+# to a directory, is a record file that cannot be read (Rule 3).
+
+# Where a link at the record file's path leads, from the working directory.
+LINKED_RECORDS = "./ci/kept-records.jsonl"
+
+THROUGH_A_LINK = [
+    pytest.param(OTHER_RUNS_LINE, OTHER_RUNS_LINE + K1_LINE, id="appended to"),
+    pytest.param(K1_LINE, K1_LINE, id="read, so K1's run is already recorded"),
+]
+
+
+@pytest.mark.parametrize(("before", "after"), THROUGH_A_LINK)
+def test_through_a_link_the_record_file_is_read_and_appended_to(
+    before: bytes, after: bytes, shop: Shop, tmp_path: Path
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    linked = tmp_path / LINKED_RECORDS
+    linked.write_bytes(before)
+    record_file(tmp_path).symlink_to(linked.name)
+
+    evaluate.run(run_args(K1_RUN, shop))
+
+    assert (record_file(tmp_path).is_symlink(), linked.read_bytes()) == (True, after)
+
+
+def test_through_a_link_to_no_file_the_append_creates_the_file_it_names(
+    shop: Shop, tmp_path: Path
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    linked = tmp_path / LINKED_RECORDS
+    record_file(tmp_path).symlink_to(linked.name)
+
+    evaluate.run(run_args(K1_RUN, shop))
+
+    assert (record_file(tmp_path).is_symlink(), linked.read_bytes()) == (True, K1_LINE)
+
+
+def a_loop_of_links(path: Path) -> None:
+    """A symbolic link to itself."""
+    path.symlink_to(path.name)
+
+
+def a_link_to_a_directory(path: Path) -> None:
+    directory = path.with_name("a-directory")
+    directory.mkdir()
+    path.symlink_to(directory.name)
+
+
+@pytest.mark.parametrize(
+    "make",
+    [
+        pytest.param(a_loop_of_links, id="a loop of links"),
+        pytest.param(a_link_to_a_directory, id="a link to a directory"),
+    ],
+)
+def test_a_record_file_behind_a_link_that_cannot_be_read_is_any_other_failure(
+    make: Callable[[Path], None],
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    make(record_file(tmp_path))
+    capfd.readouterr()
+
+    code = cli.main(command_line(K1_RUN, shop))
+
+    output = capfd.readouterr()
+    assert (code, output.out) == (1, "")
+    assert output.err in UNEXPECTED_OS_ERROR_LINES
+
+
+# The permissions of a record file that the append creates (note 54): those
+# that open gives any new file, 0o666 less the process's umask.
+UMASKS = [
+    pytest.param(0o022, 0o644, id="umask 022"),
+    pytest.param(0o077, 0o600, id="umask 077"),
+    pytest.param(0o000, 0o666, id="umask 000"),
+]
+
+
+@pytest.mark.parametrize(("umask", "mode"), UMASKS)
+def test_a_record_file_that_the_append_creates_has_0o666_less_the_umask(
+    umask: int, mode: int, shop: Shop, tmp_path: Path
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    previous = os.umask(umask)
+    try:
+        evaluate.run(run_args(K1_RUN, shop))
+    finally:
+        os.umask(previous)
+
+    assert stat.S_IMODE(record_file(tmp_path).stat().st_mode) == mode
+
+
+# An append that cannot open the record file (note 51), because the directory
+# it would be in does not exist or because the file may not be written: any
+# other failure, exit 1 with nothing appended. That holds for a rejected run
+# too, whose record is appended before its message is printed, so that its
+# message is never printed.
+
+
+def k1s_inputs(_directory: Path) -> None:
+    """Leave K1's inputs as they were laid out: the run is evaluated."""
+
+
+def no_coverage_file(directory: Path) -> None:
+    """Take K1's coverage file away: the run is rejected, as in K8."""
+    (directory / COVERAGE).unlink()
+
+
+def records_in_a_directory_that_does_not_exist(_directory: Path) -> str:
+    return "./nodir/records.jsonl"
+
+
+def a_record_file_it_may_not_write(directory: Path) -> str:
+    path = record_file(directory)
+    path.write_bytes(OTHER_RUNS_LINE)
+    path.chmod(0o444)
+    if os.access(path, os.W_OK):
+        pytest.skip("this user writes a file whatever its mode, as root does")
+    return RECORDS
+
+
+APPENDS_THAT_CANNOT_OPEN = [
+    pytest.param(
+        k1s_inputs,
+        records_in_a_directory_that_does_not_exist,
+        id="evaluated, in a directory that does not exist",
+    ),
+    pytest.param(
+        k1s_inputs,
+        a_record_file_it_may_not_write,
+        id="evaluated, a file it may not write",
+    ),
+    pytest.param(
+        no_coverage_file,
+        records_in_a_directory_that_does_not_exist,
+        id="rejected, in a directory that does not exist",
+    ),
+    pytest.param(
+        no_coverage_file,
+        a_record_file_it_may_not_write,
+        id="rejected, a file it may not write",
+    ),
+]
+
+
+def with_records(arguments: list[str], records: str) -> list[str]:
+    """The same command line arguments, with these --records."""
+    changed = list(arguments)
+    changed[changed.index("--records") + 1] = records
+    return changed
+
+
+@pytest.mark.parametrize(("inputs", "records"), APPENDS_THAT_CANNOT_OPEN)
+def test_an_append_that_cannot_open_the_record_file_is_any_other_failure(
+    inputs: Callable[[Path], None],
+    records: Callable[[Path], str],
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    inputs(tmp_path)
+    arguments = with_records(command_line(K1_RUN, shop), records(tmp_path))
+    capfd.readouterr()
+
+    code = cli.main(arguments)
+
+    output = capfd.readouterr()
+    assert (code, output.out) == (1, "")
+    assert output.err in UNEXPECTED_OS_ERROR_LINES
+
+
+def files_under(directory: Path) -> dict[Path, bytes | None]:
+    """Every path under directory, with the bytes of each regular file."""
+    return {
+        path: path.read_bytes() if path.is_file() else None
+        for path in directory.rglob("*")
+    }
+
+
+@pytest.mark.parametrize(("inputs", "records"), APPENDS_THAT_CANNOT_OPEN)
+def test_an_append_that_cannot_open_the_record_file_appends_and_creates_nothing(
+    inputs: Callable[[Path], None],
+    records: Callable[[Path], str],
+    shop: Shop,
+    tmp_path: Path,
+) -> None:
+    lay_out(K1_RUN, shop, tmp_path)
+    inputs(tmp_path)
+    arguments = with_records(command_line(K1_RUN, shop), records(tmp_path))
+    before = files_under(tmp_path)
+
+    cli.main(arguments)
+
+    assert files_under(tmp_path) == before

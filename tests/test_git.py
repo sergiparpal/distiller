@@ -632,3 +632,40 @@ def test_each_query_leaves_the_checkout_byte_for_byte_as_it_was(
     QUERIES[query](history)
 
     assert snapshot(history.checkout) == before
+
+
+# Each query where git fails, given a commit id that names no object here or a
+# directory outside any repository, with an exit code that is none of the
+# query's answers (note 7).
+UNKNOWN_COMMIT = "0123456789abcdef0123456789abcdef01234567"
+FAILING_QUERIES: dict[str, Callable[[History], object]] = {
+    "is_shallow outside a repository": lambda history: git.is_shallow(
+        str(history.outside)
+    ),
+    "merge_base with an unknown commit": lambda history: git.merge_base(
+        str(history.checkout), history.main, UNKNOWN_COMMIT
+    ),
+    "is_ancestor with an unknown commit": lambda history: git.is_ancestor(
+        str(history.checkout), UNKNOWN_COMMIT, history.feature
+    ),
+    "changed_paths with an unknown commit": lambda history: git.changed_paths(
+        str(history.checkout), history.fork, UNKNOWN_COMMIT
+    ),
+    "changed_paths outside a repository": lambda history: git.changed_paths(
+        str(history.outside), history.fork, history.feature
+    ),
+    "tree_files of an unknown commit": lambda history: git.tree_files(
+        str(history.checkout), UNKNOWN_COMMIT
+    ),
+}
+
+
+@pytest.mark.parametrize("query", list(FAILING_QUERIES))
+def test_a_query_whose_git_fails_raises_rather_than_answers(
+    query: str, history: History
+) -> None:
+    # So a failed diff never reads as an empty one, nor a failed merge-base as
+    # no common history. The SPEC names no type: cli.main turns any Exception
+    # into messages.unexpected_failure and exit 1 (How a run goes, step 6).
+    with pytest.raises(Exception):  # noqa: B017, PT011
+        FAILING_QUERIES[query](history)

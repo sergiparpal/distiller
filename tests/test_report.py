@@ -1,4 +1,5 @@
 import dataclasses
+import decimal
 import os
 import re
 import subprocess
@@ -8,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from distiller import cli, records, report, selection
+from distiller import cli, messages, records, report, selection
 
 # Each test writes record files in tmp_path, its working directory, runs the
 # report on them and looks for words in what it writes on stdout, or on stderr
@@ -2125,6 +2126,94 @@ def test_a_tie_in_a_new_percentage_rounds_half_up(
     assert shows(report_of(record_files, working_directory, capsys), words)
 
 
+# Records whose fields disagree (notes 69 and 85), which decode does not check:
+# the report checks no agreement between fields either, and writes the figures
+# that the fields give as any other (Rule 7).
+
+# A run with more unmeasured tests than tests, and more tests with a row not in
+# the run than tests with a row.
+MORE_THAN_ALL = with_tests(
+    evaluated(1, 1, "green"), tests=4, unmeasured=6, tests_with_row=2, not_in_run=3
+)
+# A run with no test and no test with a row, and one of each counted anyway.
+ONE_OUT_OF_NONE = with_tests(
+    evaluated(1, 1, "green"), tests=0, unmeasured=1, tests_with_row=0, not_in_run=1
+)
+# Runs with no rerun file, whatever else they hold: a green run with one
+# failure not reproduced, a caught run with two, and a missed run.
+NO_RERUN_FILE: list[records.Record] = [
+    dataclasses.replace(evaluated(1, 1, "green"), not_reproduced=(RENDER_PAIR,)),
+    dataclasses.replace(
+        evaluated(2, 2, "caught"), not_reproduced=(TOTAL_PAIR, VAT_PAIR)
+    ),
+    evaluated(3, 3, "missed"),
+]
+
+
+@pytest.mark.parametrize(
+    ("record_files", "words"),
+    [
+        pytest.param(one_run(15000, 12000), "savings of -25%", id="savings below zero"),
+        # 1 - 100,001 / 100,000 is -0.001%, which rounds to 0 and keeps its
+        # minus sign.
+        pytest.param(
+            one_run(100001, 100000), "savings of -0%", id="savings just below zero"
+        ),
+        pytest.param(
+            [[MORE_THAN_ALL]],
+            "150% of tests treated as unmeasured",
+            id="an unmeasured share above 100%",
+        ),
+        pytest.param(
+            [[MORE_THAN_ALL]],
+            "150% of the tests with a row were not in their run",
+            id="a not-in-run share above 100%",
+        ),
+        pytest.param(
+            [[ONE_OUT_OF_NONE]],
+            "1 out of 0 tests treated as unmeasured",
+            id="an unmeasured share out of no test",
+        ),
+        pytest.param(
+            [[ONE_OUT_OF_NONE]],
+            "1 out of 0 tests with a row were not in their run",
+            id="a not-in-run share out of no test with a row",
+        ),
+        pytest.param(
+            [NO_RERUN_FILE],
+            "the failures of 2 red runs were not confirmed by a rerun",
+            id="the red runs with no rerun file",
+        ),
+        pytest.param(
+            [NO_RERUN_FILE],
+            "3 failures were discarded as not reproduced",
+            id="the failures discarded, with no rerun file",
+        ),
+    ],
+)
+def test_records_whose_fields_disagree_give_the_figures_that_their_fields_give(
+    record_files: list[list[records.Record]],
+    words: str,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    assert shows(report_of(record_files, working_directory, capsys), words)
+
+
+def test_savings_of_minus_10_to_the_27_percent_or_lower_are_an_unexpected_failure(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # They need more than the 28 digits of Decimal's default context, so
+    # quantize raises decimal.InvalidOperation (Rule 7), and cli prints the one
+    # line of any other failure and exits with 1.
+    paths = write_record_files(one_run(10**40, 1), working_directory)
+
+    code = cli.main(["report", *paths])
+
+    unexpected_failure = messages.unexpected_failure(decimal.InvalidOperation) + "\n"
+    assert (code, capsys.readouterr().err) == (1, unexpected_failure)
+
+
 # The failed tests left out
 
 
@@ -2725,6 +2814,58 @@ def test_the_first_problem_in_the_order_of_the_files_decides(
     assert (FIRST in error, SECOND in error) == (True, False)
 
 
+# Several lines that are not records (note 49): the report names the first such
+# file, in the order given, and the first such line in it.
+
+
+def lines_2_and_4_that_are_not_records_at(path: Path) -> None:
+    """Records at lines 1 and 3, and lines 2 and 4, which are not records."""
+    lines = [
+        records.encode(REJECTED_OF_PR_3),
+        b"not a record\n",
+        records.encode(REJECTED_OF_PR_5),
+        b"nor this one\n",
+    ]
+    path.write_bytes(b"".join(lines))
+
+
+def test_with_several_lines_that_are_not_records_the_first_is_named(
+    working_directory: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    lines_2_and_4_that_are_not_records_at(working_directory / FIRST)
+
+    report.run([FIRST])
+
+    numbers = numbers_in(capsys.readouterr().err)
+    assert (2 in numbers, 4 in numbers) == (True, False)
+
+
+@pytest.mark.parametrize(
+    ("given", "named", "line_number"),
+    [
+        pytest.param([FIRST, SECOND], FIRST, 2, id="first.jsonl given first"),
+        pytest.param([SECOND, FIRST], SECOND, 3, id="second.jsonl given first"),
+    ],
+)
+def test_with_lines_that_are_not_records_in_two_files_the_first_given_is_named(
+    given: list[str],
+    named: str,
+    line_number: int,
+    working_directory: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # first.jsonl's lines 2 and 4 are not records, and second.jsonl's line 3.
+    lines_2_and_4_that_are_not_records_at(working_directory / FIRST)
+    a_line_that_is_not_a_record_at(working_directory / SECOND)
+    other = SECOND if named == FIRST else FIRST
+
+    report.run(given)
+
+    error = capsys.readouterr().err
+    assert (named in error, other in error) == (True, False)
+    assert line_number in numbers_in(error)
+
+
 # Invariants 1
 
 # The tool's code, which the test of Invariants 1 runs as the CI step does.
@@ -2836,6 +2977,118 @@ def test_invariants_1_holds_for_the_failed_tests_left_out(
     second = report_through_python_m(["b.jsonl", "a.jsonl"], "1", working_directory)
 
     assert first == second
+
+
+# Invariants 1 under six hash seeds (notes 83 and 84). The two tests above run
+# their reports under the seeds 0 and 1, which can give a set the same order by
+# chance, all the more a set of two. Here each list that a set could order has
+# four entries or more somewhere, so that such an order would show under some
+# seed.
+HASH_SEEDS = ("0", "1", "2", "3", "4", "5")
+
+# Four conflicts, one of them with a null junit_sha256, each with a record in
+# each of four record files, and rejected runs under six pairs of reason and
+# input, r44's key under two of them.
+CONFLICT_30 = conflicting_records(key_of(30))
+CONFLICT_31 = conflicting_records(key_of(31))
+CONFLICT_32 = conflicting_records(key_of(32))
+CONFLICT_33 = conflicting_records(records.RunKey(head=commit_id(33), junit_sha256=None))
+CONFLICTS_AND_REJECTED: list[list[records.Record]] = [
+    [
+        CONFLICT_30[0],
+        CONFLICT_31[0],
+        CONFLICT_32[0],
+        CONFLICT_33[0],
+        rejected(40, 40, "unusable-input", "coverage"),
+        rejected(41, 41, "missing-history", "checkout"),
+        rejected(42, 42, "unsafe-xml", "junit"),
+    ],
+    [
+        CONFLICT_30[1],
+        CONFLICT_31[1],
+        CONFLICT_32[1],
+        CONFLICT_33[1],
+        rejected(43, 43, "unsafe-xml", "rerun"),
+        rejected(44, 44, "no-shared-lines", "coverage"),
+        rejected(44, 44, "collection-error", "junit"),
+    ],
+    [CONFLICT_30[0], CONFLICT_31[0], CONFLICT_32[0], CONFLICT_33[0]],
+    [CONFLICT_30[1], CONFLICT_31[1], CONFLICT_32[1], CONFLICT_33[1]],
+]
+
+# Failed tests left out whose rows have six paths, one run that left out four
+# tests, and runs whose paths with no column and import-only paths are five
+# each.
+LEFT_OUT_WITH_SIX_PATHS = selection.Test(
+    pair=("tests.test_wide", "test_six"),
+    node_id="tests/test_wide.py::test_six",
+    row=frozenset(
+        {
+            "src/shop/a.py",
+            "src/shop/b.py",
+            "src/shop/c.py",
+            "src/shop/d.py",
+            "src/shop/e.py",
+            "src/shop/f.py",
+        }
+    ),
+)
+FIVE_PATHS_WITH_NO_COLUMN = (
+    "docs/a.md",
+    "docs/b.md",
+    "docs/c.md",
+    "docs/d.md",
+    "docs/e.md",
+)
+FIVE_IMPORT_ONLY_PATHS = (
+    "src/shop/k.py",
+    "src/shop/l.py",
+    "src/shop/m.py",
+    "src/shop/n.py",
+    "src/shop/o.py",
+)
+ROWS_AND_PATHS: list[list[records.Record]] = [
+    [
+        missed_run_with(key_of(50), K1_TEST_RENDER, LEFT_OUT_WITH_SIX_PATHS),
+        dataclasses.replace(
+            missed_run_with(
+                key_of(51),
+                LEFT_OUT_CREATE,
+                K1_TEST_RENDER,
+                LEFT_OUT_VAT,
+                LEFT_OUT_WITH_SIX_PATHS,
+            ),
+            no_column=FIVE_PATHS_WITH_NO_COLUMN,
+            import_only=FIVE_IMPORT_ONLY_PATHS,
+        ),
+    ],
+    [
+        dataclasses.replace(
+            missed_run_with(key_of(52), LEFT_OUT_WITH_SIX_PATHS),
+            no_column=FIVE_PATHS_WITH_NO_COLUMN,
+            import_only=FIVE_IMPORT_ONLY_PATHS,
+        ),
+    ],
+]
+
+
+@pytest.mark.parametrize(
+    "record_files",
+    [
+        pytest.param(CONFLICTS_AND_REJECTED, id="conflicts and rejected runs"),
+        pytest.param(ROWS_AND_PATHS, id="the rows and paths of failed tests left out"),
+    ],
+)
+def test_invariants_1_reports_under_six_hash_seeds_are_byte_identical(
+    record_files: list[list[records.Record]], working_directory: Path
+) -> None:
+    paths = write_record_files(record_files, working_directory)
+
+    reports = [
+        report_through_python_m(paths, seed, working_directory) for seed in HASH_SEEDS
+    ]
+
+    assert reports == [reports[0]] * len(HASH_SEEDS)
 
 
 # The command, through cli

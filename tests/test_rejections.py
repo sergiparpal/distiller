@@ -1,4 +1,5 @@
 import contextlib
+import json
 import os
 import re
 import shutil
@@ -8,14 +9,14 @@ import stat
 import subprocess
 import sys
 from collections.abc import Callable, Generator
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from types import FrameType
 
 import coverage
 import pytest
 
-from distiller import evaluate
+from distiller import evaluate, messages
 
 # Each test lays out one run's inputs in tmp_path, its working directory, with
 # one input that cannot be used or, in task 15's tests at the end, a problem of
@@ -1169,6 +1170,243 @@ def test_an_invalid_floor_pattern_is_named_by_its_line_number(
     assert line_number in numbers_in(capfd.readouterr().err)
 
 
+# Floor configurations with more than one invalid pattern (note 20), each with
+# the line numbers of its first invalid pattern and of a later one: the
+# message names the first, in the file's order. Saved as UTF-16LE with no byte
+# order mark, every line that is not a comment holds a NUL, while a first line
+# that is a comment stays one, since its # comes before its NUL.
+SEVERAL_INVALID_PATTERNS = [
+    pytest.param(
+        b"data/**\ncanary/?.csv\nlogs/**\n**.lock\n",
+        (2, 4),
+        id="? at line 2 and **.lock at line 4",
+    ),
+    pytest.param(
+        "# Paths that no test covers\ndata/**\nlogs/**\n".encode("utf-16-le"),
+        (2, 3),
+        id="UTF-16LE with no byte order mark, after a comment",
+    ),
+]
+
+
+@pytest.mark.parametrize(("floor", "first_and_later"), SEVERAL_INVALID_PATTERNS)
+def test_with_several_invalid_patterns_the_message_names_the_first(
+    floor: bytes,
+    first_and_later: tuple[int, int],
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    first, later = first_and_later
+    capfd.readouterr()
+
+    evaluated(Run(floor=floor), b"", shop, tmp_path)
+
+    numbers = numbers_in(capfd.readouterr().err)
+    assert (first in numbers, later in numbers) == (True, False)
+
+
+# A coverage file cut a little short (note 19): coverage's read() passes on it,
+# and a query of its rows then raises an sqlite3.Error that coverage does not
+# wrap in a CoverageException. Rule 3 makes an sqlite3.Error from any query
+# unusable-input. The test cuts each file to the first byte of the last page of
+# its SQLite database, and which page comes last depends on how many tests the
+# coverage holds, so it adds tests until coverage's own API shows both: read()
+# passing, and then a query of the rows raising.
+
+
+def coverage_with_more_tests(count: int) -> LinesByContext:
+    """The fixture's coverage at M, and count more tests, each of which ran
+    line 3 of each file that the fixture's tests ran."""
+    lines: LinesByContext = dict(COVERAGE_LINES)
+    for number in range(count):
+        lines[f"tests/test_more.py::test_{number}|run"] = {
+            PRICING: [3],
+            TAX: [3],
+            DB: [3],
+            REPORT: [3],
+            ORDERS: [3],
+        }
+    return lines
+
+
+def page_size_of(path: Path) -> int:
+    """The size of each page of the SQLite database at path."""
+    with contextlib.closing(sqlite3.connect(path)) as connection:
+        (page_size,) = connection.execute("PRAGMA page_size").fetchone()
+    return page_size
+
+
+def reads_without_an_error(data: coverage.CoverageData) -> bool:
+    try:
+        data.read()
+    except (coverage.CoverageException, sqlite3.Error):
+        return False
+    return True
+
+
+def a_query_of_the_rows_raises_an_sqlite3_error(data: coverage.CoverageData) -> bool:
+    """Whether asking for a measured file's rows raises an sqlite3.Error that
+    coverage has not wrapped in a CoverageException."""
+    try:
+        for measured in data.measured_files():
+            data.contexts_by_lineno(measured)
+    except sqlite3.Error:
+        return True
+    except coverage.CoverageException:
+        return False
+    return False
+
+
+def read_passes_and_a_query_fails(path: Path) -> bool:
+    data = coverage.CoverageData(basename=path)
+    try:
+        if not reads_without_an_error(data):
+            return False
+        return a_query_of_the_rows_raises_an_sqlite3_error(data)
+    finally:
+        data.close()
+
+
+def coverage_cut_a_little_short(directory: Path) -> bytes:
+    """A coverage file cut to the first byte of its last page, which read()
+    reads without an error, and in which a query of the rows then fails."""
+    trial = directory / "trial.coverage"
+    for count in range(100, 3001, 100):
+        trial.unlink(missing_ok=True)
+        write_coverage(trial, coverage_with_more_tests(count))
+        whole = trial.read_bytes()
+        cut = whole[: len(whole) - page_size_of(trial) + 1]
+        trial.write_bytes(cut)
+        if read_passes_and_a_query_fails(trial):
+            return cut
+    pytest.fail("no coverage file that, cut inside its last page, fails in a query")
+
+
+def test_a_coverage_file_cut_a_little_short_is_unusable_input(
+    shop: Shop, tmp_path: Path
+) -> None:
+    run = Run(coverage=coverage_cut_a_little_short(tmp_path))
+
+    code = evaluated(run, b"", shop, tmp_path)
+
+    assert (code, record_file(tmp_path).read_bytes()) == (3, COVERAGE_LINE)
+
+
+# Symbolic links (notes 8, 18 and 22): os.stat follows them, so a link to a
+# regular file is that file, a link to no file counts as a missing file, a link
+# to a directory is no regular file, and a loop of links, which os.stat cannot
+# look at, is a file that cannot be read (Rule 3).
+
+
+def a_link_to_it(path: Path) -> None:
+    """Move the file to a name of its own and put at path a symbolic link to
+    it, so that the file is reached only through the link."""
+    target = path.with_name("target-of-" + path.name)
+    path.rename(target)
+    path.symlink_to(target.name)
+
+
+def a_link_to_no_file(path: Path) -> None:
+    path.unlink()
+    path.symlink_to("no-such-file")
+
+
+def a_link_to_a_directory(path: Path) -> None:
+    path.unlink()
+    directory = path.with_name("a-directory")
+    directory.mkdir()
+    path.symlink_to(directory.name)
+
+
+def a_loop_of_links(path: Path) -> None:
+    """A symbolic link to itself."""
+    path.unlink()
+    path.symlink_to(path.name)
+
+
+@dataclass(frozen=True)
+class LinkedInput:
+    """An input that a test puts a link at: its path from the working
+    directory, a run that has it, and the line that the run's rejection
+    appends when the input cannot be used."""
+
+    path: str
+    run: Run
+    line: bytes
+
+
+LINKED_INPUTS = [
+    pytest.param(
+        LinkedInput(JUNIT, Run(), NO_JUNIT_LINE), id="the full run's JUnit file"
+    ),
+    pytest.param(
+        LinkedInput(RERUN, Run(rerun=K2_RERUN), RERUN_LINE), id="the rerun file"
+    ),
+    pytest.param(LinkedInput(COVERAGE, Run(), COVERAGE_LINE), id="the coverage file"),
+    pytest.param(
+        LinkedInput(FLOOR_CONFIG, Run(floor=VALID_FLOOR), FLOOR_LINE),
+        id="the floor configuration",
+    ),
+]
+
+LINKS_TO_NO_REGULAR_FILE = [
+    pytest.param(a_link_to_no_file, id="a link to no file"),
+    pytest.param(a_link_to_a_directory, id="a link to a directory"),
+    pytest.param(a_loop_of_links, id="a loop of links"),
+]
+
+
+@pytest.mark.parametrize("make", LINKS_TO_NO_REGULAR_FILE)
+@pytest.mark.parametrize("linked", LINKED_INPUTS)
+def test_a_link_that_leads_to_no_regular_file_is_unusable_input(
+    linked: LinkedInput, make: Callable[[Path], None], shop: Shop, tmp_path: Path
+) -> None:
+    run = replace(linked.run, replaced=(linked.path, make))
+
+    code = evaluated(run, b"", shop, tmp_path)
+
+    assert (code, record_file(tmp_path).read_bytes()) == (3, linked.line)
+
+
+# A run with a link to one input, and fields of its record that show that the
+# input was read through the link: K1's run, with K2's rerun file for the rerun
+# file, and for the floor configuration a pattern that matches K1's diff,
+# templates/invoice.html.
+READ_THROUGH_A_LINK = [
+    pytest.param(
+        Run(replaced=(JUNIT, a_link_to_it)),
+        {"junit_sha256": K1_SHA256, "verdict": "missed"},
+        id="the full run's JUnit file",
+    ),
+    pytest.param(
+        Run(rerun=K2_RERUN, replaced=(RERUN, a_link_to_it)),
+        {"not_reproduced": [["tests.test_report", "test_render"]]},
+        id="the rerun file",
+    ),
+    pytest.param(
+        Run(replaced=(COVERAGE, a_link_to_it)),
+        {"verdict": "missed", "tests_with_row": 4},
+        id="the coverage file",
+    ),
+    pytest.param(
+        Run(floor=b"templates/**\n", replaced=(FLOOR_CONFIG, a_link_to_it)),
+        {"floor_matched": True},
+        id="the floor configuration",
+    ),
+]
+
+
+@pytest.mark.parametrize(("run", "expected"), READ_THROUGH_A_LINK)
+def test_a_link_to_a_regular_file_is_read_as_that_file(
+    run: Run, expected: dict[str, object], shop: Shop, tmp_path: Path
+) -> None:
+    evaluated(run, b"", shop, tmp_path)
+
+    record = json.loads(record_file(tmp_path).read_bytes())
+    assert {key: record[key] for key in expected} == expected
+
+
 # K10 and K11: a rejected record is appended once
 
 
@@ -1747,6 +1985,55 @@ def test_a_rejection_for_another_reason_prints_nothing_on_stdout(
     evaluated(run, b"", shop, tmp_path)
 
     assert capfd.readouterr().out == ""
+
+
+# What a rejection prints on stderr (note 66): its message, once, and nothing
+# else (How a run goes, step 5). The message is what messages.rejection gives
+# for the run's Rejected, made from the reason and the input that its line
+# holds and from what the message names.
+
+
+def message_of(rejection: Rejection) -> str:
+    """The rejection's message, as messages.rejection writes it."""
+    line = json.loads(rejection.line)
+    error = messages.Rejected(
+        line["reason"], line["input"], rejection.named, rejection.line_number
+    )
+    return messages.rejection(error)
+
+
+EVERY_REJECTION = [
+    pytest.param(rejection, id=rejection.name)
+    for rejection in [*REJECTIONS, *OTHER_REJECTIONS]
+]
+
+
+@pytest.mark.parametrize("rejection", EVERY_REJECTION)
+def test_a_rejection_prints_its_message_once_and_nothing_else_on_stderr(
+    rejection: Rejection,
+    shop: Shop,
+    tmp_path: Path,
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    capfd.readouterr()
+
+    evaluated(rejection.run, b"", shop, tmp_path)
+
+    assert capfd.readouterr().err == message_of(rejection) + "\n"
+
+
+def test_k10_a_rejection_already_recorded_prints_its_message_once(
+    shop: Shop, tmp_path: Path, capfd: pytest.CaptureFixture[str]
+) -> None:
+    # Nothing is appended, and the message is still printed (K10).
+    rejection = Rejection(
+        "K10, the run rejected again", MISSING_COVERAGE_RUN, COVERAGE_LINE, COVERAGE
+    )
+    capfd.readouterr()
+
+    evaluated(rejection.run, COVERAGE_LINE, shop, tmp_path)
+
+    assert capfd.readouterr().err == message_of(rejection) + "\n"
 
 
 # What the no-shared-lines message says, as tests/test_messages.py checks it:
