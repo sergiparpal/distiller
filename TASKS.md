@@ -9,7 +9,7 @@ What someone still has to do or decide.
 
 ### To fix
 Defects found and not yet fixed.
-- **Note 3.** In the tests phase nothing stops the agent from creating the files that implement freezes (pytest.ini, ruff.toml, .gitattributes and the rest of `FROZEN_AT_ROOT` and `FROZEN_ANYWHERE` in `.claude/hooks/phase.py`); one that enters the tests commit becomes implement's reference.
+- **Note 3.** In the tests phase nothing stops the agent from creating the files that implement freezes (pytest.ini, ruff.toml, .gitattributes and the rest of `FROZEN_AT_ROOT` and `FROZEN_ANYWHERE` in `.claude/hooks/phase.py`); one that enters the tests commit becomes implement's reference. Fixed on 2026-11-15 in 2bff724 (D-008): `.claude/phase` says `tests <commit>`, and in that phase `freeze_tests.py` and Stop keep `TESTS_PHASE_PATHSPECS` as that commit has them, and the root `pyproject.toml` too, all but `[tool.importlinter]`.
 
 ### To decide
 Inputs that real tools or users can give and whose handling the SPEC does not settle.
