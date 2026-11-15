@@ -669,3 +669,18 @@ def test_a_query_whose_git_fails_raises_rather_than_answers(
     # into messages.unexpected_failure and exit 1 (How a run goes, step 6).
     with pytest.raises(Exception):  # noqa: B017, PT011
         FAILING_QUERIES[query](history)
+
+
+@pytest.mark.parametrize("query", list(FAILING_QUERIES))
+def test_nothing_a_failing_git_prints_reaches_the_tools_stdout_or_stderr(
+    query: str, history: History, capfd: pytest.CaptureFixture[str]
+) -> None:
+    # A git that fails says why on its stderr, which Rule 2 captures like
+    # everything else git prints (note 92). The query raises, as the test
+    # above checks.
+    capfd.readouterr()  # drop what was written before the query
+
+    with pytest.raises(Exception):  # noqa: B017, PT011
+        FAILING_QUERIES[query](history)
+
+    assert capfd.readouterr() == ("", "")
