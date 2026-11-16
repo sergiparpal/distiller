@@ -69,8 +69,8 @@ For each pull request:
 7. **The rerun file**: the tests that failed in the replayed full run, run again
    at H, as the last pilot's workflow did.
 8. **The environment of each commit**: rebuilt from what the commit holds,
-   poetry's `poetry.lock` or urllib3's pinned requirements and nox sessions,
-   with the Python that the project's CI job used. Installing reaches PyPI,
+   poetry's `poetry.lock` or urllib3's `uv.lock`, which its nox session installs
+   with `uv sync --frozen`, with the Python that the project's CI job used. Installing reaches PyPI,
    though the tool itself opens no connection (SPEC, Agent safety). How far back
    that still works is what bounds the window [VERIFY].
 9. **The floor configuration**: chosen before the first record, as D-005 chose

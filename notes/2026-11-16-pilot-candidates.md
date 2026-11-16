@@ -144,6 +144,54 @@ with variant dependencies, 5 or 6 each. In one of pytest's failed runs only
 `gh` gave no job at all (INFERENCE: those runs failed before any job ran, so no
 test failed in them).
 
+## The finalists' configuration, and their suites run offline
+
+The user cloned both on 2026-11-16, poetry at 18668c8d (2026-11-15) and urllib3
+at d9f9b0ad (2026-11-14), and the agent read their configuration (FACT):
+
+- poetry needs Python 3.11 or later. Its pytest options add `-n logical -ra`,
+  so xdist, and its test group holds `pytest-randomly`, which runs the tests in
+  another order each time. Its CI runs `poetry run pytest --integration -v`,
+  with `POETRY_TEST_INTEGRATION_GIT_USERNAME` and
+  `POETRY_TEST_INTEGRATION_GIT_PASSWORD` set to the actor and the job's token,
+  and runs pytest only when a pull request changes the files that its "Detect
+  changed files" job looks at. Without `--integration`, its `conftest.py` leaves
+  out the tests marked `integration`. The tests marked `integration` or
+  `network` are in two files, `tests/integration/test_utils_vcs_git.py`, marked
+  as a whole, and `tests/masonry/builders/test_editable_builder.py`; the others
+  mock HTTP with `responses`. Its environment is locked in `poetry.lock`.
+- urllib3 needs Python 3.10 or later. Its nox session runs `pytest -n auto`
+  with `--disable-socket --allow-unix-socket` and
+  `--allow-hosts=localhost,127.0.0.1,::1,127.0.0.0,240.0.0.0`, so its CI runs
+  its tests with no network but the loopback, and with `--cov=urllib3` under
+  `COVERAGE_CORE=sysmon`, which a replay would not use, since it records M with
+  `ctrace` as the SPEC asks. A test that needs the Internet carries
+  `requires_network`, which skips it when there is no route; a test marked
+  `integration` is skipped without `--integration`. Its environment is
+  installed with `uv sync --frozen` from `uv.lock`.
+
+The user built both environments with uv on Python 3.12: urllib3's with
+`uv sync --frozen --group dev --extra socks --extra brotli --extra zstd
+--extra h2`, and poetry's with `uv sync --group test`, resolved from its
+`pyproject.toml` rather than from `poetry.lock`. The agent then ran each suite
+once in its sandbox, which reaches no host but `pypi.org`, with a `HOME` of its
+own and 16 threads (FACT):
+
+- urllib3, with its nox session's pytest options but no coverage or memray:
+  2695 passed, 348 skipped, 4 xfailed and none failed, in 28 s. The skips:
+  126 that need TLSv1 and 126 TLSv1.1; 31 `requires_network`, since there was
+  no route; 20 that need IPv6; 11 "Can't resolve localhost."; 10 `integration`;
+  and fewer for other reasons.
+- poetry, without `--integration`: 3362 passed, 34 skipped, all for Windows or
+  macOS, 2 xfailed and none failed, in 36 s. A first run, with the
+  environment's `python` not on `PATH`, had 11 failures: 9 raised
+  `FileNotFoundError` for `python`, and 2 looked for Python interpreters. With
+  the environment's `bin` first on `PATH`, as `poetry run` puts it, none failed.
+
+No test of either failed, or logged anything, for want of the network. Which of
+urllib3's skips its CI runs is not checked [VERIFY]; the 31 that need a route,
+and those that need IPv6 or resolve `localhost`, likely run there (INFERENCE).
+
 ## Where it leaves the choice
 
 Discarded (OPINION, from the facts above):
@@ -160,23 +208,31 @@ Discarded (OPINION, from the facts above):
 - pytest: its failures depend mostly on the environment, xdist, pypy or Windows,
   and one replayed job, such as `ubuntu-py312`, failed in 7 runs in 23 days.
 
-Finalists (OPINION): python-poetry/poetry first, then urllib3/urllib3.
+Finalists (OPINION): urllib3/urllib3 first, then python-poetry/poetry. On their
+CI's figures alone poetry came first; their configuration and the offline runs
+above put urllib3 first, since its CI already runs its tests with no network and
+its lock is installed frozen, while poetry's CI also runs tests that need the
+network and a GitHub token, which a replay cannot run, and its tests change
+their order on every run.
 
 | | poetry | urllib3 |
 |---|---|---|
 | PRs red in a Linux job's tests, in 52 days | 26 | 21 |
 | Base branch runs failed | 0% | 7% |
 | A passing Linux test job | 0.9 min | 1.3 min |
-| For | its failures hit every Ubuntu Python alike, so they come from the diff (INFERENCE); a lock file for each commit's environment | a small library with few dependencies |
-| Against | its tests run with `--integration`, which may reach the network [VERIFY] | its tests start local servers, and some may be flaky [VERIFY] |
+| Suite run offline, 16 threads | 3362 passed, none failed, 36 s | 2695 passed, none failed, 28 s |
+| For | its failures hit every Ubuntu Python alike, so they come from the diff (INFERENCE); a lock file for each commit's environment | its CI runs its tests with no network; `uv sync --frozen`; a small library with few dependencies |
+| Against | its CI's integration tests need the network and a GitHub token, so a red run that failed only there cannot be replayed; `pytest-randomly` changes the order, and with it M's rows, unless turned off | some of its tests that need a route, IPv6 or `localhost` skip offline, which its CI likely runs; some tests start local servers, and may be flaky [VERIFY] |
 
 With one Linux job replayed, about 30 pull requests with a red run, the 30 that
 give Report 2's bound of 9.5% when none is missed, take three to four months of
 either project's pull requests (INFERENCE, from the rates above). Replayed
 offline, they come from history, with no wait.
 
-To check before choosing [VERIFY]: whether poetry's tests, and urllib3's, need
-the network or anything beyond a Python environment; whether a failure seen in
-CI fails again when replayed; how far back each project's environments can be
-rebuilt; and whether the red pull requests are spread over many authors, rather
-than a burst from one contributor or a bot.
+To check before choosing [VERIFY]: whether a failure seen in CI fails again when
+replayed, which needs the pull requests' heads, fetched from GitHub, which the
+agent's sandbox cannot reach; how many of poetry's red runs failed only in its
+integration tests; how far back each project's environments can be rebuilt;
+and whether the red pull requests are spread over many authors, rather than a
+burst from one contributor or a bot. Whether their tests need the network was
+checked on 2026-11-16, above: they do not, but for poetry's integration tests.
