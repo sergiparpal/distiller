@@ -245,6 +245,47 @@ not checked [VERIFY]. If a third of urllib3's red pull requests count when
 replayed, its 21 in 52 days give some 7, about 4 a month, so 30 take some seven
 months of history: an estimate from six pull requests.
 
+## poetry's latest red pull requests, replayed
+
+The same, on 2026-11-16, for poetry's workflow "Tests" and its job "Ubuntu
+(Python 3.12) / pytest", with the job's log read from the API and its colour
+codes taken out, so that the tests that failed in the CI are known by name. The
+script's first try stopped on an error that `gh run view --json jobs` gave for a
+run; after that, it tried each such call three times, 5 s apart. The user
+fetched five pull requests by `pull/<n>/head`, and one head, of a pull request
+whose number the script did not find, by its commit id. The heads that #11081's
+and #11057's runs had tested were not in their pull requests' later heads, and
+came only when fetched by their ids.
+
+The agent replayed each tested head in the environment built from 18668c8d's
+`pyproject.toml`, without `--integration`, with the environment's `bin` first on
+`PATH`, in its sandbox (FACT):
+
+| PR | Its change | CI, "Ubuntu (Python 3.12) / pytest" | Replayed |
+|---|---|---|---|
+| no number found, branch `viktor/fix-config-int-validator-11148`, run of 2026-11-01 | the setting's name for invalid integer values | 2 failed: `tests/console/commands/test_config.py::test_cannot_set_invalid_integer_value`, two parameters | the same 2 failed |
+| #11226, 2026-11-12 | keeping bracketed path segments | the job failed; its log names no failed test | a `RecursionError` in its own test, `tests/utils/test_dependency_specification.py::test_parse_path_requirement_keeps_brackets_before_extras`, stopped an xdist worker, and pytest ended with an internal error, exit 3 |
+| #11081, 2026-10-17 | a missing URL in a repository's configuration | 1 failed: `tests/utils/test_authenticator.py::test_repository_config_supports_none_url` | not run: `ModuleNotFoundError: No module named 'tomlkit'`; its latest head, of 2026-11-15, passes |
+| #11057, 2026-10-12 | invalid repository configurations | 1 failed: `tests/utils/test_helpers.py::test_extractall_sdist_no_symlink_path_traversal_via_directory_symlink` | not run, for `tomlkit`; its latest head, of 2026-11-14, passes |
+| #11136, 2026-10-12 | accepting any matching hash | 1 failed: the same test | not run, for `tomlkit` |
+| #11109, 2026-10-11 | clearing downloaded artifacts | 1 failed: the same test | not run, for `tomlkit` |
+
+poetry's `pyproject.toml` lists `tomlkit` at the heads of October and not at
+18668c8d, of 2026-11-15, so the environment of mid-November runs no head of
+mid-October (FACT).
+
+So, of poetry's latest six red pull requests (INFERENCE): three failed from their
+own change, by the names of the tests that failed: the first, which replays
+exactly; #11226, which replays as pytest's internal error, and a JUnit that holds
+it is one that the Distiller rejects as `unusable-input`, so that run would not
+be evaluated; and #11081, which could not be run. Three failed, within two days,
+on one test that none of their changes touches, as urllib3's three did on a
+flaky test of `main`: likely inherited, which was not checked, since the
+environment of their date was not rebuilt [VERIFY]. Pass 2 found no failed run of
+poetry's test workflow on its base branch; that workflow runs pytest only when a
+push changes the files that its "Detect changed files" job looks at, which could
+hide a red base branch [VERIFY].
+
 ## Where it leaves the choice
 
 Discarded (OPINION, from the facts above):
@@ -267,10 +308,14 @@ and the offline runs above put urllib3 first, since its CI already runs its
 tests with no network and its lock is installed frozen, while poetry's CI also
 runs tests that need the network and a GitHub token, which a replay cannot run,
 and its tests change their order on every run. But only two of urllib3's latest
-six red pull requests replay as red from their own change, and poetry's have not
-been replayed: its base branch never failed in pass 2, so fewer of its red runs
-may be inherited (INFERENCE), while those that failed only in its integration
-tests cannot be replayed.
+six red pull requests replay as red from their own change; of poetry's latest
+six, three failed from their own change, of which one replays as red, one as
+pytest's internal error, which the Distiller rejects, and one not at all without
+the environment of its date. Both have red runs that a base branch, flaky or
+red, seems to have passed on. urllib3 is the easier to replay: its environment
+of mid-November ran heads six weeks older, while poetry's ran none four weeks
+older. For either, a third to a half of the CI's red pull requests would count,
+some 4 to 6 a month, so 30 take five to eight months of history (INFERENCE).
 
 | | poetry | urllib3 |
 |---|---|---|
@@ -278,7 +323,7 @@ tests cannot be replayed.
 | Base branch runs failed | 0% | 7% |
 | A passing Linux test job | 0.9 min | 1.3 min |
 | Suite run offline, 16 threads | 3362 passed, none failed, 36 s | 2695 passed, none failed, 28 s |
-| Latest six red PRs, replayed | not replayed | 2 red from their own change, 3 on a test flaky on `main` then, 1 green |
+| Latest six red PRs, replayed | 1 red from its own change, 1 pytest internal error from its own change, 4 not run, for want of `tomlkit` | 2 red from their own change, 3 on a test flaky on `main` then, 1 green |
 | For | its failures hit every Ubuntu Python alike, so they come from the diff (INFERENCE); a lock file for each commit's environment | its CI runs its tests with no network; `uv sync --frozen`; a small library with few dependencies |
 | Against | its CI's integration tests need the network and a GitHub token, so a red run that failed only there cannot be replayed; `pytest-randomly` changes the order, and with it M's rows, unless turned off | some of its tests that need a route, IPv6 or `localhost` skip offline, which its CI likely runs; some tests start local servers, and may be flaky [VERIFY] |
 
@@ -287,11 +332,13 @@ give Report 2's bound of 9.5% when none is missed, take three to four months of
 either project's pull requests (INFERENCE, from the rates above). Replayed
 offline, they come from history, with no wait.
 
-To check before choosing [VERIFY]: whether poetry's red runs fail again when
-replayed, as urllib3's latest six were checked above, and how many of them
-failed only in its integration tests; how far back each project's environments
-can be rebuilt, beyond the six weeks that urllib3's replays reached; and whether
-the red pull requests are spread over many authors, rather than a burst from one
-contributor or a bot. Checked on 2026-11-16, above: their tests need no network,
-but for poetry's integration tests; and two of urllib3's latest six red pull
-requests replay as red from their own change.
+To check before choosing [VERIFY]: whether, with the environment of each head's
+date rebuilt, poetry's red runs of October fail again, and whether the test that
+three of them failed on was red on their base branch then; how far back each
+project's environments can be rebuilt, beyond the six weeks that urllib3's
+replays reached; how many of poetry's red runs failed only in its integration
+tests; and whether the red pull requests are spread over many authors, rather
+than a burst from one contributor or a bot. Checked on 2026-11-16, above: their
+tests need no network, but for poetry's integration tests; and of their latest
+six red pull requests, two of urllib3's and one of poetry's replay as red from
+their own change.

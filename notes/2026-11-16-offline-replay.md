@@ -155,3 +155,24 @@ labelled):
   gave an empty log for every job asked for, and the job's log from the API,
   `gh api repos/<repo>/actions/jobs/<id>/logs`, holds pytest's output with its
   colour codes, which have to be taken out before its lines are read.
+
+## What replaying six of poetry's red pull requests added
+
+The same check, on 2026-11-16, for the latest six red runs of poetry's job
+"Ubuntu (Python 3.12) / pytest" (FACT, unless labelled):
+
+- Point 8 comes first: poetry's environment, built from its `pyproject.toml` of
+  2026-11-15, ran none of the four heads of 2026-10-11 to 2026-10-17, which
+  import `tomlkit`, a dependency that poetry dropped in between. A replay of
+  poetry builds the environment of each head from what that head holds, and
+  cannot share one environment over more than a few weeks.
+- Point 6, and the SPEC's rejections: a replayed run can end in pytest's
+  internal error. #11226's own test recursed until an xdist worker died, and
+  pytest exited with 3. A full run's JUnit that holds pytest's internal error is
+  rejected as `unusable-input` (SPEC), so such a run is recorded as rejected and
+  counts as neither red nor green (INFERENCE: the replay wrote no JUnit).
+- Point 1: the two tested heads that their pull requests' later heads do not
+  hold came when fetched by their commit ids.
+- Reading the CI's results: with its colour codes taken out, the job's log from
+  the API names the tests that failed, as it did for five of poetry's six runs.
+  `gh` failed once on a run's jobs, so such calls are worth trying again.
