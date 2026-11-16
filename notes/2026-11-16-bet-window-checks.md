@@ -13,13 +13,15 @@ Labels: **FACT** = seen on 2026-11-16; **INFERENCE**; **OPINION**;
 
 ## In short
 
-- Over the bet's window, the CI saw 25 of urllib3's pull requests red in the
-  tests of "Ubuntu 3.12", before any replay, and 30 are what the bet asks for;
-  poetry's job saw 21; and the year before the window adds none to urllib3's,
-  in the months that GitHub still lists (FACT). So neither finalist alone gives
-  the bet's 30 pull requests with a red run of one job (INFERENCE: a replay
-  could pass the CI's count only by turning red pull requests that the CI saw
-  green).
+- Over the bet's window, the counts found 25 of urllib3's pull requests red in
+  the tests of "Ubuntu 3.12", before any replay, and 30 are what the bet asks
+  for; in poetry's job, 21; and the months before the window that GitHub still
+  lists add none to either (FACT). If the counts see every red run, neither
+  finalist alone gives the bet's 30 pull requests with a red run of one job
+  (INFERENCE: a replay could pass the CI's count only by turning red pull
+  requests that the CI saw green). But neither count found a red run older
+  than 2026-05-23, about 180 days before they ran, so they may not see older
+  ones [VERIFY]: see "A doubt about the counts' first months".
 - The environment of the window's first day builds and runs urllib3's suite
   with no network: 1912 passed and 2 failed, both on the flaky HTTP/2 probe
   test, which then kept the process from exiting (FACT).
@@ -107,6 +109,7 @@ a job of that name (FACT).
 | urllib3, "Ubuntu 3.12", 2026-03-16 to 2026-11-15 | 967 | 352 | 317 | 166 | 25 |
 | poetry, "Ubuntu (Python 3.12) / pytest", 2026-03-16 to 2026-11-15 | 929 | 352 | 153 | 101 | 21 |
 | urllib3, "Ubuntu 3.12", 2025-03-16 to 2026-03-15 | 173 | 58 | 64 | 19 | 0 |
+| poetry, "Ubuntu (Python 3.12) / pytest", 2025-10-01 to 2026-03-15 | 297 | 90 | 45 | 27 | 0 |
 
 urllib3's 352 pull requests and poetry's are different ones, from 198 and 174
 repositories. By month, the pull requests red; one red in two months counts in
@@ -138,16 +141,33 @@ What the counts say:
 - poetry's 21 are a ceiling: the job's one test step runs the integration tests
   too, `poetry run pytest --integration -v`, which a replay with no network
   cannot run (FACT, in its `.github/workflows/.tests-matrix.yaml`).
-- In the year before the window, no urllib3 pull request was red in the job,
-  from November 2025, the first month in which GitHub lists any run, to
-  2026-03-15 (FACT; see the next section).
+- Before the window, the counts found no pull request red in the job, in
+  urllib3 or in poetry, from November 2025, the first month in which GitHub
+  lists any of their runs, to 2026-03-15 (FACT; see "How far back GitHub lists
+  runs").
 - Both projects have the most in October, and neither has any from 2026-03-16
-  to the end of April (FACT).
+  to the end of April (FACT), though the doubt of the next section bears on
+  those months.
+
+## A doubt about the counts' first months
+
+Neither count found a red run older than 2026-05-23 in urllib3 or 2026-05-24 in
+poetry, and they ran on 2026-11-16, 180 days after 2026-05-20 (FACT). Yet both
+projects had failed runs before then: from 2026-03-16 to the end of April, 31
+in urllib3 and 31 in poetry; from November 2025 to 2026-03-15, 64 and 45
+(FACT). Where a count checked it, the failed runs it opened had the job (FACT),
+and from 2026-05-23 to 2026-11-15 the counts found 25 and 21 red pull requests.
+So the counts may not see a red run older than about 180 days, for instance if
+GitHub then gives a job's conclusion but no longer its steps [VERIFY: the jobs
+of an old failed run, beside those of a recent one]. If so, the counts say
+nothing about the window's first two months or the months before it, and the
+window may hold more red pull requests than 25 and 21 (INFERENCE).
 
 ## How far back GitHub lists runs
 
 By its own `total_count`, GitHub has no pull request run of urllib3's CI in any
-month from 2025-03 to 2025-10, and two in 2025-11 (FACT). GitHub's changelog of
+month from 2025-03 to 2025-10, and two in 2025-11; none of poetry's test
+workflow in 2025-10, and 14 in 2025-11 (FACT). GitHub's changelog of
 2026-08-27 ("Actions retention will cover checks, workflow runs, and statuses")
 says that runs "were retained for 400+ days", and that from 2026-10-01 the runs
 of public repositories would be kept 90 days at most; that post is marked
@@ -176,7 +196,8 @@ A bound below 15% takes at least 19 pull requests with no miss, 30 with one, or
 ## What it leaves open
 
 The bet asks for at least 30 pull requests with a red run, which neither
-finalist's job gives over the window (INFERENCE, from the counts above).
+finalist's job gives over the window if the counts see every red run
+(INFERENCE, from the counts above).
 Whether to change the bet is the user's. The options that the agent saw
 (OPINION):
 
@@ -191,3 +212,7 @@ Whether to change the bet is the user's. The options that the agent saw
 
 The agent recommended the first, after a count of poetry from late 2025 to
 2026-03-15, which would give the two projects' total over all that GitHub lists.
+The user accepted it on 2026-11-16, and that count found no red pull request
+(FACT); but all its months are older than 180 days, so the doubt above comes
+first. If the counts cannot see older red runs, the window's real number is not
+known yet, and urllib3 alone might reach 30 (INFERENCE).
