@@ -8,6 +8,12 @@ Properties: off. While off, write each invariant as one or two concrete
 examples. -->
 
 ## Bet
+- Hypothesis: on urllib3/urllib3, over the pull requests whose CI runs started from 2026-03-16 to 2026-11-15, replayed offline in its job "Ubuntu 3.12", an all-affected, file-level selector would leave out every failed test in so few of the pull requests with a red run that the one-sided 95% Clopper–Pearson upper bound of its miss rate is below 15%, over at least 30 such pull requests.
+- Appetite: 3 weeks, from 2026-11-16.
+- Kill signal: at the end of the appetite, the bound is 15% or more; or the replayed window holds fewer than 30 pull requests with a red run; or the harness cannot rebuild the environment of more than 20% of the window's pull requests.
+- Outcome: pending, decided on 2026-12-07.
+
+## Previous bet
 - Hypothesis: on sergiparpal/adaptive-policy-compilation, an all-affected, file-level selector would cut at least 25% of the full suite's test time across its PRs.
 - Appetite: 3 weeks, ended 2026-10-31; renewed once, on 2026-10-31, with no scope cut, to 2026-11-14, after the agent subscription lapsed on 2026-10-26.
 - Kill signal: at the end of the appetite, the savings measured on sergiparpal/adaptive-policy-compilation are below 25%, or Slice 1 does not run end to end in its CI.
