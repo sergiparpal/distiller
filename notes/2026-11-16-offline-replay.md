@@ -117,3 +117,41 @@ Each of these is the user's to decide, in the next bet's slice:
 The non-goal that Slice 1 never decides which tests run still holds: the replay
 runs the full suite at every H. The tool's code needs no change for any of these
 (INFERENCE): they are inputs that it takes on its command line.
+
+## What replaying six of urllib3's red pull requests showed
+
+On 2026-11-16 the agent replayed, with no network, the heads that the latest six
+red runs of urllib3's job "Ubuntu 3.12" had tested
+(`notes/2026-11-16-pilot-candidates.md`), with no tool: only the suite, to see
+which red runs fail again. What it shows for the points above (FACT, unless
+labelled):
+
+- Point 1: fetching the heads by their commit ids brought nothing into the
+  clone, while `git fetch origin pull/<n>/head:refs/pr/<n>` brought every head
+  that the runs had tested, the older ones of pull requests pushed to again
+  afterwards included.
+- Point 2: for the one red run that did not replay, #5278, the pull request's
+  head and its merge into the last commit of `main` before the run both passed,
+  so no case yet shows the merge mattering.
+- Point 6: a red run of the CI can replay green: #5278 failed in the CI with 57
+  failed tests and 1 error, and passed replayed, at its head, at that merge and
+  with `--memray`, as its CI runs pytest. The record then holds the replay's
+  green, as point 6 says.
+- Point 7: three of the six failed only on `test_http2_probe_blocked_per_thread`,
+  which failed in 3 of 10 runs at the commit of `main` before the first of their
+  runs, and in 0 of 10 at today's `main`: a flaky test of the base branch at the
+  time. A rerun discards such a failure when the test passes the second time;
+  when it fails again, the run is red for a reason outside its diff, and counts
+  against the selector, as the SPEC's open question on inherited failures says.
+- A limit per test belongs in the replay: one replay ran past 900 s with no
+  result, and the same head, run again with `--timeout=120`, took 37 s with no
+  test reaching the limit. A replay that hangs stalls every one after it.
+- Point 8: four heads, up to six weeks older than the commit that the
+  environment was built from, and whose `uv.lock` or `pyproject.toml` differ
+  from its, ran in that environment; older ones were not tried.
+- Cost: each replay of the suite took 24 to 40 s on 16 threads, by pytest's own
+  count, as the estimate under Cost assumed.
+- Reading the CI's results through `gh`: `gh run view --job <id> --log-failed`
+  gave an empty log for every job asked for, and the job's log from the API,
+  `gh api repos/<repo>/actions/jobs/<id>/logs`, holds pytest's output with its
+  colour codes, which have to be taken out before its lines are read.

@@ -192,6 +192,59 @@ No test of either failed, or logged anything, for want of the network. Which of
 urllib3's skips its CI runs is not checked [VERIFY]; the 31 that need a route,
 and those that need IPv6 or resolve `localhost`, likely run there (INFERENCE).
 
+## urllib3's latest red pull requests, replayed
+
+On 2026-11-16 the user ran one more script through `gh`: among the latest 300
+pull request runs of urllib3's CI, those in which the job "Ubuntu 3.12" failed
+in a step that runs the tests, one per pull request, the latest six. The user
+then fetched them with `git fetch origin pull/<n>/head:refs/pr/<n>`, which also
+brought every head that those runs had tested. A first fetch, by the heads'
+commit ids, had brought nothing. `gh run view --job <id> --log-failed` gave an
+empty log for each job, and the job logs from the API hold pytest's output with
+colour codes, which the script did not take out, so the tests that failed in
+the CI are known by their count, from pytest's summary line, not by their names.
+
+The agent replayed each tested head in the clone, in the environment built at
+d9f9b0ad, with the pytest options of urllib3's nox session and no coverage or
+memray, in its sandbox, which reaches no host but `pypi.org` (FACT). The
+`uv.lock` or `pyproject.toml` of four of the heads, #5357's and the three of
+October, differ from the environment's commit, and they ran in it all the same.
+
+| PR | Its change | CI, "Ubuntu 3.12" | Replayed |
+|---|---|---|---|
+| #5375 | bounded decoder flush | 5 failed | 5 failed, all in `test/test_response.py`, on zstd and deflate decoding |
+| #5357 | empty `allowed_methods` | 1 failed | 1 failed: `test/test_retry.py::TestRetry::test_empty_allowed_methods` |
+| #5295 | rejecting NaN timeouts | 1 failed | 2 failed: `test_http2_probe_blocked_per_thread`, with TLSv1_2 and TLSv1_3 |
+| #5293 | a bump of pre-commit hooks | 1 failed | 1 failed: `test_http2_probe_blocked_per_thread`, with TLSv1_3 |
+| #5296 | rejecting non-finite timeouts | 1 failed | stopped after 900 s with no result |
+| #5278 | an HTTP/2 prototype | 57 failed, 1 error | 3044 passed, none failed |
+
+Each replay that ended took 24 to 40 s. Three checks followed (FACT):
+
+- #5296's head again, with `--timeout=120`: 2 failed, both
+  `test_http2_probe_blocked_per_thread` with TLSv1_2, in `test_https.py` and in
+  `contrib/test_pyopenssl.py`, in 37 s; no test reached the limit, so the hang
+  did not happen again.
+- #5278's head merged into d9f9b0ad, the last commit of `main` before its run,
+  as the CI tests a merge: no conflict, and 3063 passed, none failed. Its head
+  with `--memray --hide-memray-summary`, as its CI's log shows pytest run: 3044
+  passed, none failed.
+- `test_http2_probe_blocked_per_thread`, 10 runs at each commit: it failed in 1
+  of 10 at #5293's head, 2 of 10 at #5295's, 3 of 10 at 796d200d, the last
+  commit of `main` before #5293's run, on 2026-10-01, and 0 of 10 at d9f9b0ad.
+
+So, of urllib3's latest six red pull requests (INFERENCE): two, #5375 and
+#5357, failed from their own change, and replay so; three, #5293, #5295 and
+#5296, failed on a test that was flaky on `main` at the time, which a rerun file
+would mostly discard, and which, failing again, would count against the
+selector, as the SPEC's open question on failures inherited from the base branch
+says; and one, #5278, failed in the CI for a reason that its head, its merge
+and memray do not show offline, so a replay records it green. What its CI has
+that the replay lacks, coverage under `sysmon`, a newer Python 3.12 or IPv6, is
+not checked [VERIFY]. If a third of urllib3's red pull requests count when
+replayed, its 21 in 52 days give some 7, about 4 a month, so 30 take some seven
+months of history: an estimate from six pull requests.
+
 ## Where it leaves the choice
 
 Discarded (OPINION, from the facts above):
@@ -208,12 +261,16 @@ Discarded (OPINION, from the facts above):
 - pytest: its failures depend mostly on the environment, xdist, pypy or Windows,
   and one replayed job, such as `ubuntu-py312`, failed in 7 runs in 23 days.
 
-Finalists (OPINION): urllib3/urllib3 first, then python-poetry/poetry. On their
-CI's figures alone poetry came first; their configuration and the offline runs
-above put urllib3 first, since its CI already runs its tests with no network and
-its lock is installed frozen, while poetry's CI also runs tests that need the
-network and a GitHub token, which a replay cannot run, and its tests change
-their order on every run.
+Finalists (OPINION): urllib3/urllib3 and python-poetry/poetry, with neither
+first yet. On their CI's figures alone poetry came first; their configuration
+and the offline runs above put urllib3 first, since its CI already runs its
+tests with no network and its lock is installed frozen, while poetry's CI also
+runs tests that need the network and a GitHub token, which a replay cannot run,
+and its tests change their order on every run. But only two of urllib3's latest
+six red pull requests replay as red from their own change, and poetry's have not
+been replayed: its base branch never failed in pass 2, so fewer of its red runs
+may be inherited (INFERENCE), while those that failed only in its integration
+tests cannot be replayed.
 
 | | poetry | urllib3 |
 |---|---|---|
@@ -221,6 +278,7 @@ their order on every run.
 | Base branch runs failed | 0% | 7% |
 | A passing Linux test job | 0.9 min | 1.3 min |
 | Suite run offline, 16 threads | 3362 passed, none failed, 36 s | 2695 passed, none failed, 28 s |
+| Latest six red PRs, replayed | not replayed | 2 red from their own change, 3 on a test flaky on `main` then, 1 green |
 | For | its failures hit every Ubuntu Python alike, so they come from the diff (INFERENCE); a lock file for each commit's environment | its CI runs its tests with no network; `uv sync --frozen`; a small library with few dependencies |
 | Against | its CI's integration tests need the network and a GitHub token, so a red run that failed only there cannot be replayed; `pytest-randomly` changes the order, and with it M's rows, unless turned off | some of its tests that need a route, IPv6 or `localhost` skip offline, which its CI likely runs; some tests start local servers, and may be flaky [VERIFY] |
 
@@ -229,10 +287,11 @@ give Report 2's bound of 9.5% when none is missed, take three to four months of
 either project's pull requests (INFERENCE, from the rates above). Replayed
 offline, they come from history, with no wait.
 
-To check before choosing [VERIFY]: whether a failure seen in CI fails again when
-replayed, which needs the pull requests' heads, fetched from GitHub, which the
-agent's sandbox cannot reach; how many of poetry's red runs failed only in its
-integration tests; how far back each project's environments can be rebuilt;
-and whether the red pull requests are spread over many authors, rather than a
-burst from one contributor or a bot. Whether their tests need the network was
-checked on 2026-11-16, above: they do not, but for poetry's integration tests.
+To check before choosing [VERIFY]: whether poetry's red runs fail again when
+replayed, as urllib3's latest six were checked above, and how many of them
+failed only in its integration tests; how far back each project's environments
+can be rebuilt, beyond the six weeks that urllib3's replays reached; and whether
+the red pull requests are spread over many authors, rather than a burst from one
+contributor or a bot. Checked on 2026-11-16, above: their tests need no network,
+but for poetry's integration tests; and two of urllib3's latest six red pull
+requests replay as red from their own change.
