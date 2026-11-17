@@ -1,13 +1,14 @@
 # Draft: Slice 2, replaying the pilots' red pull requests offline
 
 A draft, in the format of `docs/SPEC.md`, of the slice of the bet that the user
-wrote on 2026-11-17 (D-010), to move into the SPEC once the user has settled
-it. First written on 2026-11-16 for urllib3 alone, from
-`notes/2026-11-16-replay-slice-proposal.md`; rewritten on 2026-11-17 for both
-pilots, from `notes/2026-11-16-bet-window-checks.md`. Nothing here is decided.
-The bet, the non-goals and the "then" of every [core] example are the user's:
-the non-goals below are proposals, and each [core] example carries a proposed
-"then" for the user to keep, change or drop. Figures come from
+wrote on 2026-11-17 (D-010), to move into the SPEC. First written on 2026-11-16
+for urllib3 alone, from `notes/2026-11-16-replay-slice-proposal.md`; rewritten
+on 2026-11-17 for both pilots, from `notes/2026-11-16-bet-window-checks.md`; and
+settled with the user the same day: the user kept its non-goals and the "then"
+of its two [core] examples as written, and chose the answer to each of its open
+questions (D-011). The non-goals and the "then" of every [core] example are the
+user's, who writes them into the SPEC; the agent writes the rest. Figures come
+from
 `notes/2026-11-16-pilot-candidates.md`, `notes/2026-11-16-offline-replay.md` and
 `notes/2026-11-16-bet-window-checks.md`; what was not checked carries [VERIFY].
 
@@ -28,7 +29,8 @@ could not.
   report; the harness's Deployment stands in for Slice 1's on these two pilots
   only.
 
-Proposed non-goals, the user's:
+Non-goals, which the user kept on 2026-11-17 and writes into the SPEC's
+Non-goals:
 - The harness changes nothing in `distiller`: no field in a record, no input, no
   rule.
 - No pull request, window, run or floor pattern is chosen once a record exists
@@ -68,10 +70,9 @@ Terms:
 - The run chosen for a pull request is its latest run in the window whose job
   failed, in any step, as the bet says; the CSV names it.
 - The tested head is the commit that the chosen run tested. It is H for the
-  tool (open question 1).
+  tool, not a merge of it into the base (D-011).
 - The base commit is the last commit of the pilot's base branch before the
-  chosen run started, standing in for the one that the run saw (open question
-  7).
+  chosen run started, standing in for the one that the run saw (D-011).
 - M is the merge-base of the base commit and the tested head.
 - The environment of a commit is what the pilot's configuration builds from
   that commit's own lock file: `uv.lock` for urllib3, `poetry.lock` for poetry.
@@ -87,14 +88,14 @@ Terms:
 - Given a row with no pull request number, when the manifest is read, then the
   replay does not start, and says that the number must be found first.
 - Given a number that both pilots' rows hold, when the manifest is read, then
-  the replay does not start, and names it: Slice 1's report counts pull requests
-  by number alone (open question 8).
+  the replay does not start, and names it: Slice 1's report, over both pilots'
+  record files, counts pull requests by number alone (D-011).
 - Given a row whose head is not in the clone, when the manifest is read, then
   that pull request is listed as not replayed before any run starts.
 
 #### Replaying a pull request
 - [core] Given urllib3's #5375 at its tested head, b66457156bf7, when it is
-  replayed, then (proposed) the full run's JUnit holds 5 failed tests, all in
+  replayed, then the full run's JUnit holds 5 failed tests, all in
   `test/test_response.py`, the rerun file holds those 5 run again, and one
   record is appended to urllib3's record file.
 - Given poetry's #10980 at its tested head, 7b38c77a1ef2, when it is replayed,
@@ -111,7 +112,7 @@ Terms:
   test did on 2026-11-16, when its run ends, then the pytest process ends with
   it.
 - [core] Given a full run that ends in pytest's internal error, as poetry's
-  #11226 did, when it is evaluated, then (proposed) the run is rejected with
+  #11226 did, when it is evaluated, then the run is rejected with
   `unusable-input` and `junit`, as Slice 1 rejects such a JUnit file.
 - Given a test that fails at the tested head and at M, when the pull request is
   replayed, then the log marks its failure as inherited.
@@ -142,21 +143,21 @@ Terms:
 
 ## Changes to Constraints
 
-- Deployment, for Slice 2: the harness runs on the user's machine, where the
-  pilots' clones are, with `git`, `uv` and the pilots' Python on the `PATH`;
-  poetry runs through `uv tool run`. It reaches GitHub to fetch and PyPI to
-  install, before the runs; the suite runs reach the loopback only. The agent's
-  sandbox reaches neither `~/code/distiller-pilots` nor GitHub (open question
-  9). The tool runs as in Slice 1: `python -P -m distiller evaluate` from a
+- Deployment, for Slice 2: the user runs the harness on the user's machine,
+  where the pilots' clones are, with `git`, `uv`, `bwrap` and the pilots'
+  Python on the `PATH`; poetry runs through `uv tool run`. It reaches GitHub to
+  fetch and PyPI to install, before the runs; the suite runs reach the loopback
+  only. The agent's sandbox reaches neither `~/code/distiller-pilots` nor GitHub
+  (D-011). The tool runs as in Slice 1: `python -P -m distiller evaluate` from a
   fixed commit of this repository, with coverage 7.16.2, which
   `requirements.txt` pins and which also records the coverage at M.
-- Allowed dependencies, for the harness: the standard library, and `git`, `uv`
-  and poetry, as programs on the `PATH`; `gh` only to find the two missing
-  numbers. Nothing that `distiller` depends on changes.
+- Allowed dependencies, for the harness: the standard library, and `git`, `uv`,
+  poetry and `bwrap`, as programs on the `PATH`; `gh` only to find the two
+  missing numbers. Nothing that `distiller` depends on changes.
 - Agent safety: the harness runs the pilots' code at commits that strangers
-  wrote, with no network but the loopback and a `HOME` in the work directory.
-  Whether that is enough isolation, or the runs need a container or a CI runner,
-  is open (open question 6).
+  wrote. Each suite run goes inside bubblewrap, with no network but the
+  loopback, the home hidden but the work directory, and a `HOME` there
+  (D-011).
 - Performance, from the samples of 2026-11-17: a whole run of urllib3's suite
   took 50 to 118 s with no xdist, which its heads before 2026-10-15 lack, and
   poetry's 31 to 56 s with its own `-n logical` (FACT); the environments' build
@@ -267,18 +268,20 @@ For each manifest line of the pilot, in order:
 ### Rules
 1. The manifest is fixed: its SHA-256 goes into the log's first line, and a run
    with another manifest over the same record file replays nothing.
-2. Every process has a time limit, and every test of a suite run the pilot's;
-   for poetry, whose environments lack pytest-timeout, the replay adds it (open
-   question 5).
-3. A suite run takes the pilot's pytest options, reaches no network but the
-   loopback, and has its `HOME` in the work directory and the environment's
-   `bin` first on its `PATH`.
-4. pytest runs in a wrapper that ends the process with `os._exit` once pytest
+2. Every process has a time limit, and every test of a suite run the pilot's,
+   120 s; for poetry, whose environments lack pytest-timeout, the replay adds it
+   to the environment, and the log says so (D-011).
+3. A suite run takes the pilot's pytest options and runs inside bubblewrap, with
+   no network but the loopback, the home hidden but the work directory, its
+   `HOME` there, and the environment's `bin` first on its `PATH`.
+4. The tests that failed in the full run run once more, in one rerun, as Slice
+   1's rerun file has them (D-011).
+5. pytest runs in a wrapper that ends the process with `os._exit` once pytest
    returns, since a thread that a test left blocked kept one alive for 37
    minutes on 2026-11-16.
-5. The coverage at M is recorded by coverage 7.16.2, under `ctrace`, with test
+6. The coverage at M is recorded by coverage 7.16.2, under `ctrace`, with test
    contexts and no static context, as Slice 1's Deployment asks.
-6. Every step's output is kept, with its colour codes taken out.
+7. Every step's output is kept, with its colour codes taken out.
 
 ### Imports
 - `distiller` imports nothing of `replay`, and `replay` nothing of `distiller`:
@@ -316,28 +319,29 @@ the jobs' conclusions.
 - Whether adding pytest-timeout to poetry's environments changes any test's
   outcome.
 
+## Decided on 2026-11-17
+
+The user answered the draft's open questions, each with the agent's
+recommendation (D-011):
+
+1. H is the tested head, not a merge of it into the base commit rebuilt. For
+   urllib3's #5278 both passed.
+2. Which runs: the bet's, one per pull request, its latest run in the window
+   whose job failed.
+3. The harness lives in this repository, as a package `replay` apart from
+   `distiller`, with its own tests and an import-linter contract.
+4. The tests that failed run once more, in one rerun.
+5. The limit per test is 120 s; poetry's environments get pytest-timeout for
+   the replay alone.
+6. Each suite runs inside bubblewrap, with no network but the loopback and the
+   home hidden but the work directory.
+7. The base commit is the last commit of the base branch before the run
+   started.
+8. One report, Slice 1's, over both pilots' record files, gives the bet's bound,
+   and the harness's summary breaks it down by pilot. In the window, urllib3's
+   numbers run from 3593 to 5375 and poetry's from 9805 to 11226, so they do not
+   collide; the two rows with no number are checked once found.
+9. The user runs the replays on the user's machine, where the clones are.
+
 ## Open questions
-1. H: the tested head, or a merge of it into the base commit that the run saw,
-   as the CI tested. For urllib3's #5278 both passed.
-2. Which runs: settled by the bet of 2026-11-17, one per pull request, its
-   latest run in the window whose job failed.
-3. Where the harness lives: in this repository, as above, or in a repository of
-   its own.
-4. How many reruns: one, as Slice 1's pilot had, or more for tests as flaky as
-   urllib3's `test_http2_probe_blocked_per_thread`, which the base branch held
-   until early October 2026.
-5. The time limit per test: 120 s held for urllib3; for poetry, pytest-timeout
-   added to the replay's environments alone, or a run that hangs rejected at the
-   process's limit.
-6. Isolation: whether running strangers' commits with no network but the
-   loopback is enough, or the runs need a container or a CI runner.
-7. The base commit: the last commit of the base branch before the run started,
-   or the one that the run's event names, looked up once through `gh` while
-   GitHub keeps the runs.
-8. One report or two: the bet counts the two pilots together, and Slice 1's
-   report counts pull requests by number alone; in the window, urllib3's numbers
-   run from 3593 to 5375 and poetry's from 9805 to 11226, so they do not collide,
-   but the two rows with no number are still to be checked.
-9. Where the replays run: on the user's machine, where the clones are, or with
-   copies in the agent's scratchpad, as the samples were; the agent's sandbox
-   reaches neither `~/code/distiller-pilots` nor GitHub.
+None left in the slice's design; the [VERIFY] above stay to be checked.
