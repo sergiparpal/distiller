@@ -1,0 +1,91 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+urllib3,3720,19903409392,2025-12-03T17:46:25Z,b94cb76397e9626eaec64939dcade5c20c7081ff,"failed, steps no longer given",
+urllib3,3729,19955298005,2025-12-05T06:57:25Z,21d551306c9bbeeb91f93e3152f96ae8e60e5f3b,"failed, steps no longer given",
+urllib3,3759,21097540005,2026-01-17T16:39:26Z,6fcd8985b8a3934147f82c242d788d3afec71e97,"failed, steps no longer given",
+urllib3,3761,21199215062,2026-01-21T06:08:22Z,8864ba508b1dfda3dde5613fdf80254c478dd8b8,"failed, steps no longer given",
+urllib3,3766,21432072471,2026-01-28T09:10:52Z,3d60e1d5634d1cc1a7be837817c5ff0e4c273ba5,"failed, steps no longer given",
+urllib3,3770,21859009178,2026-02-10T09:22:14Z,97ac7b445509595b5fbeda9017e0341ce261d620,"failed, steps no longer given",
+urllib3,3780,22478343633,2026-02-27T08:15:25Z,c72483fb086a172b8e84a7af8b6b7dbfb902b2c1,"failed, steps no longer given",
+urllib3,3781,22506956108,2026-02-27T22:53:00Z,9cd61f1994326851bf608bff69352aed90b3f35a,"failed, steps no longer given",
+urllib3,3593,23089963065,2026-03-14T14:35:04Z,58835f6213ff589639c9da02802b0c147928ef22,"failed, steps no longer given",
+urllib3,3796,23195480328,2026-03-17T13:02:03Z,cbcd6d512f1825f5aa47c699c37ebfd54641b149,"failed, steps no longer given",
+urllib3,4946,23721011639,2026-03-29T22:51:37Z,05619440764e56221733c9ea55e1c811a90638e2,"failed, steps no longer given",
+urllib3,4948,23728696105,2026-03-30T04:59:51Z,486b1fd1dbb7aed34c88eea4a7d7dbd479f4441c,"failed, steps no longer given",
+urllib3,4962,24362830593,2026-04-13T19:33:17Z,ae81f84b758e94fe7c51212c320b03518f9d7d7e,"failed, steps no longer given",
+urllib3,4982,25178751597,2026-04-30T17:06:39Z,6853a77989e95a20441d8b2e6b5681b820f502a2,"failed, steps no longer given",
+urllib3,4988,25572314501,2026-05-08T18:24:59Z,905c86e3bebd42064e2492d8b6a6ca33902242ec,"failed, steps no longer given",
+urllib3,4996,25607015573,2026-05-09T17:16:56Z,58b99eacf55489947bb5dbfc906c7b8aeeea9723,"failed, steps no longer given",
+urllib3,5047,25715213323,2026-05-12T05:24:29Z,0c05768646b4e3efdacb7d8eb9dff3508897c779,"failed, steps no longer given",
+urllib3,5008,25724246448,2026-05-12T08:57:36Z,8c8a0220ece0847c5fa6b701df04b13c6807420b,"failed, steps no longer given",
+urllib3,5009,25726141275,2026-05-12T09:35:51Z,f50ebc1b82f41e581aa91f61050f0e2e351f0a8b,"failed, steps no longer given",
+urllib3,5021,25940853270,2026-05-15T20:52:41Z,a895cdd016e97bb86eb14ba005539f37986fc3cc,"failed, steps no longer given",
+urllib3,5027,25991123703,2026-05-17T12:40:32Z,06101b6a2bd14fa68589e509290774564b8a699c,"failed, steps no longer given",
+urllib3,5034,26077707162,2026-05-19T05:14:23Z,1b186496d37545f0aba4efd0f5a619e8f573d0d3,"failed, steps no longer given",
+urllib3,5050,26326541760,2026-05-23T07:07:55Z,8456785e9914d0665943e2770916c3198a8a2821,failed in a test step,Run tests
+urllib3,,26447918898,2026-05-26T12:25:04Z,af561312238e91032ca7913df3d3d3086b4e53a1,failed in another step,Set up job
+urllib3,3786,26703309893,2026-05-31T04:33:50Z,8cd4b4f25af29258485f6932959de600a17e0ed0,failed in a test step,Run tests
+urllib3,5091,28112381188,2026-06-24T16:08:19Z,bb4ea3dded7f7585b1ad0fff3d80b60f5aa71b88,failed in a test step,Run tests
+urllib3,5093,28328678244,2026-06-28T16:30:00Z,8c3be2802c873076639fc5ce5d6f1a57c3e1dd27,failed in a test step,Run tests
+urllib3,5097,28520178605,2026-07-01T13:13:30Z,eed4289edca6ee92c0116c6266c8e42267c159ef,failed in a test step,Run tests
+urllib3,5103,28820781923,2026-07-06T20:23:10Z,930d337f44483571dd6bcea162488cb099bd5611,failed in a test step,Run tests
+urllib3,5156,31377075102,2026-08-10T09:58:43Z,3cb945526534007b369a005ddce99221a8f4ad1d,failed in a test step,Run tests
+urllib3,5168,31978231327,2026-08-16T23:07:11Z,9f40859c4fdf933af96b9191d7833af03e0ff8cf,failed in a test step,Run tests
+urllib3,5173,32014467263,2026-08-17T09:17:39Z,da93262156822e908f2bbb7039fc4f48705ae4ee,failed in a test step,Run tests
+urllib3,5210,33834943710,2026-09-04T03:55:31Z,ac8706c6144c6c166a337888e79de35ca0dd5248,failed in a test step,Run tests
+urllib3,5212,33904290129,2026-09-04T18:08:31Z,46ab811ed595633c2c4dfdf08bc71088dbd543de,failed in a test step,Run tests
+urllib3,5228,34163438667,2026-09-07T21:31:23Z,839ce46e4a7a3afcaed2f6e0927cb6364789bef1,failed in a test step,Run tests
+urllib3,5237,34292263864,2026-09-08T23:48:25Z,a9f6c42f0dca51ed84b3ea6aa1f21b66c3700e62,failed in a test step,Run tests
+urllib3,4947,35711228935,2026-09-22T09:35:15Z,f56c19e99334530e47cb0e5b07304c7fff56d3ad,failed in a test step,Run tests
+urllib3,5279,36813215434,2026-10-01T04:01:52Z,239aa6cf2c85ee99bd971589375cb8571bef58f3,failed in a test step,Run tests
+urllib3,5290,36823876939,2026-10-01T06:16:10Z,17f51286d6a6fe40ff3ee718eb9a30ca7f1bdfc2,failed in a test step,Run tests
+urllib3,5242,36826259277,2026-10-01T06:43:00Z,129e1e7554f6b42e7ff58b9132929e9ddcdc0cf3,failed in a test step,Run tests
+urllib3,5291,36864933582,2026-10-01T12:54:23Z,8342764182e24028771741a8698a16e03f39cff4,failed in a test step,Run tests
+urllib3,5292,36922864421,2026-10-01T20:36:54Z,4ffe5f39f37630ba37af600a2d262b5f5f16be5d,failed in a test step,Run tests
+urllib3,5293,36923189158,2026-10-01T20:39:33Z,33bd269c5c9c13f49f83e4f21b348c9c1ce7a685,failed in a test step,Run tests
+urllib3,5295,37002616200,2026-10-02T11:43:54Z,723ec6c05e878cbdce2368a3c5a6bcc4ddf744fe,failed in a test step,Run tests
+urllib3,5296,37022613249,2026-10-02T14:49:45Z,12908a8cda999b237b262ef3939a0aab636ddfb0,failed in a test step,Run tests
+urllib3,5357,41830300402,2026-11-04T12:33:30Z,ff6022fdab1f3e59325a44ca69b48b2de1b826ec,failed in a test step,Run tests
+urllib3,5375,43640664881,2026-11-14T21:02:34Z,b66457156bf78d4683690a5004058ec09635e4f8,failed in a test step,Run tests
+urllib3,5278,43653393732,2026-11-14T23:28:14Z,9f2aa07e66faf5e5104c0e57f253875957afb4fe,failed in a test step,Run tests
+poetry,10679,20639804247,2026-01-01T13:58:36Z,066fef0d7c1b0db8a8e3589e79f2bcb73fcac10d,"failed, steps no longer given",
+poetry,10687,20951186847,2026-01-13T09:15:01Z,b1939d002140c8891475946ad66bc9e4aed16700,"failed, steps no longer given",
+poetry,10720,21794727332,2026-02-08T07:58:41Z,4d174b163fec3b0d932033b2b832408506cfc8ce,"failed, steps no longer given",
+poetry,10721,21794732310,2026-02-08T07:59:06Z,ba4acd41b8cbcf719a993646271ccfed66353a2f,"failed, steps no longer given",
+poetry,10722,21794741079,2026-02-08T07:59:42Z,cd6b2695ade5d3ea1087c9ae30757744f960c447,"failed, steps no longer given",
+poetry,10719,21820412643,2026-02-09T09:57:24Z,01f7a6c876c2fe8a2d122ee16529ec6637ef3a07,"failed, steps no longer given",
+poetry,10736,21989386354,2026-02-13T13:55:07Z,a737e659eae1a1466b342f6d9c396b553a3adc69,"failed, steps no longer given",
+poetry,10746,22296623585,2026-02-23T07:24:15Z,befa80c282e65ba9ad3ecbaf91ed2b6d62f55ee1,"failed, steps no longer given",
+poetry,10751,22524454427,2026-02-28T16:26:58Z,8169bd25f8aa80c424ba92d3ba6fac1e43a08fd4,"failed, steps no longer given",
+poetry,10717,22615552999,2026-03-03T08:56:11Z,b86dc321a5ad7072722e195d360f612aaae377d6,"failed, steps no longer given",
+poetry,10763,22830799698,2026-03-08T21:58:40Z,1eec850860af39fb8a68482410f1efc2d3688d04,"failed, steps no longer given",
+poetry,10742,23942004352,2026-04-03T09:45:14Z,8093ac5115fde3e2369f3f9875e89e0099709149,"failed, steps no longer given",
+poetry,10845,24475389543,2026-04-15T19:59:00Z,0b4a9c46296841022ec5a85b0f33a927171b3592,"failed, steps no longer given",
+poetry,10060,24502057106,2026-04-16T09:12:22Z,7e18afa44d2a55d453b534944a90143809afd98f,"failed, steps no longer given",
+poetry,9805,24502866067,2026-04-16T09:31:14Z,a7d38c54f67e7ec04956da932a1a4633f3c8f95b,"failed, steps no longer given",
+poetry,10852,24627975698,2026-04-19T11:26:49Z,51a10c9790c59183298eeda643dcc219556f40ca,"failed, steps no longer given",
+poetry,10816,25106232517,2026-04-29T11:28:21Z,dac684c11300958bced821e0036d10ae21f05fb9,"failed, steps no longer given",
+poetry,10881,25293535499,2026-05-03T23:10:45Z,bfd40afac9e4bc70f8788681a791f6007c371522,"failed, steps no longer given",
+poetry,10885,25562207423,2026-05-08T14:49:34Z,ee811fb9a594239b220bbecc6959694bcaf4367f,"failed, steps no longer given",
+poetry,10889,25624826941,2026-05-10T09:08:19Z,ab66cd89359f53858fa97d1c51dc48bd47d4f855,"failed, steps no longer given",
+poetry,10908,25999332874,2026-05-17T18:37:48Z,edf2ec98241c320e35002b99fcad7744b4a0eb0a,"failed, steps no longer given",
+poetry,10924,26446265423,2026-05-26T10:14:44Z,d5c33e7a2456ecce572f4c30e303d472121113ab,failed in a test step,Run poetry run pytest --integration -v
+poetry,10849,26575845270,2026-05-28T12:52:49Z,81f32b3ce5350ee58a39cf7dfb3b476d35e95568,failed in a test step,Run poetry run pytest --integration -v
+poetry,10956,27668234550,2026-06-17T05:37:50Z,8ba07e37b40c695eaf72110a841829704d530f98,failed in another step,
+poetry,10961,28074966122,2026-06-24T04:22:20Z,96285ae24c696bc0b86b859ac65fb6180082b84f,failed in a test step,Run poetry run pytest --integration -v
+poetry,10964,28262152429,2026-06-26T20:01:04Z,a21ffdbf2497d5a1a367c3a01c8df038719e8c56,failed in a test step,Run poetry run pytest --integration -v
+poetry,10980,30416145764,2026-07-29T02:11:07Z,7b38c77a1ef24a9d6bb42371e845079f8093c056,failed in a test step,Run poetry run pytest --integration -v
+poetry,11051,34224047083,2026-09-08T12:04:25Z,f897b0e396fda31efab7c7613bd994aae9135ccd,failed in a test step,Run poetry run pytest --integration -v
+poetry,11010,35364542297,2026-09-18T15:47:17Z,3d3249db3a6dac35843eb163b677b30d566a0b65,failed in a test step,Run poetry run pytest --integration -v
+poetry,11115,37708005441,2026-10-08T00:29:08Z,1e172930eb688dc73df2944bcb65b33df8df0bd8,failed in a test step,Run poetry run pytest --integration -v
+poetry,11131,37766268260,2026-10-08T10:51:50Z,78f5e2bea59b22a91e5dbcd3569072950cb6f795,failed in a test step,Run poetry run pytest --integration -v
+poetry,11092,37824903513,2026-10-08T18:31:07Z,cbf03c4b2baed040a24fea7e4b6a24a2f1f9a5a7,failed in a test step,Run poetry run pytest --integration -v
+poetry,11132,37950410345,2026-10-09T15:15:50Z,0f6d7fa9033ce063c5c3280e9c621d9e2258f660,failed in a test step,Run poetry run pytest --integration -v
+poetry,10877,38057432062,2026-10-10T13:52:55Z,23996520e110162057ed4e99de7be1a957ffdbf6,failed in a test step,Run poetry run pytest --integration -v
+poetry,10911,38071133373,2026-10-10T17:17:34Z,a0e0eb96dd87e96f69e85dabfc8db95aafefe08f,failed in a test step,Run poetry run pytest --integration -v
+poetry,11135,38078723691,2026-10-10T19:10:13Z,f4e3be5de558afb3b4af27c1a1fe95be26c867ce,failed in a test step,Run poetry run pytest --integration -v
+poetry,11109,38137871970,2026-10-11T12:04:10Z,1a8de1f39af279f6c73c643915c4f147c36c3b3e,failed in a test step,Run poetry run pytest --integration -v
+poetry,11136,38201401884,2026-10-12T03:51:15Z,b6ab19abd06a4ebf53ea8521b5d806ff261b5421,failed in a test step,Run poetry run pytest --integration -v
+poetry,11057,38217088589,2026-10-12T07:19:25Z,9926d1767796c49b74d165d33fce17856d506399,failed in a test step,Run poetry run pytest --integration -v
+poetry,11081,39050296518,2026-10-17T16:38:33Z,36862acd680f327c651b0cda85038285cddce7e4,failed in a test step,Run poetry run pytest --integration -v
+poetry,,41279644934,2026-11-01T06:09:07Z,4240f5cbc1a0408fe1ed30aa90770c9b08bbed96,failed in a test step,Run poetry run pytest --integration -v
+poetry,11226,43162239778,2026-11-12T05:34:07Z,0e45d518af97fa0aabe673ecbc44a95e0eb30e39,failed in a test step,Run poetry run pytest --integration -v

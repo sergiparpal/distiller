@@ -405,3 +405,34 @@ window, at the edge of its 30, and some 41 over all that GitHub lists, enough
 for a bound below 15% with up to two misses (INFERENCE; see "A sample of
 poetry's red pull requests, replayed"). Which pilots, which window and which
 minimum the bet takes is the user's to write.
+
+The user wrote it on 2026-11-17: both finalists, over the pull requests whose
+job failed in a CI run that started from 2025-12-01 to 2026-11-15 (D-010).
+
+## The window's red pull requests, kept
+
+On 2026-11-17 the agent wrote `notes/2026-11-17-window-red-runs.csv` from the
+window counts of 2026-11-16, with the bet's rule: the pull requests whose job
+failed in a CI run that started from 2025-12-01 to 2026-11-15, in any step,
+each with its latest such run, whose head the replay takes. It has one row per
+pull request, 90 in all, 48 of urllib3's and 42 of poetry's, from 2025-12-03 to
+2026-11-14, and no user or branch name: the project, the pull request's number,
+the run's id and start, the head that the run tested, the job's outcome as
+GitHub gave it on 2026-11-16, and its failed steps (FACT).
+
+| Job's outcome in the latest such run | urllib3 | poetry |
+|---|---|---|
+| failed in a test step | 25 | 20 |
+| failed, steps no longer given | 22 | 21 |
+| failed in another step | 1 | 1 |
+
+Two rows are worth knowing (FACT). urllib3's in another step has no number,
+since the count looked numbers up only for the pull requests red in tests or of
+unknown step; its run id gives it. Its job failed in "Set up job" on
+2026-05-26, as in two more of its runs that minute, and its later runs did not
+fail. poetry's in another step is #10956, whose run of 2026-06-17 failed with no
+step given as failed, the day after a run red in its tests, so its row has the
+later run's head; its sample's replay, at the earlier head, waited for an answer
+that never came, so its job may have hung until a time limit [VERIFY]. One more
+row, poetry's of 2026-11-01, has no number, since the count did not find it;
+its run id gives it.
