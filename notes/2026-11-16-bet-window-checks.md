@@ -28,6 +28,10 @@ Labels: **FACT** = seen on 2026-11-16; **INFERENCE**; **OPINION**;
   replayed on 2026-11-17, kept five red, each from its own change: 7 of 17 in
   all, about 41%, which gives some 16 for urllib3's window alone, too few for
   a bound below 15% even with no miss (INFERENCE).
+- A sample of ten of poetry's kept five red, each from its own change, and one
+  gave no result: 6 of 12 with the two of before, 50%. Both finalists together
+  would give some 31 red in the replay over the bet's window, and some 41 over
+  all that GitHub lists, from November 2025 (INFERENCE).
 - The environment of the window's first day builds and runs urllib3's suite
   with no network: 1912 passed and 2 failed, both on the flaky HTTP/2 probe
   test, which then kept the process from exiting (FACT).
@@ -274,6 +278,61 @@ What the sample says (INFERENCE unless labelled):
 - For the harness (OPINION): pytest inside such a wrapper, and a check at a
   merge-base needs that merge-base's generated files or its own environment.
 
+## A sample of poetry's red pull requests, replayed
+
+On 2026-11-17 the user asked for the same sample of poetry's. The rule was the
+same, without the two pull requests whose replay of 2026-11-16 gave a result,
+#11226 and the one of head 4240f5cb: ten of 29 (FACT). The user built each
+environment as poetry's CI does, from the head's own `poetry.lock`, with the
+latest poetry from PyPI run through `uv tool run`: `poetry env use
+/usr/bin/python3.12`, then `poetry install --with github-actions`. All 10 were
+built, with pytest-xdist and pytest-randomly but without pytest-timeout; the
+heads came, 5 with `pull/<number>/head`, 4 by their commit ids, and 1 was in
+the clone already (FACT).
+
+The agent replayed them as urllib3's, with poetry's own pytest options from its
+`pyproject.toml` (`-n logical -ra`, and pytest-randomly's order), without
+`--integration`, and with no limit per test, since the environments have no
+pytest-timeout (FACT):
+
+| PR | The CI's run | Whole run, node ids failed | Failed again | Replay |
+|---|---|---|---|---|
+| #10742 | 2026-04-03, step unknown | 3 | 1 | red |
+| #9805 | 2026-04-16, step unknown | 2 | 1 | red |
+| #10881 | 2026-05-03, step unknown | 4 | 3 | red |
+| #10908 | 2026-05-17, step unknown | 1 | 1 | red |
+| #10956 | 2026-06-16, red in tests | 1, after 1679 s | the rerun reached the limit of 2400 s | no result |
+| #10980 | 2026-07-29, red in tests | 2 | 2 | red |
+| #11115 | 2026-10-08, red in tests | 0 | | green |
+| #11132 | 2026-10-09, red in tests | 0 | | green |
+| #11135 | 2026-10-10, red in tests | 0 | | green |
+| #11057 | 2026-10-12, red in tests | 0 | | green |
+
+At the merge-base, with the head's environment, the tests that had failed twice
+passed for #10742, #9805, #10881 and #10908, and #10980's two are tests that the
+pull request adds, which its merge-base does not hold (FACT). So each of the
+five failed from its own change. #10956 changes the prompts of `poetry init`,
+and the test that took 28 minutes gives that command scripted answers: it
+likely waited for an answer that never came, a red run from its own change that
+a limit per test would have ended [VERIFY].
+
+What it says (INFERENCE unless labelled):
+
+- With the two of 2026-11-16, one red from its own change and one ended in
+  pytest's internal error, the replay kept 6 of 12 red, 50%.
+- As in urllib3, those of unknown step, from April and May, replayed red, 4 of
+  4, and those of October green, 4 of 4 (FACT). In the CI, #11057 had failed on
+  the test of `extractall` on which #11136 and #11109 failed within two days
+  (`notes/2026-11-16-pilot-candidates.md`), and it passes replayed in its own
+  environment: likely a failure of that time's `main`, not of its change.
+- Both finalists together, at 41% and 50%: some 31 pull requests red in the
+  replay over the bet's window, and some 41 over all that GitHub lists, where
+  the months that replay red more often are older. A bound below 15% takes at
+  least 19 pull requests with no miss, 30 with one, or 40 with two.
+- For the harness (OPINION): poetry needs a limit per test, such as
+  pytest-timeout added for the replay alone, or else its runs that hang are
+  rejected.
+
 ## How far back GitHub lists runs
 
 By its own `total_count`, GitHub has no pull request run of urllib3's CI in any
@@ -340,4 +399,9 @@ measure that share before the bet is rewritten. It kept 7 of 17 red in all, so
 some 16 of urllib3's window, and with both finalists some 29 over their windows
 and some 37 over all that GitHub lists, if poetry's share were the same
 (INFERENCE; see "A sample of urllib3's red pull requests, replayed"). The same
-day the user asked for the same sample of poetry's, to measure its share.
+day the user asked for the same sample of poetry's, to measure its share. It
+kept 6 of 12 red, 50%, so both finalists would give some 31 over the bet's
+window, at the edge of its 30, and some 41 over all that GitHub lists, enough
+for a bound below 15% with up to two misses (INFERENCE; see "A sample of
+poetry's red pull requests, replayed"). Which pilots, which window and which
+minimum the bet takes is the user's to write.
