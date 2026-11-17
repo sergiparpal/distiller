@@ -24,8 +24,10 @@ Labels: **FACT** = seen on 2026-11-16; **INFERENCE**; **OPINION**;
   counts the replay's red runs, which a pass in the rerun discards, and of the
   six pull requests replayed so far, two stayed red from their own change: at
   that share, some 13 for urllib3 alone, and some 30 for both finalists over
-  all that GitHub lists (INFERENCE, from six). A sample of about ten replays
-  is to measure that share.
+  all that GitHub lists (INFERENCE, from six). A sample of eleven more,
+  replayed on 2026-11-17, kept five red, each from its own change: 7 of 17 in
+  all, about 41%, which gives some 16 for urllib3's window alone, too few for
+  a bound below 15% even with no miss (INFERENCE).
 - The environment of the window's first day builds and runs urllib3's suite
   with no network: 1912 passed and 2 failed, both on the flaky HTTP/2 probe
   test, which then kept the process from exiting (FACT).
@@ -206,6 +208,72 @@ and 21 of 21 in poetry failed in a step that runs the tests (FACT), so nearly
 every pull request of unknown step likely did too (INFERENCE: those are older
 runs, which may have failed otherwise).
 
+## A sample of urllib3's red pull requests, replayed
+
+On 2026-11-17, to measure how many of the CI's red pull requests a replay keeps
+red, the agent chose eleven of urllib3's by a rule fixed before any replay: of
+the window's pull requests whose job failed in the tests or in a run of unknown
+step, 32 once the six replayed on 2026-11-16 are left out, ordered by the day
+of their latest such run, one in every three from the first, each at the head
+of that run. The user fetched the heads, 9 with `pull/<number>/head` and 2 by
+their commit ids, and built each environment with the command of urllib3's nox
+session all through the window, `uv sync --frozen --python 3.12 --group dev`
+with the extras socks, brotli, zstd and h2: all 11 were built (FACT).
+
+The agent replayed each head with no network: the whole suite once, with the
+pytest options of urllib3's nox session but no coverage or memray and 120 s per
+test, then once more the tests that failed, as a rerun file would. A pull
+request is red when a test failed in both, as a red run is in the SPEC. pytest
+ran inside a wrapper that wrote the node id of each failed test, as a pytest
+plugin heard of it, and ended the process with `os._exit` as soon as pytest
+returned, so that a thread left blocked could not keep it alive. No run hung,
+and each whole run took 50 to 118 s, with no xdist, which none of these heads'
+locks holds (FACT).
+
+| PR | The CI's run | Whole run, node ids failed | Failed again | Replay |
+|---|---|---|---|---|
+| #3796 | 2026-03-17, step unknown | 1 | 1 | red |
+| #4962 | 2026-04-13, step unknown | 9, one the probe test | 8 | red |
+| #4996 | 2026-05-09, step unknown | 2, one the probe test | 1 | red |
+| #5009 | 2026-05-12, step unknown | 14 | 14 | red |
+| #5034 | 2026-05-19, step unknown | 1, the probe test | 0 | green |
+| #5091 | 2026-06-24, red in tests | 0 | | green |
+| #5103 | 2026-07-06, red in tests | 6 | 6 | red |
+| #5173 | 2026-08-17, red in tests | 0 | | green |
+| #5228 | 2026-09-07, red in tests | 1, the probe test | 0 | green |
+| #5279 | 2026-10-01, red in tests | 0 | | green |
+| #5291 | 2026-10-01, red in tests | 0 | | green |
+
+Then, at the merge-base of each red pull request with `main`, the agent ran the
+tests that had failed twice, with the head's environment and `PYTHONPATH` set
+to the merge-base's `src/` (FACT). For #3796, #4962, #4996 and #5009 every one
+of them passed there, so they failed from the pull request's change. For #5103
+they failed there too; its change includes `uv.lock`, so the head's
+environment holds the dependencies it brings, and those, not the code at its
+merge-base, likely make them fail [VERIFY: with the merge-base's own
+environment]. The titles fit the failing tests: socket options, the SSL context
+of a proxy, header names, header types and pyOpenSSL's API (INFERENCE). A
+first try of that check ran no test, since git does not
+hold `src/urllib3/_version.py`, which installing writes: without it, urllib3
+cannot be imported from a bare checkout (FACT).
+
+What the sample says (INFERENCE unless labelled):
+
+- With the six of 2026-11-16, two red from their own change, three failed only
+  on the probe test, which a rerun would mostly discard, and one green, the
+  replay kept 7 of 17 red, about 41%; 17 pull requests leave that share wide.
+- Of the five of unknown step, from March to May, four replayed red; of the
+  six seen red in the tests, from June to October, one (FACT). The CI's red
+  runs of the later months may hold more failures inherited from `main`, such
+  as those of 2026-10-01, or flaky ones [VERIFY].
+- At 41%, the replay would keep some 16 of the 39 of urllib3's window: too few
+  for a bound below 15%, which takes at least 19 pull requests with no miss,
+  and too few for the bet's 30. Some 29 of both finalists' windows and some 37
+  of both over all that GitHub lists, if poetry's share were the same, which is
+  not measured.
+- For the harness (OPINION): pytest inside such a wrapper, and a check at a
+  merge-base needs that merge-base's generated files or its own environment.
+
 ## How far back GitHub lists runs
 
 By its own `total_count`, GitHub has no pull request run of urllib3's CI in any
@@ -268,4 +336,8 @@ passed. At a third, the replay would keep some 13 of urllib3's window, some 23
 of both finalists' windows, and some 30 of both over all that GitHub lists
 (INFERENCE, from six pull requests of October and November). On 2026-11-17 the
 user asked for a sample of about ten of urllib3's, over the whole window, to
-measure that share before the bet is rewritten.
+measure that share before the bet is rewritten. It kept 7 of 17 red in all, so
+some 16 of urllib3's window, and with both finalists some 29 over their windows
+and some 37 over all that GitHub lists, if poetry's share were the same
+(INFERENCE; see "A sample of urllib3's red pull requests, replayed"). The same
+day the user asked for the same sample of poetry's, to measure its share.
