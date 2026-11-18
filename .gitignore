@@ -37,3 +37,5 @@ __pycache__/
 /.vscode
 /.zprofile
 /.zshrc
+# Editors' lock and swap files, such as nano's, which exist while a file is open.
+.*.sw[a-p]
