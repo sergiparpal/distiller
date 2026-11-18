@@ -1,6 +1,102 @@
+import os
+import shlex
+import subprocess
+import time
+from pathlib import Path
+
 from replay.pilot import Pilot
 from replay.steps import StepResult
 
+# Builds a commit's environment in its worktree: the pilot's commands, run there
+# in order, so that each reads that commit's own lock file, then the plugins of
+# Rule 4. Both pilots' environments end in <worktree>/.venv: uv's by default,
+# and poetry's through POETRY_VIRTUALENVS_IN_PROJECT. Every command runs through
+# subprocess.run, from an argument list, with a time limit (Rules 1 and 3). The
+# first command that fails ends the build with its exit code, and one that
+# outlives its limit with none; a program that cannot start raises, as
+# subprocess.run does, so that a missing uv or poetry stops the replay.
+
+# The time limit of one command, in seconds: an install from PyPI took a few
+# minutes in the samples of 2026-11-17.
+SECONDS_PER_COMMAND = 1800
+
+# Rule 4's plugins: coverage at the version that Slice 1's Deployment asks for.
+# pytest-cov's and pytest-timeout's versions are fixed once checked with each
+# pilot's pytest [VERIFY].
+COVERAGE_PLUGINS = ("coverage==7.16.2", "pytest-cov")
+TIMEOUT_PLUGIN = "pytest-timeout"
+
 
 def build(pilot: Pilot, worktree: str, *, for_coverage: bool) -> StepResult:
-    raise NotImplementedError
+    started = time.monotonic()
+    printed: list[str] = []
+    for command in _commands(pilot, worktree, for_coverage=for_coverage):
+        exit_code = _run(command, worktree, printed)
+        if exit_code != 0:
+            return _result(exit_code, started, printed)
+    return _result(0, started, printed)
+
+
+def _commands(
+    pilot: Pilot, worktree: str, *, for_coverage: bool
+) -> list[tuple[str, ...]]:
+    # The pilot's commands, then one that installs the plugins, if there are any.
+    commands = list(pilot.environment)
+    plugins = _plugins(pilot, for_coverage=for_coverage)
+    if plugins:
+        python = str(Path(worktree) / ".venv" / "bin" / "python")
+        commands.append(("uv", "pip", "install", "--python", python, *plugins))
+    return commands
+
+
+def _plugins(pilot: Pilot, *, for_coverage: bool) -> list[str]:
+    plugins: list[str] = []
+    if for_coverage:
+        plugins.extend(COVERAGE_PLUGINS)
+    if pilot.adds_timeout_plugin:
+        plugins.append(TIMEOUT_PLUGIN)
+    return plugins
+
+
+def _run(command: tuple[str, ...], worktree: str, printed: list[str]) -> int | None:
+    # Adds the command, and what it printed, to printed, and gives its exit
+    # code, or None past its time limit. stderr goes into stdout, so that the two
+    # keep the order in which the command printed them.
+    printed.append("$ " + shlex.join(command))
+    try:
+        result = subprocess.run(  # noqa: S603
+            list(command),
+            cwd=worktree,
+            env=_variables(),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=SECONDS_PER_COMMAND,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as error:
+        printed.append(_text_of(error.stdout))
+        printed.append(f"stopped at its time limit, {SECONDS_PER_COMMAND} s")
+        return None
+    printed.append(_text_of(result.stdout))
+    return result.returncode
+
+
+def _variables() -> dict[str, str]:
+    # The harness's own variables, and poetry's environment in the work tree.
+    return {**os.environ, "POETRY_VIRTUALENVS_IN_PROJECT": "true"}
+
+
+def _text_of(output: bytes | None) -> str:
+    # What a command printed, decoded so that no byte stops the log.
+    if output is None:
+        return ""
+    return output.decode("utf-8", errors="replace")
+
+
+def _result(exit_code: int | None, started: float, printed: list[str]) -> StepResult:
+    return StepResult(
+        exit_code=exit_code,
+        seconds=time.monotonic() - started,
+        failed=(),
+        output="\n".join(printed),
+    )
