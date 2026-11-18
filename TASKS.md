@@ -565,7 +565,7 @@ Each one is to be decided before the task that needs it.
 
 A task 0 outside the cycle, eight tasks of one cycle each, as in Slice 1 (a tests session, which cannot read `src/`, then an implement session, with the tests frozen), and a task 9 outside the cycle. The tasks go bottom up through the imports of the harness `replay`, the SPEC's "Slice 2: the harness `replay`". The fields read as Slice 1's. Every module of `replay` is new, so the agent writes each one's stubs, and its import-linter contract, in its task's tests phase. Replaying 1 to 6 are the examples of the SPEC's "Replaying a pull request" that are not [core], in their order. Written on 2026-11-18, from the SPEC of daf0fd0.
 
-K16's given names urllib3's real head, and K17's poetry's #11226, which no test of the suite can hold with no network and no clone: their tests use fixture projects of the same shape, five failures in one file run again into the rerun file and one record appended, and a full run that ends in pytest's internal error. Task 9 runs K16 itself on the user's machine, as the slice's acceptance (decided on 2026-11-18). The fixtures' environments are built with no network [VERIFY: how, in task 4's tests phase].
+K16's given names urllib3's real head, and K17's poetry's #11226, which no test of the suite can hold with no network and no clone: their tests use fixture projects of the same shape, five failures in one file run again into the rerun file and one record appended, and a full run that ends in pytest's internal error. Task 9 runs K16 itself on the user's machine, as the slice's acceptance (decided on 2026-11-18). The fixtures' environments are built with no network: since task 4's tests, the pilot's commands are local scripts, and a fake `uv` first on `PATH` stands for the installs.
 
 The appetite ends on 2026-12-09: at about two days a task, the harness is done by 2026-12-02, which leaves the replay of the window, some 5 to 9 hours, and the report for 2026-12-03 to 2026-12-08 (OPINION).
 
@@ -654,10 +654,12 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
       exit_code: int | None
       seconds: float
       failed: tuple[str, ...]
+      output: str
   # environment.py
-  def build(pilot: Pilot, worktree: str, for_coverage: bool) -> StepResult: ...
+  def build(pilot: Pilot, worktree: str, *, for_coverage: bool) -> StepResult: ...
   ```
 - **Contract**, by the agent: `steps` imports no other module of `replay`; and `replay.environment` joins the allowed importers of `subprocess` (task 2).
+- **Tests**, on 2026-11-18, in a tests phase from 88ca529 that the agent opened itself (D-014): `tests/replay/test_environment.py`, 20 cases, and the stubs `src/replay/steps.py` and `src/replay/environment.py`, whose `build` raises `NotImplementedError`; all 20 fail against it. The SPEC asked the log to keep every step's output (Rule 9) and to name the plugins (Rule 4), with no way for `build` to give either, and said neither how the plugins go in nor what a failing build does. The user decided that day, and the SPEC now says it, in the data model and in Rules 4 and 9: `StepResult` gains `output`, each command that the step ran and what it printed, which the harness writes to the log; `build` runs the pilot's commands in the worktree with `POETRY_VIRTUALENVS_IN_PROJECT=true`, so that both pilots' environments are `<worktree>/.venv`, then installs the plugins with `uv pip install --python <worktree>/.venv/bin/python`, coverage at 7.16.2 and pytest-cov's and pytest-timeout's versions left to task 9; and it stops at the first command that fails, with its exit code, or with `None` past its time limit, while a program that cannot start makes it raise. `for_coverage` became keyword-only, since ruff's FBT001 refuses a positional boolean. The tests use no network, as the slice's opening asked: the pilot's commands are local scripts that note their folder, the variable and the lock file they see, and a fake `uv` first on `PATH` notes its arguments. A reference of the decided behaviour, written in the test file for a moment and then taken out, passed all 20; without the variable, going on after a failure, and -1 past the time limit, exactly the three tests that pin those decisions failed.
 
 ### 5. Suite runs
 - **Closes**: running pytest in a worktree's environment, inside bubblewrap and through the wrapper: the coverage at M, the full run and the rerun, each with its JUnit file and its limits.

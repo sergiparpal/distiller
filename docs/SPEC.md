@@ -559,7 +559,7 @@ def add_worktree(clone: str, commit: str, folder: str) -> None: ...
 def remove_worktree(clone: str, folder: str) -> None: ...
 
 # environment.py
-def build(pilot: Pilot, worktree: str, for_coverage: bool) -> StepResult: ...
+def build(pilot: Pilot, worktree: str, *, for_coverage: bool) -> StepResult: ...
 
 # suite.py
 def record_coverage(pilot: Pilot, worktree: str, work: str, coverage_file: str, junit_file: str) -> StepResult: ...
@@ -611,6 +611,7 @@ class StepResult:
     exit_code: int | None      # None: stopped at its time limit
     seconds: float
     failed: tuple[str, ...]    # node ids, as the wrapper wrote them
+    output: str                # each command that the step ran, and what it printed
 
 @dataclass(frozen=True)
 class ToolInputs:
@@ -654,12 +655,12 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 1. **Dependencies.** The standard library only; `git`, `uv`, poetry, `bwrap` and the tool run through `subprocess.run` with an argument list, never a shell.
 2. **The manifest is fixed.** Its SHA-256 goes into the log's first line, and a run with another manifest over the same record file replays nothing.
 3. **Time limits.** Every process has one, and every test of a suite run the pilot's, 120 s.
-4. **Plugins added.** For the coverage run, M's environment gets coverage 7.16.2 and pytest-cov; poetry's environments get pytest-timeout; the log names each.
+4. **Plugins added.** For the coverage run, M's environment gets coverage 7.16.2 and pytest-cov; poetry's environments get pytest-timeout; the log names each. `build` runs the pilot's commands in the worktree, in order, with `POETRY_VIRTUALENVS_IN_PROJECT=true`, so that both pilots' environments are `<worktree>/.venv`, then installs the plugins with `uv pip install --python <worktree>/.venv/bin/python`; pytest-cov's and pytest-timeout's versions are fixed once checked with each pilot's pytest, as the [VERIFY] below asks. It stops at the first command that fails, with its exit code, or with no exit code past its time limit, and nothing after it runs; a program that cannot start makes it raise, so that a missing uv or poetry stops the replay rather than leave every pull request not replayed (decided on 2026-11-18).
 5. **Suite runs.** Each takes the pilot's pytest options and runs inside bubblewrap, with no network but the loopback, the home hidden but the work directory, its `HOME` there, and the environment's `bin` first on its `PATH`.
 6. **The wrapper.** pytest runs in a wrapper that writes the node id of each test that failed or erred, as a plugin hears of it, and ends the process with `os._exit` once pytest returns, since a thread that a test left blocked kept one alive for 37 minutes on 2026-11-16.
 7. **One rerun.** The tests that failed in the full run run once more, in one rerun, as Slice 1's rerun file has them.
 8. **Coverage at M.** Recorded by coverage 7.16.2, under `ctrace`, with test contexts and no static context, as Slice 1's Deployment asks.
-9. **Logs.** Every step's output is kept, with its colour codes taken out.
+9. **Logs.** Every step's output is kept, with its colour codes taken out. A step gives it in its `StepResult`: each command that it ran and what that printed, stdout and stderr together, which `harness` writes to the log; for `build`, the plugins' install command among them, which names each (decided on 2026-11-18).
 
 #### Imports
 `lint-imports` checks these once the package is in place:
