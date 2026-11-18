@@ -217,7 +217,7 @@ A harness, `replay`, apart from the tool, replays the pull requests of two pilot
 
 Inputs for one replay:
 - a pilot's configuration, a TOML file in this repository for each pilot, that names the repository, its base branch, the job, the Python, the commands that build an environment (for urllib3, `uv sync --frozen` with its nox session's arguments; for poetry, `poetry env use` and `poetry install --with github-actions`, with the environment in the work tree), the pytest options of the job's run with no network, the time limit per test, the package that the coverage measures and the floor configuration. Its keys are the field names of `Pilot`, in the harness's data model, each one required but `floor_config`, which may be left out and is then `None`. Each value has its field's type in TOML, with no conversion: a string for each field of type `str`, `floor_config` included, an integer for `seconds_per_test`, not a float or a boolean, `true` or `false` for `adds_timeout_plugin`, an array of strings for `pytest`, and for `environment` an array of commands, each an array of strings. A path with no file, a file that is not TOML, and one that lacks a key, has a key that `Pilot` has not or holds a value of another type are refused: `read_pilot` raises, with no fixed type or message, and the replay stops with exit 1, as for any other failure (decided on 2026-11-18);
-- the manifest: the window's CSV, `notes/2026-11-17-window-red-runs.csv`, one row per pull request with its project, number, run id, run start, head and the CI job's outcome; its two rows with no number get theirs, once, through `gh`, before the first record;
+- the manifest: the window's CSV, `notes/2026-11-17-window-red-runs.csv`, one row per pull request with its project, number, run id, run start, head and the CI job's outcome; its two rows with no number get theirs, once, through `gh`, before the first record. `read_manifest` gives every row, in the file's order, and leaves aside the columns that no field of `ManifestLine` holds, such as `failed_steps`. A path with no file, a file that lacks one of the six columns it needs, a run id or a number that is not a whole number, and a run start with no time zone or that is no date are refused: `read_manifest` raises, with no fixed type, and the replay stops with exit 1, as for any other failure. A run start with no time zone would be read as local time, and give another base commit unseen (decided on 2026-11-18);
 - the pilot's clone, a full clone in which each row's head is kept by a ref of its own, `refs/window/<run id>`;
 - a checkout of this repository at a fixed commit, whose environment runs the tool;
 - a work directory, for the worktrees, the environments, the inputs made for the tool and the log;
@@ -531,7 +531,7 @@ The package `replay`, in `src/` beside `distiller`, as D-011 chose; the user run
 | `__main__` | `raise SystemExit(cli.main())` | core | K16, K17 |
 | `cli` | argparse (`allow_abbrev=False`) into the command `run`; nothing else | core | K16, K17 |
 | `pilot` | reads a pilot's configuration, with `tomllib` | core | K16, K17 |
-| `manifest` | reads the window's CSV and checks its rows: numbers, numbers that both pilots hold; lists the rows whose head is not in the clone | core | K16, K17 |
+| `manifest` | reads the window's CSV and checks its rows: numbers, numbers that two rows hold; lists the rows whose head is not in the clone | core | K16, K17 |
 | `checkout` | whether a commit is in the clone, the base commit and M; adds and removes worktrees | core | K16, K17 |
 | `steps` | `StepResult` and `ToolInputs`, which `environment`, `suite`, `tool` and `harness` share; imports no other module of the package | core | K16, K17 |
 | `environment` | builds a commit's environment, as the pilot's configuration says, with the plugins of Rule 4 | core | K16, K17 |
@@ -547,7 +547,7 @@ Every module is on the path from a manifest row to what K16 and K17 observe. The
 def read_pilot(path: str) -> Pilot: ...  # raises, with no fixed type, for a file it refuses
 
 # manifest.py
-def read_manifest(path: str, project: str) -> list[ManifestLine]: ...
+def read_manifest(path: str) -> list[ManifestLine]: ...  # every row, in the file's order
 def problems(lines: list[ManifestLine], others: list[ManifestLine]) -> list[str]: ...  # empty when the replay can start
 def missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]: ...  # listed as not replayed
 
@@ -573,6 +573,8 @@ def evaluate(tool: str, inputs: ToolInputs) -> StepResult: ...
 def replay(pilot: Pilot, manifest: str, clone: str, work: str, records: str, tool: str,
            only: list[int] | None) -> int: ...  # the exit code
 ```
+
+Of the lines that `read_manifest` gives, `replay` keeps its pilot's, and passes the other pilot's to `problems` as `others`. Each problem is one message: a line with no number names its run, and a number that two lines hold, of one pilot or of both, is named; two lines with no number are two problems, not a number that they share (decided on 2026-11-18).
 
 `checkout` raises when git fails, as Slice 1's `git` does (`TASKS.md`, note 7), so that no failure reads as an answer: `has_commit` is false only for a commit that the clone lacks, `base_commit` gives `None` only when the branch has no commit before the run started, and `merge_base` only for two commits with no common history (decided on 2026-11-18).
 
@@ -640,7 +642,7 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 
 #### How a replay goes
 1. `cli.main` parses the arguments and calls `harness.replay`.
-2. `replay` reads the pilot and the manifest, and stops with exit 1 when `manifest.problems` finds any, or when the log names another manifest's SHA-256; the pull requests that `manifest.missing_heads` gives are written in the log as not replayed.
+2. `replay` reads the pilot and the manifest, keeps its pilot's lines, and stops with exit 1 when `manifest.problems`, given the other pilot's lines too, finds any, or when the log names another manifest's SHA-256; the pull requests that `manifest.missing_heads` gives are written in the log as not replayed.
 3. For each manifest line of the pilot, in order, unless the log shows it done: the base commit is the last commit of the base branch before the run started, and M its merge-base with the tested head.
 4. A worktree of M is added in the work directory, M's environment built there with the plugins of Rule 4, and the coverage at M recorded with `--cov=<source> --cov-context=test` and `COVERAGE_CORE=ctrace`, its JUnit kept for the failures at M.
 5. A worktree of the tested head is added, its environment built, and the full run writes its JUnit; the tests that failed run once more into the rerun file.

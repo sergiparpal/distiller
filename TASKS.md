@@ -619,7 +619,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
 - **Done**, on 2026-11-18, in an implement phase from dde0d0b: `checkout` runs git as Slice 1's `git` does, by name, from an argument list, its output captured, and with a time limit of 300 s; when git fails in a way that is not one of a query's answers, `check_returncode` raises `CalledProcessError`. `has_commit` is `rev-parse --verify --quiet --end-of-options <commit>^{commit}`, exit 1 being no; `base_commit` reads `rev-list --first-parent --timestamp` of the branch, whose dates are committer dates in seconds since 1970, and takes the first one before the run's start, read with `datetime.fromisoformat`; `merge_base` is `git merge-base`, exit 1 being no common history; the worktrees are added with `--detach` and removed with `--force`. All 43 tests passed at the first run; `make verify` gave 1992 passed and 100% coverage.
 
 ### 3. The manifest
-- **Closes**: reading the window's CSV into the `ManifestLine`s of one pilot, the problems that stop a replay before it starts, and the pull requests whose head is not in the clone.
+- **Closes**: reading the window's CSV into `ManifestLine`s, the problems that stop a replay before it starts, and the pull requests whose head is not in the clone.
 - **Covers**: Manifest 1 to 4.
 - **Constrained by**: none.
 - **Modules**: `manifest`, which calls `checkout.has_commit`.
@@ -633,11 +633,12 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
       run_started: str
       tested_head: str
       ci_job: str
-  def read_manifest(path: str, project: str) -> list[ManifestLine]: ...
+  def read_manifest(path: str) -> list[ManifestLine]: ...
   def problems(lines: list[ManifestLine], others: list[ManifestLine]) -> list[str]: ...
   def missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]: ...
   ```
 - **Contract**: none new.
+- **Tests**, on 2026-11-18, in a tests phase from 1c2a469: `tests/replay/test_manifest.py`, 31 cases, and the stub `src/replay/manifest.py`, the dataclass and three functions that raise `NotImplementedError`; all 31 fail against it. Writing them showed that `problems` needs the other pilot's lines, which `read_manifest(path, project)` could not give a harness that knows only its own pilot, and that the SPEC said neither what the problems' messages hold, nor what a file that cannot be read does, nor whether a number held twice by one pilot is a problem. The user decided that day, and the SPEC now says it, under Inputs, after the harness's Interfaces and in step 2 of "How a replay goes": `read_manifest(path)` gives every row, in the file's order, and the harness keeps its pilot's lines and passes the others to `problems`; each problem is one message, which names the run of a line with no number, or the number that two lines hold, of one pilot or of both; and a file that cannot be read as the manifest makes `read_manifest` raise, of any type, the columns it does not need left aside. The tests also read the window's own manifest: 48 lines of urllib3's and 42 of poetry's, K16's among them, and no problem for either pilot. A reference of the decided behaviour, written in the test file for a moment and then taken out, passed all 31; with a run start of no time zone accepted, the other pilot's lines left aside, two missing numbers counted as one shared, and a failing git taken for a missing head, exactly the four tests that pin those decisions failed.
 
 ### 4. Environments
 - **Closes**: building a commit's environment in its worktree, as the pilot's configuration says, from the commit's own lock file, with the plugins of Rule 4.
