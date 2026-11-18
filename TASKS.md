@@ -560,3 +560,184 @@ Each one is to be decided before the task that needs it.
 7. **The JUnit files that the notes at the top of this file leave open.** Decided, 2026-10-27: they stay as they are, as known limits that Rule 5 lists. A well-formed file that is not a JUnit, such as `<html><body/></html>`, gives no results and is not rejected; a `time` that rounds to 10^25 s or more, and an XML declaration naming an encoding that Python or expat lacks, end as an unexpected failure, exit 1 with no record; and an entity declaration that expat skips after an unread parameter entity parses, with nothing resolved or expanded. pytest writes none of these files, and task 19 checks that the pilot's first records have tests.
 8. **Which floor hits a selected test's reason cites.** Decided, 2026-10-21: every test cites every pair that `floor_hits` gives, as one floor reason each. A test's reasons are a `frozenset`, so they have no order, and a pair given twice, by a pattern written twice or a default one written again in the configuration, is one reason. A record holds only `floor_matched`, so no reason reaches it or the report. Giving every test its own set of reasons, 10,000 tests and 1,000 floor hits take about 330 MB and under a second (Python 3.13, 2026-10-21), under the SPEC's 1 GB. The prose on the selection says so.
 9. **A key rejected for several reasons.** Decided, 2026-11-01: a key with no evaluated record, whose rejected records give several pairs of reason and input, counts once under each pair, as when a run rejected for `unusable-input` with `coverage` is rejected again for `unsafe-xml` with `junit`. The counts can then add up to more than the number of keys rejected, but they depend on no order, and every rejection that the evaluation recorded stays in view. Rejected: counting such a key once, under the first pair in sort order, which is arbitrary, or on a line of its own. No example has rejected runs to count, so task 17's tests phase makes one up. The prose on the report says so.
+
+## Slice 2
+
+A task 0 outside the cycle, eight tasks of one cycle each, as in Slice 1 (a tests session, which cannot read `src/`, then an implement session, with the tests frozen), and a task 9 outside the cycle. The tasks go bottom up through the imports of the harness `replay`, the SPEC's "Slice 2: the harness `replay`". The fields read as Slice 1's. Every module of `replay` is new, so the agent writes each one's stubs, and its import-linter contract, in its task's tests phase. Replaying 1 to 6 are the examples of the SPEC's "Replaying a pull request" that are not [core], in their order. Written on 2026-11-18, from the SPEC of daf0fd0.
+
+K16's given names urllib3's real head, and K17's poetry's #11226, which no test of the suite can hold with no network and no clone: their tests use fixture projects of the same shape, five failures in one file run again into the rerun file and one record appended, and a full run that ends in pytest's internal error. Task 9 runs K16 itself on the user's machine, as the slice's acceptance (decided on 2026-11-18). The fixtures' environments are built with no network [VERIFY: how, in task 4's tests phase].
+
+The appetite ends on 2026-12-09: at about two days a task, the harness is done by 2026-12-02, which leaves the replay of the window, some 5 to 9 hours, and the report for 2026-12-03 to 2026-12-08 (OPINION).
+
+### 0. Prepare the package (outside the cycle)
+- **Closes**: what the phases freeze and the package needs before its first tests phase.
+- **Does**: `src/replay/__init__.py`, and its tests in `tests/replay/`; in `pyproject.toml`, `replay` beside `distiller` wherever the checks name a package: coverage's source, with `fail_under = 100`, pyright, ruff and import-linter's root packages, and the contract that neither package imports the other; in `.github/workflows/check.yml`, `bubblewrap` installed before `make check` [VERIFY: whether AppArmor lets an unprivileged `bwrap` start on GitHub's Ubuntu 24.04 runners]. In the SPEC's technical sheet: `checkout.has_commit(clone: str, commit: str) -> bool`, which `manifest` needs, since only `checkout` runs git; `manifest.missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]`, for Manifest 4, whose pull requests are listed as not replayed and do not stop the replay; and a module `steps`, which imports nothing of the package, for `StepResult` and `ToolInputs`, which `environment`, `suite`, `tool` and `harness` share.
+- **By**: the agent, outside any phase, in a commit that the user reviews, with `make check` green.
+
+### 1. A pilot's configuration
+- **Closes**: reading a pilot's TOML file into `Pilot`, and refusing one that lacks a field or gives one of the wrong type.
+- **Covers**: Slice 2's Inputs, "a pilot's configuration, a TOML file...": each field of `Pilot`.
+- **Constrained by**: none.
+- **Modules**: `pilot`.
+- **Stubs**, by the agent, in the tests phase (new module):
+  ```python
+  @dataclass(frozen=True)
+  class Pilot:
+      project: str
+      repository: str
+      base_branch: str
+      job: str
+      python: str
+      environment: tuple[tuple[str, ...], ...]
+      pytest: tuple[str, ...]
+      coverage_source: str
+      seconds_per_test: int
+      adds_timeout_plugin: bool
+      floor_config: str | None
+  def read_pilot(path: str) -> Pilot: ...
+  ```
+- **Contract**: none new.
+
+### 2. The clone: base commit, M and worktrees
+- **Closes**: the git that `replay` runs on a pilot's clone, which only reads, and adds or removes worktrees.
+- **Covers**: Terms, the base commit, the last commit of the base branch before the run started, and M; Invariants 3, the clone's checked-out commit and work tree unchanged; Rule 1, for git.
+- **Constrained by**: none.
+- **Modules**: `checkout`.
+- **Stubs**, by the agent (new module):
+  ```python
+  def has_commit(clone: str, commit: str) -> bool: ...
+  def base_commit(clone: str, branch: str, started: str) -> str | None: ...
+  def merge_base(clone: str, a: str, b: str) -> str | None: ...
+  def add_worktree(clone: str, commit: str, folder: str) -> None: ...
+  def remove_worktree(clone: str, folder: str) -> None: ...
+  ```
+- **Contract**, by the agent: only `checkout`, `environment`, `suite` and `tool` import `subprocess`.
+
+### 3. The manifest
+- **Closes**: reading the window's CSV into the `ManifestLine`s of one pilot, the problems that stop a replay before it starts, and the pull requests whose head is not in the clone.
+- **Covers**: Manifest 1 to 4.
+- **Constrained by**: none.
+- **Modules**: `manifest`, which calls `checkout.has_commit`.
+- **Stubs**, by the agent (new module):
+  ```python
+  @dataclass(frozen=True)
+  class ManifestLine:
+      project: str
+      pull_request: int | None
+      run: int
+      run_started: str
+      tested_head: str
+      ci_job: str
+  def read_manifest(path: str, project: str) -> list[ManifestLine]: ...
+  def problems(lines: list[ManifestLine], others: list[ManifestLine], clone: str) -> list[str]: ...
+  def missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]: ...
+  ```
+- **Contract**: none new.
+
+### 4. Environments
+- **Closes**: building a commit's environment in its worktree, as the pilot's configuration says, from the commit's own lock file, with the plugins of Rule 4.
+- **Covers**: Replaying 2, each environment built from its own commit's lock file; Terms, a pull request not replayed when one of its environments cannot be built; Rule 4.
+- **Constrained by**: none.
+- **Modules**: `environment`, and `steps` for `StepResult`.
+- **Stubs**, by the agent (new modules):
+  ```python
+  # steps.py
+  @dataclass(frozen=True)
+  class StepResult:
+      exit_code: int | None
+      seconds: float
+      failed: tuple[str, ...]
+  # environment.py
+  def build(pilot: Pilot, worktree: str, for_coverage: bool) -> StepResult: ...
+  ```
+- **Contract**, by the agent: `steps` imports no other module of `replay`.
+
+### 5. Suite runs
+- **Closes**: running pytest in a worktree's environment, inside bubblewrap and through the wrapper: the coverage at M, the full run and the rerun, each with its JUnit file and its limits.
+- **Covers**: Replaying 3, a test that waits for input fails at the time limit; Replaying 4, a blocked thread does not keep the process alive; Invariants 2, no network but the loopback; Rules 3, 5, 6, 7 and 8.
+- **Constrained by**: K16 (the full run's JUnit holds the failed tests, and the rerun file those run again), in a fixture project of its shape.
+- **Modules**: `suite`.
+- **Stubs**, by the agent (new module):
+  ```python
+  def record_coverage(pilot: Pilot, worktree: str, work: str, coverage_file: str, junit_file: str) -> StepResult: ...
+  def full_run(pilot: Pilot, worktree: str, work: str, junit_file: str) -> StepResult: ...
+  def rerun(pilot: Pilot, worktree: str, work: str, failed: tuple[str, ...], junit_file: str) -> StepResult: ...
+  ```
+- **Needs**: `bwrap` where the tests run, on the user's machine and in CI (task 0).
+- **Contract**: none new.
+
+### 6. Running the tool
+- **Closes**: running `python -P -m distiller evaluate` as a process, from the checkout of this repository at a fixed commit, with the inputs that a replay made.
+- **Covers**: "How a replay goes", step 6.
+- **Constrained by**: K16 (one record appended to the pilot's record file), K17 (a full run's JUnit with pytest's internal error is rejected with `unusable-input` and `junit`).
+- **Modules**: `tool`, and `steps` for `ToolInputs`.
+- **Stubs**, by the agent:
+  ```python
+  # steps.py
+  @dataclass(frozen=True)
+  class ToolInputs:
+      pull_request: int
+      head: str
+      base: str
+      m: str
+      coverage_file: str
+      junit_file: str
+      rerun_file: str | None
+      floor_config: str | None
+      records: str
+      checkout: str
+  # tool.py
+  def evaluate(tool: str, inputs: ToolInputs) -> StepResult: ...
+  ```
+- **Contract**: none new; that `replay` imports nothing of `distiller` comes with task 0.
+
+### 7. A replay
+- **Closes**: `harness.replay`: for each manifest line, the steps of "How a replay goes", the log, the inherited failures, the pull requests not replayed, starting again, and the summary.
+- **Covers**: K16 and K17, end to end, in fixtures of their shape; Replaying 1, tests that the pull request adds fail at its head and again; Replaying 2, the log names each lock file's SHA-256; Replaying 5, inherited failures; Replaying 6, starting again; Manifest 4, the pull requests listed as not replayed; Invariants 1 and 4; Summary 1 and 2; Rules 2 and 9.
+- **Constrained by**: K16, K17.
+- **Modules**: `harness`.
+- **Stubs**, by the agent (new module):
+  ```python
+  def replay(pilot: Pilot, manifest: str, clone: str, work: str, records: str, tool: str,
+             only: list[int] | None) -> int: ...
+  ```
+- **Contract**: none new.
+
+### 8. The command line
+- **Closes**: `python -m replay run` and its exit codes.
+- **Covers**: the Command line: its options, `--only`, the exit codes 0, 1 and 2, and the usage errors.
+- **Constrained by**: none.
+- **Modules**: `cli`, `__main__`.
+- **Stubs**, by the agent (new modules):
+  ```python
+  # cli.py
+  def main(argv: list[str] | None = None) -> int: ...
+  # __main__.py
+  raise SystemExit(cli.main())
+  ```
+- **Contract**, by the agent: only `__main__` imports `cli`, and only `cli` imports `harness`.
+
+### 9. The window replayed (outside the cycle)
+- **Does**: the two pilots' TOML files, with their real values; K16 itself, urllib3's #5375 replayed on the user's machine from `~/code/distiller-pilots/urllib3`, as the slice's acceptance; then the replay of the window's 90 pull requests into each pilot's record file, and Slice 1's report over both, which gives the bet's bound for its outcome on 2026-12-09.
+- **By**: the user runs the harness; the agent reads its log, its summary and the report.
+
+### Coverage of Slice 2
+Each line has the one task that covers it. "Constrains" lists the earlier tasks that cite the K example under Constrained by.
+
+| Item | Task | Constrains |
+|---|---|---|
+| K16 | 7 | 5, 6 |
+| K17 | 7 | 6 |
+| Manifest 1-3 | 3 | |
+| Manifest 4, the heads not in the clone | 3 | |
+| Manifest 4, the listing before any run | 7 | |
+| Replaying 1 | 7 | |
+| Replaying 2, the environments | 4 | |
+| Replaying 2, the log | 7 | |
+| Replaying 3, 4 | 5 | |
+| Replaying 5, 6 | 7 | |
+| Invariants 1, 4 | 7 | |
+| Invariants 2 | 5 | |
+| Invariants 3 | 2 | |
+| Summary 1, 2 | 7 | |
+| Command line | 8 | |
