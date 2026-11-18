@@ -227,7 +227,7 @@ Terms:
 - The window is the span of dates in which a run must have started to count: 2025-12-01 to 2026-11-15, as the Bet says.
 - The run chosen for a pull request is its latest run in the window whose job failed, in any step; the manifest names it.
 - The tested head is the commit that the chosen run tested. It is H for the tool, not a merge of it into the base (D-011).
-- The base commit is the last commit of the pilot's base branch before the chosen run started, standing in for the one that the run saw (D-011).
+- The base commit is the last commit of the pilot's base branch before the chosen run started, standing in for the one that the run saw (D-011): along the branch's first parents, the commits that were its tip one after another, the last whose committer date is before the run's start, the two compared as instants, whatever their time zones. A commit that reached the branch after the run started is not the base commit, even when it was written before, on a pull request's branch merged later or with an earlier author date (decided on 2026-11-18).
 - M is the merge-base of the base commit and the tested head.
 - The environment of a commit is what the pilot's configuration builds from that commit's own lock file: `uv.lock` for urllib3, `poetry.lock` for poetry.
 - A failure is inherited when a test that failed at the tested head also failed at M, in the run that recorded the coverage.
@@ -573,6 +573,8 @@ def evaluate(tool: str, inputs: ToolInputs) -> StepResult: ...
 def replay(pilot: Pilot, manifest: str, clone: str, work: str, records: str, tool: str,
            only: list[int] | None) -> int: ...  # the exit code
 ```
+
+`checkout` raises when git fails, as Slice 1's `git` does (`TASKS.md`, note 7), so that no failure reads as an answer: `has_commit` is false only for a commit that the clone lacks, `base_commit` gives `None` only when the branch has no commit before the run started, and `merge_base` only for two commits with no common history (decided on 2026-11-18).
 
 #### Data model
 ```python

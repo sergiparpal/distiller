@@ -603,7 +603,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
 
 ### 2. The clone: base commit, M and worktrees
 - **Closes**: the git that `replay` runs on a pilot's clone, which only reads, and adds or removes worktrees.
-- **Covers**: Terms, the base commit, the last commit of the base branch before the run started, and M; Invariants 3, the clone's checked-out commit and work tree unchanged; Rule 1, for git.
+- **Covers**: Terms, the base commit, the last commit of the base branch before the run started, and M; Invariants 3, the clone's checked-out commit and work tree unchanged; Rules 1 and 3, for git; the failures of git, which raise.
 - **Constrained by**: none.
 - **Modules**: `checkout`.
 - **Stubs**, by the agent (new module):
@@ -615,6 +615,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
   def remove_worktree(clone: str, folder: str) -> None: ...
   ```
 - **Contract**, by the agent: only `checkout`, `environment`, `suite` and `tool` import `subprocess`.
+- **Tests**, on 2026-11-18, in a tests phase from c3235bc: `tests/replay/test_checkout.py`, 43 cases, and the stub `src/replay/checkout.py`, whose five functions raise `NotImplementedError`; all 43 fail against it. The SPEC said neither along which history nor by which date the base commit is the last before the run, nor what a failing git does, so the user decided that day, and the SPEC now says it, in Terms and after the harness's Interfaces: along the base branch's first parents, by committer date, the dates compared as instants whatever their time zones; and a git that fails raises, as in Slice 1 (note 7). The user also chose to test Rule 3 here: every git that `checkout` runs has a time limit. The tests build a clone as the user's are, `main` checked out and heads kept by `refs/window/<run id>` alone, and run 5 hours behind UTC, so that a run's start read as local time picks another commit. Before the stub was put back, a reference of the decided behaviour, written in the test file for a moment and then taken out, passed all 43; with `--first-parent` left out, the author date, and the start read as local time, exactly the three tests that pin those decisions failed. The contract on `subprocess` is one for both packages, since a protected module's allowed importers are the only ones in the whole graph: "only git and replay's checkout import subprocess". It names only the modules that exist, since import-linter fails on an allowed importer that does not (`find_descendants` raises `ModuleNotPresent`), so tasks 4, 5 and 6 each add theirs.
 
 ### 3. The manifest
 - **Closes**: reading the window's CSV into the `ManifestLine`s of one pilot, the problems that stop a replay before it starts, and the pull requests whose head is not in the clone.
@@ -653,7 +654,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
   # environment.py
   def build(pilot: Pilot, worktree: str, for_coverage: bool) -> StepResult: ...
   ```
-- **Contract**, by the agent: `steps` imports no other module of `replay`.
+- **Contract**, by the agent: `steps` imports no other module of `replay`; and `replay.environment` joins the allowed importers of `subprocess` (task 2).
 
 ### 5. Suite runs
 - **Closes**: running pytest in a worktree's environment, inside bubblewrap and through the wrapper: the coverage at M, the full run and the rerun, each with its JUnit file and its limits.
@@ -667,7 +668,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
   def rerun(pilot: Pilot, worktree: str, work: str, failed: tuple[str, ...], junit_file: str) -> StepResult: ...
   ```
 - **Needs**: `bwrap` where the tests run, on the user's machine and in CI (task 0).
-- **Contract**: none new.
+- **Contract**, by the agent: `replay.suite` joins the allowed importers of `subprocess` (task 2).
 
 ### 6. Running the tool
 - **Closes**: running `python -P -m distiller evaluate` as a process, from the checkout of this repository at a fixed commit, with the inputs that a replay made.
@@ -692,7 +693,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
   # tool.py
   def evaluate(tool: str, inputs: ToolInputs) -> StepResult: ...
   ```
-- **Contract**: none new; that `replay` imports nothing of `distiller` comes with task 0.
+- **Contract**, by the agent: `replay.tool` joins the allowed importers of `subprocess` (task 2); that `replay` imports nothing of `distiller` comes with task 0.
 
 ### 7. A replay
 - **Closes**: `harness.replay`: for each manifest line, the steps of "How a replay goes", the log, the inherited failures, the pull requests not replayed, starting again, and the summary.

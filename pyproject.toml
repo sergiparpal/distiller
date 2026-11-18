@@ -89,11 +89,16 @@ type = "protected"
 protected_modules = ["defusedxml"]
 allowed_importers = ["distiller.junit"]
 
+# One contract for both packages: a protected module's allowed importers are
+# the only ones in the whole graph. Slice 1's git, and of Slice 2's checkout,
+# environment, suite and tool, as the technical sheet's Imports name them, those
+# that exist: import-linter fails on an allowed importer that does not, so each
+# comes with its module's tests (Slice 2's tasks 2, 4, 5 and 6).
 [[tool.importlinter.contracts]]
-name = "only git imports subprocess"
+name = "only git and replay's checkout import subprocess"
 type = "protected"
 protected_modules = ["subprocess"]
-allowed_importers = ["distiller.git"]
+allowed_importers = ["distiller.git", "replay.checkout"]
 
 # Slice 1 opens no network connection: tests/test_git.py checks that git runs
 # only local commands, and this contract that no module imports these.
