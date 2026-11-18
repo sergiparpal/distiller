@@ -32,6 +32,12 @@ The whole product is described in `docs/C6-destilador-revisada.md` (in Spanish);
 - In Slice 1 it never decides which tests run, and an evaluated run's verdict never changes the CI result: the full suite runs every time, and a missed run exits like a caught one.
 - It classifies no failed test left out of a selection by cause: a person does it, from the report.
 - Not in Slice 1, though not ruled out: the solver, shards and order (§5); sharded runs, with several JUnit files per run or coverage at M combined from several jobs; file tracing (§6), which §13.2 decides with this slice's figures; the static envelope (§14); any runner other than pytest.
+- In Slice 2 the harness changes nothing in `distiller`: no field in a record, no input, no rule.
+- In Slice 2 no pull request, window, run or floor pattern is chosen once a record exists (D-007): the window's pull requests are those of `notes/2026-11-17-window-red-runs.csv`, fixed before the first record.
+- Slice 2 replays two pilots and one job of each: no Windows, macOS, pypy or other Python, and none of poetry's integration tests, which need the network and a GitHub token.
+- Slice 2 gives no savings figure: only the pull requests whose job failed in the CI are replayed, as the Bet says.
+- Slice 2 does not explain a red run of the CI that replays green: the record holds what the replay saw.
+- In Slice 2 no suite run reaches the network but the loopback: the network is for fetching and installing, before the runs.
 
 ## Constraints
 - Stack: Python 3.12+, as a command-line tool run as a CI step; `git` is called as a local binary.
@@ -40,6 +46,11 @@ The whole product is described in `docs/C6-destilador-revisada.md` (in Spanish);
 - Agent safety: not an agent and does not run inside one; no model reads its inputs or makes its decisions. The external-communication leg is cut anyway: Slice 1 opens no network connection. It reads local files, runs the local `git` and writes local output.
 - If no leg can be cut: not applicable.
 - Deployment: Slice 1 runs on one pilot repository, named in the previous bet, on GitHub Actions. The pull request's full pytest run writes its JUnit in a single pytest invocation, without `--junit-prefix`. The tool's step runs after it whatever the tests' outcome (`if: always()`) and never fails the pull request's CI (`continue-on-error: true`): a rejection shows in the step's log and in the report, never as a failed check. The checkout has the whole history (`fetch-depth: 0`). H is the commit the full run tested, the checkout's HEAD: on the `pull_request` event, the merge commit in `github.sha`, not the pull request's head. Each CI job writes its own record file and the report reads them all, so no two jobs append to the same file. The coverage at M is recorded on the base branch by a separate job, at least once a day, with `--cov-context=test` and `COVERAGE_CORE=ctrace` and with no static context, and each run is given the newest recorded M that is the merge-base or one of its ancestors. A static context such as `[run] context = ci` would be joined to every test's, as in `ci|<node id>|run`, and the node id read from it, `ci|<node id>`, matches no JUnit pair, so every test would count as unmeasured and be selected. In the first week on the pilot, the records are checked by hand against the CI's list of pull request runs. The checkout is a full clone, not a partial one: in a partial clone, git can fetch missing objects from the remote, and Slice 1 opens no network connection. The base branch is given as `origin/<branch>`, since a pull request's checkout has it only as a remote-tracking branch. Slice 1 is not packaged: the step runs `python -P -m distiller` from a checkout of this repository at a fixed commit, with `PYTHONPATH` set to that checkout's `src` directory and the same version of `coverage` installed as in the job that records M. `-P` keeps the pilot's working directory out of `sys.path`, so that no file in the pilot can stand in for the tool's modules or its dependencies. On the pilot, the step is given a floor configuration whose only pattern is `results*/**`, decided before its first record (D-005): the pilot's tests check its records under `results*/`, files that coverage cannot see.
+- Stack, for Slice 2: a second package, `replay`, in this repository's `src/`, run by the user from a terminal with Python 3.12+; it runs `git`, `uv`, poetry, `bwrap` and the tool as local programs (D-011).
+- Allowed dependencies, for Slice 2: in `replay`, the standard library only; as programs on the `PATH`, `git`, `uv`, poetry, through `uv tool run`, and `bwrap`, and `gh` only to find the manifest's two missing numbers, once. The harness adds coverage 7.16.2 and pytest-cov to M's environment for the coverage run alone, and pytest-timeout to poetry's environments. Nothing that `distiller` depends on changes.
+- Performance, for Slice 2: in the samples of 2026-11-17, a whole run of urllib3's suite took 50 to 118 s with no xdist, which its heads before 2026-10-15 lack, and poetry's 31 to 56 s with its own `-n logical`. With the environments, the run at M under test contexts and the rerun, some 3 to 6 minutes a pull request and some 5 to 9 hours for the 90, an estimate.
+- Agent safety, for Slice 2: the harness runs code that strangers wrote, at their pull requests' commits. Each suite run goes inside bubblewrap, with no network but the loopback, the home hidden but the work directory, and a `HOME` there (D-011); fetching and installing reach GitHub and PyPI, before the runs. No model reads the harness's inputs or makes its decisions.
+- Deployment, for Slice 2: the user runs the harness on the user's machine, where the pilots' clones are, `~/code/distiller-pilots/urllib3` and `~/code/distiller-pilots/poetry`, each head of the window kept by a ref `refs/window/<run id>`; the agent's sandbox reaches neither them nor GitHub (D-011). The tool runs as in Slice 1, `python -P -m distiller evaluate`, from a checkout of this repository at a fixed commit, with coverage 7.16.2, which `requirements.txt` pins, and the coverage at M is recorded with that same version.
 
 ## Slices
 <Add each slice's criteria just before starting it.>
@@ -199,6 +210,55 @@ All examples use this fixture unless they say otherwise. The run belongs to pull
 - Edge case: a floor configuration saved with a byte order mark and `\r\n` line endings -> read like the same file without them: its patterns match as usual.
 - Property (only while properties are on): for every <input>, <invariant that must hold>.
 
+### Slice 2: Replaying the pilots' red pull requests offline
+A harness, `replay`, apart from the tool, replays the pull requests of two pilots whose CI the Distiller cannot join, urllib3 and poetry, each in one job. For each pull request of the Bet's window, it rebuilds the environment of its commits from their own lock files, records the coverage at the merge-base, runs the full suite at the head of the run chosen for it, runs the tests that failed once more, and runs Slice 1's `evaluate` on what it made, as the CI step did. The tool does not change: Slice 1's report over the replay's record files gives the miss rate that Slice 1's pilot could not.
+
+- Supersedes: nothing of Slice 1, which keeps its tool, its records and its report; the harness's Deployment stands in for Slice 1's on these two pilots only.
+
+Inputs for one replay:
+- a pilot's configuration, a TOML file in this repository for each pilot, that names the repository, its base branch, the job, the Python, the commands that build an environment (for urllib3, `uv sync --frozen` with its nox session's arguments; for poetry, `poetry env use` and `poetry install --with github-actions`, with the environment in the work tree), the pytest options of the job's run with no network, the time limit per test, the package that the coverage measures and the floor configuration;
+- the manifest: the window's CSV, `notes/2026-11-17-window-red-runs.csv`, one row per pull request with its project, number, run id, run start, head and the CI job's outcome; its two rows with no number get theirs, once, through `gh`, before the first record;
+- the pilot's clone, a full clone in which each row's head is kept by a ref of its own, `refs/window/<run id>`;
+- a checkout of this repository at a fixed commit, whose environment runs the tool;
+- a work directory, for the worktrees, the environments, the inputs made for the tool and the log;
+- the record file, as in Slice 1, one for each pilot.
+
+Terms:
+- The window is the span of dates in which a run must have started to count: 2025-12-01 to 2026-11-15, as the Bet says.
+- The run chosen for a pull request is its latest run in the window whose job failed, in any step; the manifest names it.
+- The tested head is the commit that the chosen run tested. It is H for the tool, not a merge of it into the base (D-011).
+- The base commit is the last commit of the pilot's base branch before the chosen run started, standing in for the one that the run saw (D-011).
+- M is the merge-base of the base commit and the tested head.
+- The environment of a commit is what the pilot's configuration builds from that commit's own lock file: `uv.lock` for urllib3, `poetry.lock` for poetry.
+- A failure is inherited when a test that failed at the tested head also failed at M, in the run that recorded the coverage.
+- A pull request is not replayed when its head is not in the clone or one of its environments cannot be built: the log says which, no record is appended for it, and it counts toward the Bet's 20% of environments.
+
+#### Manifest
+- Given a row of the manifest, when it is read, then its tested head is the row's head, and the clone holds it at `refs/window/<run id>`.
+- Given a row with no pull request number, when the manifest is read, then the replay does not start, and says that the number must be found first.
+- Given a number that both pilots' rows hold, when the manifest is read, then the replay does not start, and names it: Slice 1's report, over both pilots' record files, counts pull requests by number alone (D-011).
+- Given a row whose head is not in the clone, when the manifest is read, then that pull request is listed as not replayed before any run starts.
+
+#### Replaying a pull request
+- [core] Given urllib3's #5375 at its tested head, b66457156bf7, when it is replayed, then the full run's JUnit holds 5 failed tests, all in `test/test_response.py`, the rerun file holds those 5 run again, and one record is appended to urllib3's record file.
+- [core] Given a full run that ends in pytest's internal error, as poetry's #11226 did, when it is evaluated, then the run is rejected with `unusable-input` and `junit`, as Slice 1 rejects such a JUnit file.
+- Given poetry's #10980 at its tested head, 7b38c77a1ef2, when it is replayed, then the full run fails the two tests that the pull request adds, the rerun fails them again, and one record is appended to poetry's record file.
+- Given a tested head whose lock file differs from its M's, when it is replayed, then each environment is built from its own commit's lock file, and the log names the SHA-256 of each.
+- Given a test that waits for input, as poetry's #10956's did at its head of 2026-06-16 when replayed on 2026-11-17, when the full run is replayed, then that test fails at the pilot's time limit, the full run ends, and the next pull request is replayed.
+- Given a test that leaves a thread blocked, as urllib3's flaky HTTP/2 probe test did on 2026-11-16, when its run ends, then the pytest process ends with it.
+- Given a test that fails at the tested head and at M, when the pull request is replayed, then the log marks its failure as inherited.
+- Given a replay stopped after some pull requests, when it is started again with the same manifest, then it starts at the first pull request that the log does not show as done.
+
+#### Invariants
+- Given the inputs that a replay kept, when they are evaluated again, then the two record files are byte-identical, as Slice 1's Invariants say. Two replays of one pull request are not: the tests' times differ.
+- Given any suite run, when it runs, then it opens no network connection but the loopback.
+- Given a pull request replayed, whatever its outcome, when the replay goes on, then the clone's checked-out commit and work tree are as they were: the commits are checked out in worktrees of the work directory.
+- Given a record file that holds a replay's records, when the harness is started over it with a manifest whose SHA-256 differs from that replay's, then it replays nothing and says so.
+
+#### Summary
+- The report is Slice 1's, over both pilots' record files together, as the Bet counts its 30 pull requests over the two projects.
+- Given a replay done, when its summary is written, then it shows, apart from the report, for each pilot and for both: how many pull requests were replayed, how many were not and why, how many were red, and how many failures were inherited.
+
 ## Technical sheet
 A module that produces the "then" of a [core] example is core. A module with an irreversible effect that no [core] example observes means a missing example.
 
@@ -222,6 +282,8 @@ Option A of `notes/2026-10-10-architecture-options.md`, with D-001 and D-002 of 
 | K13 | K1's missed run, with no file at the record file's path |
 | K14 | a coverage file that is empty, 0 bytes long |
 | K15 | a record file whose first line is a record and whose second, holding `canary`, is not |
+| K16 | Slice 2: urllib3's #5375 at its tested head, replayed |
+| K17 | Slice 2: a full run that ends in pytest's internal error, as poetry's #11226's did, evaluated |
 
 ### Modules
 | Module | Does | Tier | [core] "then"s |
@@ -459,6 +521,159 @@ The report reads its record files in the order given, all of them before it writ
 - A repository owned by another user ("dubious ownership") makes every git command fail, which the tool would report as not a git checkout.
 - defusedxml 0.7.1 on Python 3.13 and 3.14.
 - Which coverage versions write schema 7: not needed while the Deployment installs the same `coverage` in both jobs.
+
+### Slice 2: the harness `replay`
+The package `replay`, in `src/` beside `distiller`, as D-011 chose; the user runs it. It runs the tool as a process, as a CI step does, and imports nothing of it.
+
+#### Modules
+| Module | Does | Tier | [core] "then"s |
+|---|---|---|---|
+| `__main__` | `raise SystemExit(cli.main())` | core | K16, K17 |
+| `cli` | argparse (`allow_abbrev=False`) into the command `run`; nothing else | core | K16, K17 |
+| `pilot` | reads a pilot's configuration, with `tomllib` | core | K16, K17 |
+| `manifest` | reads the window's CSV and checks its rows: numbers, numbers that both pilots hold, heads in the clone | core | K16, K17 |
+| `checkout` | the base commit and M; adds and removes worktrees | core | K16, K17 |
+| `environment` | builds a commit's environment, as the pilot's configuration says, with the plugins of Rule 4 | core | K16, K17 |
+| `suite` | runs pytest inside bubblewrap, in the wrapper of Rule 6: the coverage at M, the full run and the rerun | core | K16, K17 |
+| `tool` | runs the tool's `evaluate` as a process, from the checkout at a fixed commit | core | K16, K17 |
+| `harness` | one pull request's steps, the log, the summary and starting again | core | K16, K17 |
+
+Every module is on the path from a manifest row to what K16 and K17 observe. The summary is medium, as Slice 1's report is: the log and the records are kept, so a wrong count is fixed by writing it again.
+
+#### Interfaces
+```python
+# pilot.py
+def read_pilot(path: str) -> Pilot: ...
+
+# manifest.py
+def read_manifest(path: str, project: str) -> list[ManifestLine]: ...
+def problems(lines: list[ManifestLine], others: list[ManifestLine], clone: str) -> list[str]: ...  # empty when the replay can start
+
+# checkout.py
+def base_commit(clone: str, branch: str, started: str) -> str | None: ...  # the last commit before the run started
+def merge_base(clone: str, a: str, b: str) -> str | None: ...
+def add_worktree(clone: str, commit: str, folder: str) -> None: ...
+def remove_worktree(clone: str, folder: str) -> None: ...
+
+# environment.py
+def build(pilot: Pilot, worktree: str, for_coverage: bool) -> StepResult: ...
+
+# suite.py
+def record_coverage(pilot: Pilot, worktree: str, work: str, coverage_file: str, junit_file: str) -> StepResult: ...
+def full_run(pilot: Pilot, worktree: str, work: str, junit_file: str) -> StepResult: ...
+def rerun(pilot: Pilot, worktree: str, work: str, failed: tuple[str, ...], junit_file: str) -> StepResult: ...
+
+# tool.py
+def evaluate(tool: str, inputs: ToolInputs) -> StepResult: ...
+
+# harness.py
+def replay(pilot: Pilot, manifest: str, clone: str, work: str, records: str, tool: str,
+           only: list[int] | None) -> int: ...  # the exit code
+```
+
+#### Data model
+```python
+@dataclass(frozen=True)
+class Pilot:
+    project: str
+    repository: str
+    base_branch: str
+    job: str
+    python: str
+    environment: tuple[tuple[str, ...], ...]   # the commands that build it, in order
+    pytest: tuple[str, ...]
+    coverage_source: str
+    seconds_per_test: int
+    adds_timeout_plugin: bool                   # poetry's environments lack pytest-timeout
+    floor_config: str | None
+
+@dataclass(frozen=True)
+class ManifestLine:
+    project: str
+    pull_request: int | None   # None: to be found before the first record
+    run: int
+    run_started: str           # ISO 8601, UTC
+    tested_head: str
+    ci_job: str                # the job's outcome, as GitHub gave it on 2026-11-16
+
+@dataclass(frozen=True)
+class StepResult:
+    exit_code: int | None      # None: stopped at its time limit
+    seconds: float
+    failed: tuple[str, ...]    # node ids, as the wrapper wrote them
+
+@dataclass(frozen=True)
+class ToolInputs:
+    pull_request: int
+    head: str
+    base: str
+    m: str
+    coverage_file: str
+    junit_file: str
+    rerun_file: str | None
+    floor_config: str | None
+    records: str
+    checkout: str
+```
+
+#### Command line
+```
+python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
+    --records PATH --tool DIR [--only N ...]
+```
+
+`--tool` is a checkout of this repository at a fixed commit, with an environment that runs `python -P -m distiller`; `--only` replays those pull requests alone.
+
+| Exit | `run` |
+|---|---|
+| 0 | every pull request of the manifest done: replayed, or listed as not replayed |
+| 1 | the replay did not start, for a problem of the manifest or a record file of another manifest, or any other failure |
+| 2 | a usage error |
+
+#### How a replay goes
+1. `cli.main` parses the arguments and calls `harness.replay`.
+2. `replay` reads the pilot and the manifest, and stops with exit 1 when `manifest.problems` finds any, or when the log names another manifest's SHA-256.
+3. For each manifest line of the pilot, in order, unless the log shows it done: the base commit is the last commit of the base branch before the run started, and M its merge-base with the tested head.
+4. A worktree of M is added in the work directory, M's environment built there with the plugins of Rule 4, and the coverage at M recorded with `--cov=<source> --cov-context=test` and `COVERAGE_CORE=ctrace`, its JUnit kept for the failures at M.
+5. A worktree of the tested head is added, its environment built, and the full run writes its JUnit; the tests that failed run once more into the rerun file.
+6. `tool.evaluate` runs `python -P -m distiller evaluate --pr N --head <tested head> --base <base commit> --coverage <file> --coverage-commit <M> --junit <file> [--rerun <file>] [--floor-config <file>] --records <file> --checkout <clone>`.
+7. The log gets each step's command, exit code and time, the lock files' SHA-256, the failures at the head and at M, and those inherited; both worktrees are removed, whatever happened.
+8. Once every line is done, the summary is written, and `replay` returns 0.
+
+#### Rules
+1. **Dependencies.** The standard library only; `git`, `uv`, poetry, `bwrap` and the tool run through `subprocess.run` with an argument list, never a shell.
+2. **The manifest is fixed.** Its SHA-256 goes into the log's first line, and a run with another manifest over the same record file replays nothing.
+3. **Time limits.** Every process has one, and every test of a suite run the pilot's, 120 s.
+4. **Plugins added.** For the coverage run, M's environment gets coverage 7.16.2 and pytest-cov; poetry's environments get pytest-timeout; the log names each.
+5. **Suite runs.** Each takes the pilot's pytest options and runs inside bubblewrap, with no network but the loopback, the home hidden but the work directory, its `HOME` there, and the environment's `bin` first on its `PATH`.
+6. **The wrapper.** pytest runs in a wrapper that writes the node id of each test that failed or erred, as a plugin hears of it, and ends the process with `os._exit` once pytest returns, since a thread that a test left blocked kept one alive for 37 minutes on 2026-11-16.
+7. **One rerun.** The tests that failed in the full run run once more, in one rerun, as Slice 1's rerun file has them.
+8. **Coverage at M.** Recorded by coverage 7.16.2, under `ctrace`, with test contexts and no static context, as Slice 1's Deployment asks.
+9. **Logs.** Every step's output is kept, with its colour codes taken out.
+
+#### Imports
+`lint-imports` checks these once the package is in place:
+- `distiller` imports nothing of `replay`, and `replay` nothing of `distiller`;
+- only `checkout`, `environment`, `suite` and `tool` import `subprocess`;
+- only `__main__` imports `cli`, and only `cli` imports `harness`.
+
+#### Irreversible effects
+| Effect | Module | Observed by |
+|---|---|---|
+| Installing from PyPI and, for urllib3's hypercorn, from GitHub | `environment` | K16 |
+| Running the code of commits that strangers wrote, inside bubblewrap | `suite` | K16, K17; the Invariant on the network |
+| Appending to a pilot's record file | the tool, as `tool` runs it | K16, K17 |
+| Adding and removing worktrees in the clone's `.git` | `checkout` | the Invariant on the clone |
+| Writing the work directory and its log | `harness` | the example on starting again |
+
+#### Checked and [VERIFY]
+Checked on 2026-11-16 and 2026-11-17 (`notes/2026-11-16-bet-window-checks.md`): all 90 heads of the window are in the pilots' clones, 53 fetched with `pull/<n>/head` and 37 by their commit ids; the 21 environments of the two samples, of heads from 2026-03-17 to 2026-10-12, were all built from their own lock files, urllib3's with `uv sync --frozen` and poetry's with `poetry install`; the wrapper with `os._exit` ended a run whose test left a thread blocked; at a merge-base, the tests that had failed at a head ran with the head's environment and `PYTHONPATH` set to the merge-base's `src/`, once urllib3's generated `_version.py` was there; GitHub no longer gave the logs of March's runs, nor the steps of jobs older than about 180 days, while it gave the jobs' conclusions.
+
+[VERIFY]:
+- Whether the last commit of the base branch before a run started is the base commit that the run saw; the run's `pull_request` event would say, through `gh api repos/<repo>/actions/runs/<id>`, while GitHub keeps the run.
+- Which pytest-cov version records the coverage at M with each pilot's pytest, and how long that run takes with test contexts, under xdist for poetry, whose workers' data coverage combines.
+- Whether the plugins that Rule 4 adds change any test's outcome.
+- That `bwrap` runs on the user's machine with no network and the home hidden, as the agent's sandbox does.
 
 ## Open questions
 - Failures inherited from the base branch. If the base branch was already red at the merge-base, the PR's run fails for reasons outside its diff and counts against the selector, and the rerun file reproduces them. Should a later slice read the base's results to set them apart? The same goes for a red run whose diff is empty: it is missed unless one of its failed tests is unmeasured.

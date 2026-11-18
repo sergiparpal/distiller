@@ -7,8 +7,10 @@ on 2026-11-17 for both pilots, from `notes/2026-11-16-bet-window-checks.md`; and
 settled with the user the same day: the user kept its non-goals and the "then"
 of its two [core] examples as written, and chose the answer to each of its open
 questions (D-011). The non-goals and the "then" of every [core] example are the
-user's, who writes them into the SPEC; the agent writes the rest. Figures come
-from
+user's, who writes them into the SPEC; the agent writes the rest. On 2026-11-17
+the slice moved into `docs/SPEC.md`, as `### Slice 2` with its Constraints, its
+non-goals and its technical sheet: from then on the SPEC is the reference, and
+this draft is kept as its history. Figures come from
 `notes/2026-11-16-pilot-candidates.md`, `notes/2026-11-16-offline-replay.md` and
 `notes/2026-11-16-bet-window-checks.md`; what was not checked carries [VERIFY].
 
