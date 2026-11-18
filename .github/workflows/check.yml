@@ -25,5 +25,7 @@ jobs:
         with:
           path: ~/.cache/pre-commit
           key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+      # Slice 2's suite runs go inside bubblewrap (D-011).
+      - run: sudo apt-get update && sudo apt-get install -y bubblewrap
       - run: make install
       - run: make check

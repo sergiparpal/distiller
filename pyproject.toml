@@ -18,7 +18,7 @@ ignore = [
 max-complexity = 10
 
 [tool.ruff.lint.isort]
-known-first-party = ["distiller"]
+known-first-party = ["distiller", "replay"]
 
 [tool.ruff.lint.per-file-ignores]
 # Only the modules that print, as the technical sheet says, may call print.
@@ -68,8 +68,14 @@ fail_under = 100
 show_missing = true
 
 [tool.importlinter]
-root_package = "distiller"
+root_packages = ["distiller", "replay"]
 include_external_packages = true
+
+# Slice 2's harness runs the tool as a process, as a CI step does (D-011).
+[[tool.importlinter.contracts]]
+name = "distiller and replay import nothing of each other"
+type = "independence"
+modules = ["distiller", "replay"]
 
 [[tool.importlinter.contracts]]
 name = "only coverage_at_m imports coverage"

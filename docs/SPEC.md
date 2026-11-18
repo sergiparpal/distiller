@@ -531,8 +531,9 @@ The package `replay`, in `src/` beside `distiller`, as D-011 chose; the user run
 | `__main__` | `raise SystemExit(cli.main())` | core | K16, K17 |
 | `cli` | argparse (`allow_abbrev=False`) into the command `run`; nothing else | core | K16, K17 |
 | `pilot` | reads a pilot's configuration, with `tomllib` | core | K16, K17 |
-| `manifest` | reads the window's CSV and checks its rows: numbers, numbers that both pilots hold, heads in the clone | core | K16, K17 |
-| `checkout` | the base commit and M; adds and removes worktrees | core | K16, K17 |
+| `manifest` | reads the window's CSV and checks its rows: numbers, numbers that both pilots hold; lists the rows whose head is not in the clone | core | K16, K17 |
+| `checkout` | whether a commit is in the clone, the base commit and M; adds and removes worktrees | core | K16, K17 |
+| `steps` | `StepResult` and `ToolInputs`, which `environment`, `suite`, `tool` and `harness` share; imports no other module of the package | core | K16, K17 |
 | `environment` | builds a commit's environment, as the pilot's configuration says, with the plugins of Rule 4 | core | K16, K17 |
 | `suite` | runs pytest inside bubblewrap, in the wrapper of Rule 6: the coverage at M, the full run and the rerun | core | K16, K17 |
 | `tool` | runs the tool's `evaluate` as a process, from the checkout at a fixed commit | core | K16, K17 |
@@ -547,9 +548,11 @@ def read_pilot(path: str) -> Pilot: ...
 
 # manifest.py
 def read_manifest(path: str, project: str) -> list[ManifestLine]: ...
-def problems(lines: list[ManifestLine], others: list[ManifestLine], clone: str) -> list[str]: ...  # empty when the replay can start
+def problems(lines: list[ManifestLine], others: list[ManifestLine]) -> list[str]: ...  # empty when the replay can start
+def missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]: ...  # listed as not replayed
 
 # checkout.py
+def has_commit(clone: str, commit: str) -> bool: ...
 def base_commit(clone: str, branch: str, started: str) -> str | None: ...  # the last commit before the run started
 def merge_base(clone: str, a: str, b: str) -> str | None: ...
 def add_worktree(clone: str, commit: str, folder: str) -> None: ...
@@ -573,6 +576,7 @@ def replay(pilot: Pilot, manifest: str, clone: str, work: str, records: str, too
 
 #### Data model
 ```python
+# pilot.py
 @dataclass(frozen=True)
 class Pilot:
     project: str
@@ -587,6 +591,7 @@ class Pilot:
     adds_timeout_plugin: bool                   # poetry's environments lack pytest-timeout
     floor_config: str | None
 
+# manifest.py
 @dataclass(frozen=True)
 class ManifestLine:
     project: str
@@ -596,6 +601,7 @@ class ManifestLine:
     tested_head: str
     ci_job: str                # the job's outcome, as GitHub gave it on 2026-11-16
 
+# steps.py
 @dataclass(frozen=True)
 class StepResult:
     exit_code: int | None      # None: stopped at its time limit
@@ -632,7 +638,7 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 
 #### How a replay goes
 1. `cli.main` parses the arguments and calls `harness.replay`.
-2. `replay` reads the pilot and the manifest, and stops with exit 1 when `manifest.problems` finds any, or when the log names another manifest's SHA-256.
+2. `replay` reads the pilot and the manifest, and stops with exit 1 when `manifest.problems` finds any, or when the log names another manifest's SHA-256; the pull requests that `manifest.missing_heads` gives are written in the log as not replayed.
 3. For each manifest line of the pilot, in order, unless the log shows it done: the base commit is the last commit of the base branch before the run started, and M its merge-base with the tested head.
 4. A worktree of M is added in the work directory, M's environment built there with the plugins of Rule 4, and the coverage at M recorded with `--cov=<source> --cov-context=test` and `COVERAGE_CORE=ctrace`, its JUnit kept for the failures at M.
 5. A worktree of the tested head is added, its environment built, and the full run writes its JUnit; the tests that failed run once more into the rerun file.
@@ -655,6 +661,7 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 `lint-imports` checks these once the package is in place:
 - `distiller` imports nothing of `replay`, and `replay` nothing of `distiller`;
 - only `checkout`, `environment`, `suite` and `tool` import `subprocess`;
+- `steps` imports no other module of `replay`;
 - only `__main__` imports `cli`, and only `cli` imports `harness`.
 
 #### Irreversible effects

@@ -573,6 +573,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
 - **Closes**: what the phases freeze and the package needs before its first tests phase.
 - **Does**: `src/replay/__init__.py`, and its tests in `tests/replay/`; in `pyproject.toml`, `replay` beside `distiller` wherever the checks name a package: coverage's source, with `fail_under = 100`, pyright, ruff and import-linter's root packages, and the contract that neither package imports the other; in `.github/workflows/check.yml`, `bubblewrap` installed before `make check` [VERIFY: whether AppArmor lets an unprivileged `bwrap` start on GitHub's Ubuntu 24.04 runners]. In the SPEC's technical sheet: `checkout.has_commit(clone: str, commit: str) -> bool`, which `manifest` needs, since only `checkout` runs git; `manifest.missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]`, for Manifest 4, whose pull requests are listed as not replayed and do not stop the replay; and a module `steps`, which imports nothing of the package, for `StepResult` and `ToolInputs`, which `environment`, `suite`, `tool` and `harness` share.
 - **By**: the agent, outside any phase, in a commit that the user reviews, with `make check` green.
+- **Done**, on 2026-11-18: coverage (`source = ["src"]`), pyright and pytest already took every package of `src/` and `tests/`, so only ruff's first-party packages, import-linter's root packages and the contract that `distiller` and `replay` import nothing of each other changed; `src/replay/__init__.py` is empty, and `tests/replay/` comes with task 1's tests. CI installs `bubblewrap`. In the SPEC's technical sheet: `checkout.has_commit`, `manifest.missing_heads`, the module `steps`, the module of each type of the data model, and `manifest.problems` without the clone, since the heads are `missing_heads`'s to check.
 
 ### 1. A pilot's configuration
 - **Closes**: reading a pilot's TOML file into `Pilot`, and refusing one that lacks a field or gives one of the wrong type.
@@ -629,7 +630,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
       tested_head: str
       ci_job: str
   def read_manifest(path: str, project: str) -> list[ManifestLine]: ...
-  def problems(lines: list[ManifestLine], others: list[ManifestLine], clone: str) -> list[str]: ...
+  def problems(lines: list[ManifestLine], others: list[ManifestLine]) -> list[str]: ...
   def missing_heads(lines: list[ManifestLine], clone: str) -> list[ManifestLine]: ...
   ```
 - **Contract**: none new.
