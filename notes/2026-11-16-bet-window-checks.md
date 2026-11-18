@@ -426,13 +426,22 @@ GitHub gave it on 2026-11-16, and its failed steps (FACT).
 | failed, steps no longer given | 22 | 21 |
 | failed in another step | 1 | 1 |
 
-Two rows are worth knowing (FACT). urllib3's in another step has no number,
+Two rows are worth knowing (FACT). urllib3's in another step had no number,
 since the count looked numbers up only for the pull requests red in tests or of
-unknown step; its run id gives it. Its job failed in "Set up job" on
+unknown step; its run id gave it, below. Its job failed in "Set up job" on
 2026-05-26, as in two more of its runs that minute, and its later runs did not
 fail. poetry's in another step is #10956, whose run of 2026-06-17 failed with no
 step given as failed, the day after a run red in its tests, so its row has the
 later run's head; its sample's replay, at the earlier head, waited for an answer
 that never came, so its job may have hung until a time limit [VERIFY]. One more
-row, poetry's of 2026-11-01, has no number, since the count did not find it;
-its run id gives it.
+row, poetry's of 2026-11-01, had no number, since the count did not find it.
+
+Both numbers were found on 2026-11-18 (FACT). urllib3's is #5049, the one of
+three pull requests sharing its run's branch that came from its run's fork.
+poetry's is #11151, from the log of its run's pytest job, whose checkout
+fetched `refs/pull/11151/merge`: GitHub no longer shows that pull request, by
+its number, its branch or its commit, nor, since 2026-11-16, #11226, whose row
+is in the CSV too. Of the 83 numbers from 11148 to 11230, nine answered HTTP
+404 that day, 11151 and 11226 among them: pull requests or issues that GitHub
+hides, likely those of accounts it suspended [VERIFY]. The two rows keep their
+runs and heads, and the heads are in the pilot's clone.
