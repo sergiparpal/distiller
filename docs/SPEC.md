@@ -216,7 +216,7 @@ A harness, `replay`, apart from the tool, replays the pull requests of two pilot
 - Supersedes: nothing of Slice 1, which keeps its tool, its records and its report; the harness's Deployment stands in for Slice 1's on these two pilots only.
 
 Inputs for one replay:
-- a pilot's configuration, a TOML file in this repository for each pilot, that names the repository, its base branch, the job, the Python, the commands that build an environment (for urllib3, `uv sync --frozen` with its nox session's arguments; for poetry, `poetry env use` and `poetry install --with github-actions`, with the environment in the work tree), the pytest options of the job's run with no network, the time limit per test, the package that the coverage measures and the floor configuration;
+- a pilot's configuration, a TOML file in this repository for each pilot, that names the repository, its base branch, the job, the Python, the commands that build an environment (for urllib3, `uv sync --frozen` with its nox session's arguments; for poetry, `poetry env use` and `poetry install --with github-actions`, with the environment in the work tree), the pytest options of the job's run with no network, the time limit per test, the package that the coverage measures and the floor configuration. Its keys are the field names of `Pilot`, in the harness's data model, each one required but `floor_config`, which may be left out and is then `None`. Each value has its field's type in TOML, with no conversion: a string for each field of type `str`, `floor_config` included, an integer for `seconds_per_test`, not a float or a boolean, `true` or `false` for `adds_timeout_plugin`, an array of strings for `pytest`, and for `environment` an array of commands, each an array of strings. A path with no file, a file that is not TOML, and one that lacks a key, has a key that `Pilot` has not or holds a value of another type are refused: `read_pilot` raises, with no fixed type or message, and the replay stops with exit 1, as for any other failure (decided on 2026-11-18);
 - the manifest: the window's CSV, `notes/2026-11-17-window-red-runs.csv`, one row per pull request with its project, number, run id, run start, head and the CI job's outcome; its two rows with no number get theirs, once, through `gh`, before the first record;
 - the pilot's clone, a full clone in which each row's head is kept by a ref of its own, `refs/window/<run id>`;
 - a checkout of this repository at a fixed commit, whose environment runs the tool;
@@ -544,7 +544,7 @@ Every module is on the path from a manifest row to what K16 and K17 observe. The
 #### Interfaces
 ```python
 # pilot.py
-def read_pilot(path: str) -> Pilot: ...
+def read_pilot(path: str) -> Pilot: ...  # raises, with no fixed type, for a file it refuses
 
 # manifest.py
 def read_manifest(path: str, project: str) -> list[ManifestLine]: ...

@@ -576,8 +576,8 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
 - **Done**, on 2026-11-18: coverage (`source = ["src"]`), pyright and pytest already took every package of `src/` and `tests/`, so only ruff's first-party packages, import-linter's root packages and the contract that `distiller` and `replay` import nothing of each other changed; `src/replay/__init__.py` is empty, and `tests/replay/` comes with task 1's tests. CI installs `bubblewrap`. In the SPEC's technical sheet: `checkout.has_commit`, `manifest.missing_heads`, the module `steps`, the module of each type of the data model, and `manifest.problems` without the clone, since the heads are `missing_heads`'s to check.
 
 ### 1. A pilot's configuration
-- **Closes**: reading a pilot's TOML file into `Pilot`, and refusing one that lacks a field or gives one of the wrong type.
-- **Covers**: Slice 2's Inputs, "a pilot's configuration, a TOML file...": each field of `Pilot`.
+- **Closes**: reading a pilot's TOML file into `Pilot`, and refusing one that lacks a field, has a key that `Pilot` has not or gives a field of the wrong type.
+- **Covers**: Slice 2's Inputs, "a pilot's configuration, a TOML file...": each field of `Pilot`, and what is refused.
 - **Constrained by**: none.
 - **Modules**: `pilot`.
 - **Stubs**, by the agent, in the tests phase (new module):
@@ -598,6 +598,7 @@ The appetite ends on 2026-12-09: at about two days a task, the harness is done b
   def read_pilot(path: str) -> Pilot: ...
   ```
 - **Contract**: none new.
+- **Tests**, on 2026-11-18, in a tests phase from 3e088e8: `tests/replay/test_pilot.py`, 35 cases, and the stub `src/replay/pilot.py`, whose `read_pilot` raises `NotImplementedError`; all 35 fail against it. The SPEC named what the file holds but not its keys, nor what a refusal is, so the user decided that day, and the SPEC's Inputs now say it: the keys are `Pilot`'s field names, each required but `floor_config`, which may be left out and is then `None`; a key that `Pilot` has not is refused, as a missing key or a value of the wrong type is, so that a misspelt key does not leave a field unset unseen; and a refusal is an exception whose type and message the tests do not pin, as with git's failures in note 92, since the harness turns it into its exit 1. The tests read urllib3's and poetry's configurations as the window needs them, and refuse each missing key, 18 values of the wrong type, two unknown keys, a file that is not TOML and a path with no file; a refusal must not be `NotImplementedError`, so the stub passes none of them.
 
 ### 2. The clone: base commit, M and worktrees
 - **Closes**: the git that `replay` runs on a pilot's clone, which only reads, and adds or removes worktrees.
