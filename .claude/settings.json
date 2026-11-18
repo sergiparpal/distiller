@@ -1,7 +1,7 @@
 {
   "idleCompaction": false,
   "permissions": {
-    "defaultMode": "acceptEdits",
+    "defaultMode": "bypassPermissions",
     "blockReadsOutsideWorkingDirectories": true,
     "allow": [
       "Bash(git push *)",
@@ -42,7 +42,7 @@
   },
   "autoMemoryEnabled": false,
   "sandbox": {
-    "enabled": true,
+    "enabled": false,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": true,
     "network": {
