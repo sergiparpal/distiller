@@ -530,7 +530,7 @@ The package `replay`, in `src/` beside `distiller`, as D-011 chose; the user run
 | Module | Does | Tier | [core] "then"s |
 |---|---|---|---|
 | `__main__` | `raise SystemExit(cli.main())` | core | K16, K17 |
-| `cli` | argparse (`allow_abbrev=False`) into the command `run`; nothing else | core | K16, K17 |
+| `cli` | argparse (`allow_abbrev=False`) into the command `run`; reads the pilot and runs `harness.replay` with each other path made absolute; prints the summary of a replay that returns 0, and turns an unexpected exception into one line and 1. Nothing else | core | K16, K17 |
 | `pilot` | reads a pilot's configuration, with `tomllib` | core | K16, K17 |
 | `manifest` | reads the window's CSV and checks its rows: numbers, numbers that two rows hold; lists the rows whose head is not in the clone | core | K16, K17 |
 | `checkout` | whether a commit is in the clone, the base commit and M; adds and removes worktrees | core | K16, K17 |
@@ -636,6 +636,8 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 
 `--tool` is a checkout of this repository at a fixed commit, with an environment that runs `python -P -m distiller`; `--only` replays those pull requests alone. That environment is the checkout's `.venv`, as `make install` builds it: `tool.evaluate` runs its `.venv/bin/python -P -m distiller evaluate` with the checkout's `src/` as `PYTHONPATH`, as this repository's own tests run the tool, with a time limit of its own; a checkout with no `.venv` makes it raise (2026-11-19).
 
+Usage errors exit with 2 and start no replay: a missing or unknown command or option, never abbreviated, so `--pil` is not `--pilot`, and an `--only` with no number or with a value that `int()` cannot read. `cli` gives `replay` each path made absolute, from the working directory, since the replay runs git and the tool in other directories. A replay that returns 0 prints its summary, `<work>/summary.txt`, on stdout; one that does not start prints nothing there, and says why on stderr. Any other failure, a pilot or a manifest that is refused included, is one line on stderr, `replay: <class>: <message>`, the exception's class name and its `str()`, with no traceback, and exit 1 (decided on 2026-11-19).
+
 | Exit | `run` |
 |---|---|
 | 0 | every pull request of the manifest done: replayed, or listed as not replayed |
@@ -643,14 +645,14 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 | 2 | a usage error |
 
 #### How a replay goes
-1. `cli.main` parses the arguments and calls `harness.replay`.
-2. `replay` reads the pilot and the manifest, keeps its pilot's lines, and stops with exit 1 when `manifest.problems`, given the other pilot's lines too, finds any, or when the log names another manifest's SHA-256; the pull requests that `manifest.missing_heads` gives are written in the log as not replayed.
+1. `cli.main` parses the arguments, reads the pilot with `read_pilot`, and calls `harness.replay` with it and the other paths made absolute.
+2. `replay` reads the manifest, keeps its pilot's lines, and stops with exit 1 when `manifest.problems`, given the other pilot's lines too, finds any, or when the log names another manifest's SHA-256; the pull requests that `manifest.missing_heads` gives are written in the log as not replayed.
 3. For each manifest line of the pilot, in order, unless the log shows it done: the base commit is the last commit of the base branch before the run started, and M its merge-base with the tested head.
 4. A worktree of M is added in the work directory, M's environment built there with the plugins of Rule 4, and the coverage at M recorded with `--cov=<source> --cov-context=test` and `COVERAGE_CORE=ctrace`, its JUnit kept for the failures at M.
 5. A worktree of the tested head is added, its environment built, and the full run writes its JUnit; the tests that failed run once more into the rerun file.
 6. `tool.evaluate` runs `python -P -m distiller evaluate --pr N --head <tested head> --base <base commit> --coverage <file> --coverage-commit <M> --junit <file> [--rerun <file>] [--floor-config <file>] --records <file> --checkout <clone>`.
 7. The log gets each step's command, exit code and time, the lock files' SHA-256, the failures at the head and at M, and those inherited; both worktrees are removed, whatever happened.
-8. Once every line is done, the summary is written, and `replay` returns 0.
+8. Once every line is done, the summary is written, and `replay` returns 0; `cli` prints the summary on stdout.
 
 #### The log and the summary
 Each pilot's log, `<work>/<project>.log`, holds one JSON object a line (decided on 2026-11-19):

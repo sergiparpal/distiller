@@ -152,3 +152,15 @@ name = "only cli imports evaluate and report"
 type = "protected"
 protected_modules = ["distiller.evaluate", "distiller.report"]
 allowed_importers = ["distiller.cli"]
+
+[[tool.importlinter.contracts]]
+name = "only replay's __main__ imports its cli"
+type = "protected"
+protected_modules = ["replay.cli"]
+allowed_importers = ["replay.__main__"]
+
+[[tool.importlinter.contracts]]
+name = "only replay's cli imports its harness"
+type = "protected"
+protected_modules = ["replay.harness"]
+allowed_importers = ["replay.cli"]
