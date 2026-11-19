@@ -1,6 +1,7 @@
 """What the hooks share: where things are, the phase, and how to answer.
 
-The user sets .claude/phase by hand, never the agent:
+The agent opens, changes and empties .claude/phase itself, with Write, in the
+order that CLAUDE.md gives (D-014):
 - no file, or an empty one: no phase;
 - "tests <commit>": write tests from docs/SPEC.md without reading src/, and
   without changing what <commit> holds of the files that configure the checks
