@@ -1,0 +1,32 @@
+# urllib3's job "Ubuntu 3.12", replayed with no network by Slice 2's harness.
+# The environment is built as urllib3's nox session "test" built it all
+# through the window (notes/2026-11-16-bet-window-checks.md). The pytest
+# options are that session's, without its path, test/, which would make the
+# rerun run every test again; without -n auto, since pytest-xdist is in
+# urllib3's lock only from 2026-10-15; and without --memray, --cov and -v.
+# Its PYTHONWARNINGS=always::FutureWarning stays out too: Rule 5 lets no
+# variable reach a run but HOME, PATH, LANG and coverage's. No floor
+# configuration: the default patterns alone (D-015).
+project = "urllib3"
+repository = "urllib3/urllib3"
+base_branch = "main"
+job = "Ubuntu 3.12"
+python = "3.12"
+environment = [
+    [
+        "uv", "sync", "--frozen", "--python", "3.12", "--group", "dev",
+        "--extra", "socks", "--extra", "brotli", "--extra", "zstd", "--extra", "h2",
+    ],
+]
+pytest = [
+    "-ra",
+    "--tb=native",
+    "--strict-config",
+    "--strict-markers",
+    "--disable-socket",
+    "--allow-unix-socket",
+    "--allow-hosts=localhost,127.0.0.1,::1,127.0.0.0,240.0.0.0",
+]
+coverage_source = "urllib3"
+seconds_per_test = 120
+adds_timeout_plugin = false
