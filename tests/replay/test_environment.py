@@ -63,6 +63,25 @@ with open({log!r}, "a", encoding="utf-8") as file:
 raise SystemExit(int(os.environ.get("FAKE_UV_EXIT", "0")))
 """
 
+# A command of a pilot's environment that notes, in the file it is given, the
+# two variables that would make it import or install from elsewhere than the
+# worktree, the one that puts poetry's environment there, and one of the
+# tests' own.
+VARIABLES_RECORDER = """\
+import json
+import os
+import sys
+
+names = (
+    "PYTHONPATH",
+    "VIRTUAL_ENV",
+    "POETRY_VIRTUALENVS_IN_PROJECT",
+    "REPLAY_TESTS_CANARY",
+)
+with open(sys.argv[1], "a", encoding="utf-8") as file:
+    file.write(json.dumps({name: os.environ.get(name) for name in names}) + "\\n")
+"""
+
 
 @dataclass(frozen=True)
 class Setup:
@@ -256,6 +275,34 @@ def test_the_commands_put_poetrys_environment_in_the_work_tree(setup: Setup) -> 
 
     (noted,) = entries(setup.log)
     assert noted["in_project"] == "true"
+
+
+def test_the_pilots_commands_get_neither_pythonpath_nor_virtual_env(
+    setup: Setup, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Note 95: a harness started with PYTHONPATH=src made poetry, run in a
+    # worktree of poetry's, import that worktree's own src/. Decided by the user
+    # on 2026-11-19, for the SPEC's Rule 4: build gives the pilot's commands
+    # neither variable, while the harness's other variables still reach them.
+    recorder = tmp_path / "variables.py"
+    recorder.write_text(VARIABLES_RECORDER, encoding="utf-8")
+    noted = tmp_path / "variables.jsonl"
+    monkeypatch.setenv("PYTHONPATH", "src")
+    monkeypatch.setenv("VIRTUAL_ENV", str(tmp_path / "activated"))
+    monkeypatch.setenv("REPLAY_TESTS_CANARY", "kept")
+    pilot = pilot_with((sys.executable, str(recorder), str(noted)))
+
+    result = environment.build(pilot, str(setup.worktree), for_coverage=False)
+
+    assert result.exit_code == 0
+    lines = noted.read_text(encoding="utf-8").splitlines()
+    (seen,) = [cast("dict[str, Any]", json.loads(line)) for line in lines]
+    assert seen == {
+        "PYTHONPATH": None,
+        "VIRTUAL_ENV": None,
+        "POETRY_VIRTUALENVS_IN_PROJECT": "true",
+        "REPLAY_TESTS_CANARY": "kept",
+    }
 
 
 def test_a_built_environment_gives_exit_code_0_and_no_failed_test(
