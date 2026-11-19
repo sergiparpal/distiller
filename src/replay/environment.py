@@ -28,6 +28,12 @@ SECONDS_PER_COMMAND = 1800
 COVERAGE_PLUGINS = ("coverage==7.16.2", "pytest-cov==7.1.0")
 TIMEOUT_PLUGIN = "pytest-timeout==2.4.0"
 
+# The harness's variables that no command of a build gets (Rule 4, note 95): a
+# PYTHONPATH, relative as in PYTHONPATH=src, names a folder of the worktree,
+# from which poetry imported the pilot's own code, and a VIRTUAL_ENV would make
+# poetry install there rather than in <worktree>/.venv [VERIFY].
+DROPPED_VARIABLES = ("PYTHONPATH", "VIRTUAL_ENV")
+
 
 def build(pilot: Pilot, worktree: str, *, for_coverage: bool) -> StepResult:
     started = time.monotonic()
@@ -84,8 +90,14 @@ def _run(command: tuple[str, ...], worktree: str, printed: list[str]) -> int | N
 
 
 def _variables() -> dict[str, str]:
-    # The harness's own variables, and poetry's environment in the work tree.
-    return {**os.environ, "POETRY_VIRTUALENVS_IN_PROJECT": "true"}
+    # The harness's own variables but the dropped ones, and poetry's
+    # environment in the work tree.
+    kept = {
+        name: value
+        for name, value in os.environ.items()
+        if name not in DROPPED_VARIABLES
+    }
+    return {**kept, "POETRY_VIRTUALENVS_IN_PROJECT": "true"}
 
 
 def _text_of(output: bytes | None) -> str:
