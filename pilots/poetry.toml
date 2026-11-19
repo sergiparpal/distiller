@@ -6,6 +6,9 @@
 # .venv. pytest takes poetry's own options from its pyproject.toml, -n logical
 # and -ra, and without --integration poetry's conftest leaves the integration
 # tests out. poetry's locks hold no pytest-timeout, which the harness adds.
+# Three tests are deselected (D-016): one that installs from PyPI, which no
+# suite run reaches, and two that poetry fixed as unreliable on 2026-05-17
+# (#10900), racy on Python 3.12, which 22 of the window's heads still hold.
 # No floor configuration: the default patterns alone (D-015).
 project = "poetry"
 repository = "python-poetry/poetry"
@@ -16,7 +19,14 @@ environment = [
     ["uv", "tool", "run", "--from", "poetry==2.5.1", "poetry", "env", "use", "/usr/bin/python3.12"],
     ["uv", "tool", "run", "--from", "poetry==2.5.1", "poetry", "install", "--with", "github-actions"],
 ]
-pytest = []
+pytest = [
+    "--deselect",
+    "tests/masonry/builders/test_editable_builder.py::test_builder_setup_generation_runs_with_pip_editable",
+    "--deselect",
+    "tests/utils/test_threading.py::test_threading_atomic_cached_property_different_instances",
+    "--deselect",
+    "tests/utils/test_threading.py::test_threading_property_caching",
+]
 coverage_source = "poetry"
 seconds_per_test = 120
 adds_timeout_plugin = true
