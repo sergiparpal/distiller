@@ -649,10 +649,25 @@ def a_phase_is_set(repo: Path) -> bool:
     return phase_file.read_text(encoding="utf-8").strip() != ""
 
 
+def put_back(path: Path, saved: bytes | None) -> None:
+    """Put back the bytes that path held, or remove it if there was no such file."""
+    if saved is None:
+        path.unlink(missing_ok=True)
+    else:
+        path.write_bytes(saved)
+
+
 @pytest.mark.skipif(
     a_phase_is_set(REAL_REPO), reason="a phase is set in this repository"
 )
 def test_this_repository_is_green_inside_the_sandbox() -> None:
-    result = stop(REAL_REPO, "test-hooks")
+    # The hook saves its own session where the real Stop hook counts the
+    # rounds of a turn (note 99): put back what that file held.
+    state_file = REAL_REPO / ".claude/stop-state.json"
+    saved = state_file.read_bytes() if state_file.exists() else None
+    try:
+        result = stop(REAL_REPO, "test-hooks")
+    finally:
+        put_back(state_file, saved)
 
     assert (result.returncode, result.stdout) == (0, "")
