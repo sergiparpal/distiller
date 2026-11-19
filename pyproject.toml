@@ -95,7 +95,7 @@ allowed_importers = ["distiller.junit"]
 # that exist: import-linter fails on an allowed importer that does not, so each
 # comes with its module's tests (Slice 2's tasks 2, 4, 5 and 6).
 [[tool.importlinter.contracts]]
-name = "only git and replay's checkout, environment and suite import subprocess"
+name = "only git and replay's checkout, environment, suite and tool import subprocess"
 type = "protected"
 protected_modules = ["subprocess"]
 allowed_importers = [
@@ -103,6 +103,7 @@ allowed_importers = [
     "replay.checkout",
     "replay.environment",
     "replay.suite",
+    "replay.tool",
 ]
 
 # Slice 1 opens no network connection: tests/test_git.py checks that git runs

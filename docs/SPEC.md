@@ -633,7 +633,7 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
     --records PATH --tool DIR [--only N ...]
 ```
 
-`--tool` is a checkout of this repository at a fixed commit, with an environment that runs `python -P -m distiller`; `--only` replays those pull requests alone.
+`--tool` is a checkout of this repository at a fixed commit, with an environment that runs `python -P -m distiller`; `--only` replays those pull requests alone. That environment is the checkout's `.venv`, as `make install` builds it: `tool.evaluate` runs its `.venv/bin/python -P -m distiller evaluate` with the checkout's `src/` as `PYTHONPATH`, as this repository's own tests run the tool, with a time limit of its own; a checkout with no `.venv` makes it raise (2026-11-19).
 
 | Exit | `run` |
 |---|---|
