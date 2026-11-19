@@ -640,8 +640,17 @@ def test_the_checks_cannot_reach_the_sockets_in_run(repo: Path) -> None:
     assert (result.returncode, result.stdout) == (0, "")
 
 
+def a_phase_is_set(repo: Path) -> bool:
+    """As read_phase in phase.py reads it: no .claude/phase, or one that holds
+    only whitespace, is no phase."""
+    phase_file = repo / ".claude/phase"
+    if not phase_file.exists():
+        return False
+    return phase_file.read_text(encoding="utf-8").strip() != ""
+
+
 @pytest.mark.skipif(
-    (REAL_REPO / ".claude/phase").exists(), reason="a phase is set in this repository"
+    a_phase_is_set(REAL_REPO), reason="a phase is set in this repository"
 )
 def test_this_repository_is_green_inside_the_sandbox() -> None:
     result = stop(REAL_REPO, "test-hooks")
