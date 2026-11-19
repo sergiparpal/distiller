@@ -4,7 +4,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from replay.steps import StepResult, ToolInputs
+from replay.steps import StepResult, ToolInputs, step_result, text_of
 
 # Runs the tool's evaluate as a process, as Slice 1's CI step did, from a
 # checkout of this repository at a fixed commit: that checkout's .venv, as make
@@ -36,11 +36,11 @@ def evaluate(tool: str, inputs: ToolInputs) -> StepResult:
             check=False,
         )
     except subprocess.TimeoutExpired as error:
-        printed.append(_text_of(error.stdout))
+        printed.append(text_of(error.stdout))
         printed.append(f"stopped at its time limit, {SECONDS_PER_EVALUATION} s")
-        return _result(None, started, printed)
-    printed.append(_text_of(result.stdout))
-    return _result(result.returncode, started, printed)
+        return step_result(None, started, printed)
+    printed.append(text_of(result.stdout))
+    return step_result(result.returncode, started, printed)
 
 
 def _arguments(inputs: ToolInputs) -> list[str]:
@@ -60,19 +60,3 @@ def _variables(checkout: Path) -> dict[str, str]:
     # The harness's own variables, git's settings among them, with the
     # checkout's src/ alone on PYTHONPATH.
     return {**os.environ, "PYTHONPATH": str(checkout / "src")}
-
-
-def _text_of(output: bytes | None) -> str:
-    # What the tool printed, decoded so that no byte stops the log.
-    if output is None:
-        return ""
-    return output.decode("utf-8", errors="replace")
-
-
-def _result(exit_code: int | None, started: float, printed: list[str]) -> StepResult:
-    return StepResult(
-        exit_code=exit_code,
-        seconds=time.monotonic() - started,
-        failed=(),
-        output="\n".join(printed),
-    )

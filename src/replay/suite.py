@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from replay.pilot import Pilot
-from replay.steps import StepResult
+from replay.steps import StepResult, step_result, text_of
 
 # Runs a pilot's tests in a worktree's environment, inside bubblewrap and
 # through the wrapper of Rule 6: the coverage at M, the full run and the rerun,
@@ -120,11 +120,13 @@ def _run(
             check=False,
         )
     except subprocess.TimeoutExpired as error:
-        printed.append(_text_of(error.stdout))
+        printed.append(text_of(error.stdout))
         printed.append(f"stopped at its time limit, {SECONDS_PER_RUN} s")
-        return _result(None, started, failed_file, printed)
-    printed.append(_text_of(result.stdout))
-    return _result(result.returncode, started, failed_file, printed)
+        return step_result(None, started, printed, failed=_failed_of(failed_file))
+    printed.append(text_of(result.stdout))
+    return step_result(
+        result.returncode, started, printed, failed=_failed_of(failed_file)
+    )
 
 
 def _sandbox(worktree: Path, work: Path, variables: dict[str, str]) -> list[str]:
@@ -150,13 +152,6 @@ def _variables(worktree: Path, work: Path, variables: dict[str, str]) -> dict[st
     return {"HOME": str(work / "home"), "PATH": path, "LANG": "C.UTF-8", **variables}
 
 
-def _text_of(output: bytes | None) -> str:
-    # What the run printed, decoded so that no byte stops the log.
-    if output is None:
-        return ""
-    return output.decode("utf-8", errors="replace")
-
-
 def _failed_of(failed_file: Path) -> tuple[str, ...]:
     # The node ids that the wrapper noted, once each, in its order: a test can
     # fail in its call and again in its teardown.
@@ -164,14 +159,3 @@ def _failed_of(failed_file: Path) -> tuple[str, ...]:
         return ()
     names = failed_file.read_text(encoding="utf-8").splitlines()
     return tuple(dict.fromkeys(names))
-
-
-def _result(
-    exit_code: int | None, started: float, failed_file: Path, printed: list[str]
-) -> StepResult:
-    return StepResult(
-        exit_code=exit_code,
-        seconds=time.monotonic() - started,
-        failed=_failed_of(failed_file),
-        output="\n".join(printed),
-    )

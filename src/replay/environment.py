@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 from replay.pilot import Pilot
-from replay.steps import StepResult
+from replay.steps import StepResult, step_result, text_of
 
 # Builds a commit's environment in its worktree: the pilot's commands, run there
 # in order, so that each reads that commit's own lock file, then the plugins of
@@ -41,8 +41,8 @@ def build(pilot: Pilot, worktree: str, *, for_coverage: bool) -> StepResult:
     for command in _commands(pilot, worktree, for_coverage=for_coverage):
         exit_code = _run(command, worktree, printed)
         if exit_code != 0:
-            return _result(exit_code, started, printed)
-    return _result(0, started, printed)
+            return step_result(exit_code, started, printed)
+    return step_result(0, started, printed)
 
 
 def _commands(
@@ -82,10 +82,10 @@ def _run(command: tuple[str, ...], worktree: str, printed: list[str]) -> int | N
             check=False,
         )
     except subprocess.TimeoutExpired as error:
-        printed.append(_text_of(error.stdout))
+        printed.append(text_of(error.stdout))
         printed.append(f"stopped at its time limit, {SECONDS_PER_COMMAND} s")
         return None
-    printed.append(_text_of(result.stdout))
+    printed.append(text_of(result.stdout))
     return result.returncode
 
 
@@ -98,19 +98,3 @@ def _variables() -> dict[str, str]:
         if name not in DROPPED_VARIABLES
     }
     return {**kept, "POETRY_VIRTUALENVS_IN_PROJECT": "true"}
-
-
-def _text_of(output: bytes | None) -> str:
-    # What a command printed, decoded so that no byte stops the log.
-    if output is None:
-        return ""
-    return output.decode("utf-8", errors="replace")
-
-
-def _result(exit_code: int | None, started: float, printed: list[str]) -> StepResult:
-    return StepResult(
-        exit_code=exit_code,
-        seconds=time.monotonic() - started,
-        failed=(),
-        output="\n".join(printed),
-    )

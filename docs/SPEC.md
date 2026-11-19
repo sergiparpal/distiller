@@ -534,7 +534,7 @@ The package `replay`, in `src/` beside `distiller`, as D-011 chose; the user run
 | `pilot` | reads a pilot's configuration, with `tomllib` | core | K16, K17 |
 | `manifest` | reads the window's CSV and checks its rows: numbers, numbers that two rows hold; lists the rows whose head is not in the clone | core | K16, K17 |
 | `checkout` | whether a commit is in the clone, the base commit and M; adds and removes worktrees | core | K16, K17 |
-| `steps` | `StepResult` and `ToolInputs`, which `environment`, `suite`, `tool` and `harness` share; imports no other module of the package | core | K16, K17 |
+| `steps` | `StepResult` and `ToolInputs`, which `environment`, `suite`, `tool` and `harness` share, and `text_of` and `step_result`, with which `environment`, `suite` and `tool` turn what a step printed into its `StepResult`; imports no other module of the package | core | K16, K17 |
 | `environment` | builds a commit's environment, as the pilot's configuration says, with the plugins of Rule 4 | core | K16, K17 |
 | `suite` | runs pytest inside bubblewrap, in the wrapper of Rule 6: the coverage at M, the full run and the rerun | core | K16, K17 |
 | `tool` | runs the tool's `evaluate` as a process, from the checkout at a fixed commit | core | K16, K17 |
@@ -558,6 +558,11 @@ def base_commit(clone: str, branch: str, started: str) -> str | None: ...  # the
 def merge_base(clone: str, a: str, b: str) -> str | None: ...
 def add_worktree(clone: str, commit: str, folder: str) -> None: ...
 def remove_worktree(clone: str, folder: str) -> None: ...
+
+# steps.py
+def text_of(output: bytes | None) -> str: ...  # UTF-8 with errors="replace"; "" for None
+def step_result(exit_code: int | None, started: float, printed: list[str],
+                failed: tuple[str, ...] = ()) -> StepResult: ...  # seconds since started, a time.monotonic()
 
 # environment.py
 def build(pilot: Pilot, worktree: str, *, for_coverage: bool) -> StepResult: ...
