@@ -1,0 +1,44 @@
+Miss rate: 3 missed PRs out of 52 PRs with a red run (52 red runs), with a one-sided 95% Clopper-Pearson upper bound of 14.2%.
+Test time: savings of 39.2% of the full suite's time; this is an upper bound, because fixed per-run costs such as start-up and collection are not in the JUnit times.
+These figures belong to the all-affected selector, which picks every test that any rule picks over these rows; a selector that picks only some of them, such as a set cover over the same rows, misses at least as often.
+Evaluated PRs: floor rate of 18.3%: 15 PRs out of 82; no-column rate of 74.4%: 61 PRs out of 82.
+Tests: 1.5% of tests treated as unmeasured; 0.2% of the tests with a row were not in their run.
+Reruns: the failures of 0 red runs were not confirmed by a rerun; 117 failures were discarded as not reproduced: order-dependent failures can hide in that count.
+Failed tests left out of a selection, by run, whether or not the run was caught:
+  run "head":"239aa6cf2c85ee99bd971589375cb8571bef58f3","junit_sha256":"6db2dff557b0ce0444790695317a06d12fa2881b72bdfc1932bbd31ca9e5e9e3" of PR 5279
+    paths with no column ["changelog/5279.bugfix.rst","test/test_ssltransport.py"]
+    import-only paths []
+    {"pair":["test.contrib.test_pyopenssl.TestHTTPS_TLSv1_2","test_http2_probe_blocked_per_thread"],"node_id":"test/contrib/test_pyopenssl.py::TestHTTPS_TLSv1_2::test_http2_probe_blocked_per_thread","row":["src/urllib3/_request_methods.py","src/urllib3/connection.py","src/urllib3/connectionpool.py","src/urllib3/exceptions.py","src/urllib3/http2/__init__.py","src/urllib3/http2/connection.py","src/urllib3/http2/probe.py","src/urllib3/util/connection.py","src/urllib3/util/ssl_.py","src/urllib3/util/timeout.py","src/urllib3/util/url.py"]}: its row has none of the diff's paths, and no other rule picked it
+  run "head":"3cb945526534007b369a005ddce99221a8f4ad1d","junit_sha256":"b8475c5049ffc1c51c5687f37823fd420287afcb8bd8261ffc703cd7c62cadcc" of PR 5156
+    paths with no column ["changelog/5107.bugfix.rst","test/contrib/test_pyopenssl.py"]
+    import-only paths []
+    {"pair":["test.with_dummyserver.test_https.TestHTTPS_TLSv1_2","test_http2_probe_blocked_per_thread"],"node_id":"test/with_dummyserver/test_https.py::TestHTTPS_TLSv1_2::test_http2_probe_blocked_per_thread","row":["src/urllib3/_request_methods.py","src/urllib3/connection.py","src/urllib3/connectionpool.py","src/urllib3/exceptions.py","src/urllib3/http2/__init__.py","src/urllib3/http2/connection.py","src/urllib3/http2/probe.py","src/urllib3/util/connection.py","src/urllib3/util/ssl_.py","src/urllib3/util/timeout.py","src/urllib3/util/url.py"]}: its row has none of the diff's paths, and no other rule picked it
+  run "head":"8456785e9914d0665943e2770916c3198a8a2821","junit_sha256":"eca20782ef856eabfd7ab2efee7d98013b78cddf8b896f4080305d7f56c265ba" of PR 5050
+    paths with no column ["changelog/4961.bugfix.rst","test/test_ssl.py"]
+    import-only paths []
+    {"pair":["test.contrib.test_pyopenssl.TestClientCerts","test_load_invalid_cert_file"],"node_id":"test/contrib/test_pyopenssl.py::TestClientCerts::test_load_invalid_cert_file","row":["src/urllib3/contrib/pyopenssl.py","src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.contrib.test_pyopenssl.TestClientCerts","test_load_keyfile_with_invalid_password"],"node_id":"test/contrib/test_pyopenssl.py::TestClientCerts::test_load_keyfile_with_invalid_password","row":["src/urllib3/contrib/pyopenssl.py","src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.with_dummyserver.test_socketlevel.TestClientCerts","test_load_invalid_cert_file"],"node_id":"test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_invalid_cert_file","row":["src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.with_dummyserver.test_socketlevel.TestClientCerts","test_load_keyfile_with_invalid_password"],"node_id":"test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_keyfile_with_invalid_password","row":["src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+  run "head":"ae81f84b758e94fe7c51212c320b03518f9d7d7e","junit_sha256":"817503251154caa274612d9ed9062ab0a3177324e7c99577ebf8f0cdabfc27c1" of PR 4962
+    paths with no column ["changelog/4961.bugfix.rst","test/test_connection.py","test/with_dummyserver/test_proxy_poolmanager.py"]
+    import-only paths []
+    {"pair":["test.contrib.test_pyopenssl.TestClientCerts","test_load_invalid_cert_file"],"node_id":"test/contrib/test_pyopenssl.py::TestClientCerts::test_load_invalid_cert_file","row":["src/urllib3/contrib/pyopenssl.py","src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.contrib.test_pyopenssl.TestClientCerts","test_load_keyfile_with_invalid_password"],"node_id":"test/contrib/test_pyopenssl.py::TestClientCerts::test_load_keyfile_with_invalid_password","row":["src/urllib3/contrib/pyopenssl.py","src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.with_dummyserver.test_socketlevel.TestClientCerts","test_load_invalid_cert_file"],"node_id":"test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_invalid_cert_file","row":["src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.with_dummyserver.test_socketlevel.TestClientCerts","test_load_keyfile_with_invalid_password"],"node_id":"test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_keyfile_with_invalid_password","row":["src/urllib3/http2/probe.py"]}: its row has none of the diff's paths, and no other rule picked it
+  run "head":"da93262156822e908f2bbb7039fc4f48705ae4ee","junit_sha256":"58e7806b59f6cae228258c1c6076f6363483af569d51730c81cd4cf80f322c42" of PR 5173
+    paths with no column ["test/test_response.py"]
+    import-only paths []
+    {"pair":["test.with_dummyserver.test_https.TestHTTPS_TLSv1_3","test_http2_probe_blocked_per_thread"],"node_id":"test/with_dummyserver/test_https.py::TestHTTPS_TLSv1_3::test_http2_probe_blocked_per_thread","row":["src/urllib3/_request_methods.py","src/urllib3/connection.py","src/urllib3/connectionpool.py","src/urllib3/exceptions.py","src/urllib3/http2/__init__.py","src/urllib3/http2/connection.py","src/urllib3/http2/probe.py","src/urllib3/util/connection.py","src/urllib3/util/ssl_.py","src/urllib3/util/timeout.py","src/urllib3/util/url.py"]}: its row has none of the diff's paths, and no other rule picked it
+  run "head":"eed4289edca6ee92c0116c6266c8e42267c159ef","junit_sha256":"bbefe09795dbe89c43b595e46bd35aca1dd222095934c04cd4c686eb6f74e101" of PR 5097
+    paths with no column ["test/test_ssl.py","test/test_util.py"]
+    import-only paths []
+    {"pair":["test.contrib.test_pyopenssl.TestSSL","test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs0]"],"node_id":"test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs0]","row":["src/urllib3/http2/probe.py","src/urllib3/util/ssl_.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.contrib.test_pyopenssl.TestSSL","test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs1]"],"node_id":"test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs1]","row":["src/urllib3/http2/probe.py","src/urllib3/util/ssl_.py"]}: its row has none of the diff's paths, and no other rule picked it
+    {"pair":["test.contrib.test_pyopenssl.TestSSL","test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs2]"],"node_id":"test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs2]","row":["src/urllib3/http2/probe.py","src/urllib3/util/ssl_.py"]}: its row has none of the diff's paths, and no other rule picked it
+Conflicts, keys whose evaluated records differ, left out of every figure:
+  no conflict
+Rejected runs, left out of every figure, each counted under every reason and input it was rejected for:
+  3 runs rejected for collection-error with junit
+  3 runs rejected for unusable-input with junit

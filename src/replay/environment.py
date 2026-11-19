@@ -22,9 +22,9 @@ SECONDS_PER_COMMAND = 1800
 
 # Rule 4's plugins: coverage at the version that Slice 1's Deployment asks for,
 # and pytest-cov and pytest-timeout at the versions of the pilots' latest lock
-# files, fixed on 2026-11-19 before the window's first record. Whether
-# pytest-cov 7.1.0 records the coverage at M with every pytest of the window
-# is [VERIFY].
+# files, fixed on 2026-11-19 before the window's first record. pytest-cov
+# 7.1.0 recorded the coverage at M with every pytest of the window
+# (notes/2026-11-19-window-replay.md).
 COVERAGE_PLUGINS = ("coverage==7.16.2", "pytest-cov==7.1.0")
 TIMEOUT_PLUGIN = "pytest-timeout==2.4.0"
 
