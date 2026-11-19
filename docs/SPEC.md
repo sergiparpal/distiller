@@ -220,7 +220,7 @@ Inputs for one replay:
 - the manifest: the window's CSV, `notes/2026-11-17-window-red-runs.csv`, one row per pull request with its project, number, run id, run start, head and the CI job's outcome; its two rows with no number get theirs, once, through `gh`, before the first record. `read_manifest` gives every row, in the file's order, and leaves aside the columns that no field of `ManifestLine` holds, such as `failed_steps`. A path with no file, a file that lacks one of the six columns it needs, a run id or a number that is not a whole number, and a run start with no time zone or that is no date are refused: `read_manifest` raises, with no fixed type, and the replay stops with exit 1, as for any other failure. A run start with no time zone would be read as local time, and give another base commit unseen (decided on 2026-11-18);
 - the pilot's clone, a full clone in which each row's head is kept by a ref of its own, `refs/window/<run id>`;
 - a checkout of this repository at a fixed commit, whose environment runs the tool;
-- a work directory, for the worktrees, the environments, the inputs made for the tool and the log;
+- a work directory, for the worktrees, the environments, the inputs made for the tool and the log; one for both pilots, which holds each pilot's log, `<work>/<project>.log`, the summary of every log in it, `<work>/summary.txt`, and each pull request's worktrees and kept inputs, under `<work>/<project>/<number>/` (decided on 2026-11-19);
 - the record file, as in Slice 1, one for each pilot.
 
 Terms:
@@ -231,7 +231,8 @@ Terms:
 - M is the merge-base of the base commit and the tested head.
 - The environment of a commit is what the pilot's configuration builds from that commit's own lock file: `uv.lock` for urllib3, `poetry.lock` for poetry.
 - A failure is inherited when a test that failed at the tested head also failed at M, in the run that recorded the coverage.
-- A pull request is not replayed when its head is not in the clone or one of its environments cannot be built: the log says which, no record is appended for it, and it counts toward the Bet's 20% of environments.
+- A pull request is not replayed when its head is not in the clone or one of its environments cannot be built: the log says which, no record is appended for it, and it counts toward the Bet's 20% of environments. Nor is it when no commit of the base branch came before its run, or when its head shares no history with the base commit, so that there is no M (decided on 2026-11-19).
+- A pull request is red when the record that the tool appended for it says `caught` or `missed` (decided on 2026-11-19).
 
 #### Manifest
 - Given a row of the manifest, when it is read, then its tested head is the row's head, and the clone holds it at `refs/window/<run id>`.
@@ -570,7 +571,7 @@ def rerun(pilot: Pilot, worktree: str, work: str, failed: tuple[str, ...], junit
 def evaluate(tool: str, inputs: ToolInputs) -> StepResult: ...
 
 # harness.py
-def replay(pilot: Pilot, manifest: str, clone: str, work: str, records: str, tool: str,
+def replay(pilot: Pilot, *, manifest: str, clone: str, work: str, records: str, tool: str,
            only: list[int] | None) -> int: ...  # the exit code
 ```
 
@@ -650,6 +651,14 @@ python -m replay run --pilot PATH --manifest PATH --clone DIR --work DIR
 6. `tool.evaluate` runs `python -P -m distiller evaluate --pr N --head <tested head> --base <base commit> --coverage <file> --coverage-commit <M> --junit <file> [--rerun <file>] [--floor-config <file>] --records <file> --checkout <clone>`.
 7. The log gets each step's command, exit code and time, the lock files' SHA-256, the failures at the head and at M, and those inherited; both worktrees are removed, whatever happened.
 8. Once every line is done, the summary is written, and `replay` returns 0.
+
+#### The log and the summary
+Each pilot's log, `<work>/<project>.log`, holds one JSON object a line (decided on 2026-11-19):
+- Each run first appends `{"event": "start", "manifest_sha256": ..., "pilot": ...}`, so the log's first line names its first run's manifest. A replay does not start, and says why on stderr, when that SHA-256 is another manifest's, or when the record file holds records and the work directory no log of the pilot, which could tell their manifest; nor when `--only` names a number that the pilot's lines lack.
+- Each step appends `{"event": "step", "pull_request", "step", "exit_code", "seconds", "output"}`, the step one of `environment at M`, `coverage at M`, `environment at the head`, `full run`, `rerun` and `tool`, the output with its colour codes taken out. An environment's step adds `lock_files`, the SHA-256 of each of `uv.lock` and `poetry.lock` at the worktree's root; the tool's adds `inputs`, its `ToolInputs`, whose files stay in the work directory. A tool that exits with neither 0 nor 3 appended no record, and stops the replay.
+- Each pull request ends with one `{"event": "done", "pull_request", "replayed", "why", "verdict", "inherited"}`: `why` is `head not in the clone`, `no base commit before the run`, `no common history with the base`, `environment at M not built` or `environment at the head not built`, and none for a pull request replayed; `verdict` is its record's; `inherited` lists the node ids that failed in the full run and in the coverage run at M. A run starts at the first pull request with no `done` entry, and lists the heads not in the clone before any step.
+
+The summary, `<work>/summary.txt`, is written again at the end of each run, from every log in the work directory: for each pilot, in the order of their names, then for both, a line `<name>: replayed <n>, not replayed <n>, red <n>, inherited failures <n>`, then one line `<name>: not replayed, <why>: <n>` for each reason, in the order of the reasons.
 
 #### Rules
 1. **Dependencies.** The standard library only; `git`, `uv`, poetry, `bwrap` and the tool run through `subprocess.run` with an argument list, never a shell.
