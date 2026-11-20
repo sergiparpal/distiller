@@ -30,8 +30,9 @@ TIMEOUT_PLUGIN = "pytest-timeout==2.4.0"
 
 # The harness's variables that no command of a build gets (Rule 4, note 95): a
 # PYTHONPATH, relative as in PYTHONPATH=src, names a folder of the worktree,
-# from which poetry imported the pilot's own code, and a VIRTUAL_ENV would make
-# poetry install there rather than in <worktree>/.venv [VERIFY].
+# from which poetry imported the pilot's own code, and a VIRTUAL_ENV makes
+# poetry install there and make no <worktree>/.venv, as poetry 2.5.1 did on
+# 2026-11-20 (note 95).
 DROPPED_VARIABLES = ("PYTHONPATH", "VIRTUAL_ENV")
 
 
