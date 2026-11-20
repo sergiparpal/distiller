@@ -159,6 +159,7 @@ numbers of phase 2, are not measured yet:
   services offer today. No code.
 - Costs: hours (OPINION).
 - Risks: none to the code.
+- Checked on 2026-11-21: `2026-11-21-native-selection-check.md`.
 
 ## The agent's view (OPINION)
 
