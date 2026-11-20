@@ -2,6 +2,8 @@ import contextlib
 import dataclasses
 import os
 import signal
+import subprocess
+import sys
 from collections.abc import Generator
 from pathlib import Path
 from types import FrameType
@@ -41,6 +43,10 @@ RECORDS = "./ci/records.jsonl"
 
 # A record file's path in a directory that does not exist.
 IN_A_MISSING_DIRECTORY = "./missing/records.jsonl"
+
+# The tool's source, which a process of its own imports to append under a limit
+# on the size of the files it writes (note 50).
+SRC = Path(__file__).resolve().parent.parent / "src"
 
 # The fixture's commit ids and its JUnit file's SHA-256, as
 # tests/test_records.py, tests/test_decode.py and tests/test_messages.py write
@@ -630,6 +636,77 @@ def test_the_line_goes_to_the_file_at_the_path_not_to_a_new_one(
     assert (after.st_dev, after.st_ino) == (before.st_dev, before.st_ino)
 
 
+def test_appending_after_a_torn_last_line_puts_the_line_right_after_it(
+    record_file: Path,
+) -> None:
+    # After whatever the file holds, which the append does not read (Rule 8): no
+    # newline goes before the line, even after a last line that a killed runner
+    # or a full disk tore (note 50).
+    record_file.write_bytes(K10_LINE + TORN_K1)
+
+    records.append_record(RECORDS, K1_RECORD)
+
+    assert record_file.read_bytes() == K10_LINE + TORN_K1 + K1_LINE
+
+
+# Rule 8: the append is one write of the whole line. Linux counts in
+# /proc/self/io the write calls that a process has made and the bytes they
+# wrote, so one call that writes as many bytes as the line is one write of the
+# whole line, neither two writes nor the file written again. Run on every Python
+# the suite runs on, this checks what note 50 left to check by hand.
+
+
+def write_counts() -> tuple[int, int]:
+    """The write calls this process has made, and the bytes they wrote."""
+    counts: dict[str, int] = {}
+    for line in Path("/proc/self/io").read_text(encoding="ascii").splitlines():
+        name, value = line.split(": ")
+        counts[name] = int(value)
+    return counts["syscw"], counts["wchar"]
+
+
+def can_count_writes() -> bool:
+    """Whether this system gives the counts of /proc/self/io."""
+    try:
+        write_counts()
+    except (OSError, KeyError, ValueError):
+        return False
+    return True
+
+
+# K1's record with a line longer than the 4,096 bytes of Python's write buffer,
+# through 1,000 paths with no column.
+K1_WITH_A_LONG_LINE = dataclasses.replace(
+    K1_RECORD, no_column=tuple(f"docs/page-{number:04}.md" for number in range(1000))
+)
+
+
+@pytest.mark.skipif(
+    not can_count_writes(), reason="no /proc/self/io to count the write calls"
+)
+@pytest.mark.parametrize(
+    ("record", "longer_than"),
+    [
+        pytest.param(K1_RECORD, 0, id="K1's line"),
+        pytest.param(
+            K1_WITH_A_LONG_LINE, 4096, id="a line longer than the write buffer"
+        ),
+    ],
+)
+def test_appending_is_one_write_of_the_whole_line(
+    record: records.Record, longer_than: int, record_file: Path
+) -> None:
+    record_file.write_bytes(K10_LINE)
+    calls_before, bytes_before = write_counts()
+
+    records.append_record(RECORDS, record)
+
+    calls_after, bytes_after = write_counts()
+    line = record_file.read_bytes().removeprefix(K10_LINE)
+    assert len(line) > longer_than
+    assert (calls_after - calls_before, bytes_after - bytes_before) == (1, len(line))
+
+
 # Appending where the line cannot go raises OSError, with no match for the
 # reason given above. Rule 3 checks the record file's path before each time it
 # is opened, for appending too: opening a FIFO for writing blocks.
@@ -667,3 +744,59 @@ def test_a_record_file_the_tool_is_not_allowed_to_write_cannot_be_appended_to(
 
     with pytest.raises(OSError):  # noqa: PT011
         records.append_record(RECORDS, K1_RECORD)
+
+
+# A process of its own appends K10's record to a record file that holds K1's
+# line, with the files it writes limited to 10 bytes more, as a full disk would
+# leave room for, and SIGXFSZ, which the limit sends, ignored. It prints OSError
+# if the append raises one. The limit holds only while it appends: coverage,
+# which measures that process too, writes its data file as the process ends.
+CUT_SHORT = f"""
+import resource
+import signal
+import sys
+
+from distiller import records
+
+record = records.RejectedRecord(
+    key=records.RunKey(head={HEAD!r}, junit_sha256={JUNIT_SHA256!r}),
+    pr=7,
+    reason="unusable-input",
+    input_name="coverage",
+)
+limit = int(sys.argv[2])
+soft, hard = resource.getrlimit(resource.RLIMIT_FSIZE)
+signal.signal(signal.SIGXFSZ, signal.SIG_IGN)
+resource.setrlimit(resource.RLIMIT_FSIZE, (limit, hard))
+try:
+    records.append_record(sys.argv[1], record)
+except OSError:
+    print("OSError")
+finally:
+    resource.setrlimit(resource.RLIMIT_FSIZE, (soft, hard))
+"""
+
+
+def test_an_append_that_the_system_cuts_short_raises_oserror(
+    record_file: Path,
+) -> None:
+    # The line's first 10 bytes stay: nothing takes them back, and the torn line
+    # is not a record (note 50).
+    record_file.write_bytes(K1_LINE)
+    limit = len(K1_LINE) + 10
+
+    result = subprocess.run(  # noqa: S603
+        [sys.executable, "-P", "-c", CUT_SHORT, RECORDS, str(limit)],
+        cwd=record_file.parent.parent,
+        env={**os.environ, "PYTHONPATH": str(SRC)},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert (result.returncode, result.stdout.strip(), result.stderr) == (
+        0,
+        "OSError",
+        "",
+    )
+    assert record_file.read_bytes() == K1_LINE + K10_LINE[:10]
