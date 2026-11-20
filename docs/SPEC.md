@@ -11,7 +11,7 @@ examples. -->
 - Hypothesis: on urllib3/urllib3, in its job "Ubuntu 3.12", and on python-poetry/poetry, in its job "Ubuntu (Python 3.12) / pytest" without its integration tests, over the pull requests whose job failed in a CI run that started from 2025-12-01 to 2026-11-15, each replayed offline at the head of its latest such run, in an environment rebuilt from that head's own lock file, an all-affected, file-level selector would leave out every failed test in so few of the pull requests with a red run that the one-sided 95% Clopper–Pearson upper bound of its miss rate is below 15%, over at least 30 such pull requests of the two projects together.
 - Appetite: 3 weeks, from 2026-11-18.
 - Kill signal: at the end of the appetite, the bound is 15% or more; or the two projects' replays together hold fewer than 30 pull requests with a red run; or the harness cannot rebuild the environment of more than 20% of the replayed pull requests.
-- Outcome: pending, decided on 2026-12-09.
+- Outcome: pending, decided on 2026-12-09. <!-- draft: passed on 2026-12-09 (D-020). At the end of the appetite, the window's replay gave a one-sided 95% Clopper–Pearson upper bound of 14.2% on the miss rate, 3 missed pull requests out of 52 with a red run, below 15% and over more than 30; the environments of 2 of the 90 pull requests could not be built, 2.2%, below 20%. The figure keeps the records as replayed (D-017, D-019): one more miss among the 52 would make it 16.7%, and without poetry's three pull requests red from a hung test alone it would be 15.1%. -->
 
 ## Previous bet
 - Hypothesis: on sergiparpal/adaptive-policy-compilation, an all-affected, file-level selector would cut at least 25% of the full suite's test time across its PRs.
