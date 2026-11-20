@@ -74,4 +74,5 @@ failures. Three of them, #10746, #10751 and #10956, are red from a test that
 hung and nothing else; #10889 has three other failures too. With the report's
 `clopper_pearson_upper`, the bound is 14.2% for 3 missed pull requests out of
 52, 15.1% for 3 out of 49 and 15.4% for 3 out of 48 (FACT). Whether they
-count is the user's to say, in the Bet's outcome.
+count is the user's to say, in the Bet's outcome. On 2026-11-20 the user
+chose that they count, as the replay recorded them (D-019).
