@@ -7,9 +7,11 @@ The agent can also write through Bash; the Stop hook catches that with git.
 from pathlib import Path
 
 from phase import (
+    can_read_phase,
     current_repo,
     is_frozen,
     is_frozen_in_tests,
+    is_on_phase_file,
     object_field,
     read_phase,
     run_hook,
@@ -34,6 +36,9 @@ BLOCKED_IN_TESTS = (
 
 def check(data: dict[str, object]) -> str | None:
     repo = current_repo()
+    if not can_read_phase(repo) and is_on_phase_file(data, repo):
+        # A broken phase file: the agent writes it again (D-018).
+        return None
     phase = read_phase(repo).name
     if phase not in ("tests", "implement"):
         return None

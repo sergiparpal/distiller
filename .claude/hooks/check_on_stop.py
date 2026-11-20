@@ -12,7 +12,9 @@ behind something that runs outside the sandbox later.
 - implement phase: the frozen files must also match the commit in .claude/phase;
 - tests phase: what configures the checks must also match the commit there, and so
   must the root pyproject.toml, all but [tool.importlinter];
-- every phase: no path in .claude/tests-phase.log may lie inside src/.
+- every phase: no path in .claude/tests-phase.log may lie inside src/;
+- every phase: .claude/phase must be one that read_phase reads, and a phase must
+  name a commit that is here; if not, the agent writes it again (D-018).
 
 What the agent can fix blocks the stop (exit 2) twice per turn; the third
 time, and at once for what it cannot fix, the turn ends with the reason for
@@ -57,6 +59,10 @@ HOW_OUT = (
     ".claude/blocked and stop: .claude/blocked excuses red checks, never "
     "changed frozen files."
 )
+WRITE_THE_PHASE_AGAIN = (
+    "Write .claude/phase again as you meant it, with Write: 'tests <commit>' or "
+    "'implement <commit>', in the order that CLAUDE.md gives. Then stop again."
+)
 
 
 def main() -> None:
@@ -70,9 +76,13 @@ def decide(data: dict[str, object], repo: Repo) -> NoReturn:
     problem = sandbox_problem(repo)
     if problem is not None:
         end_turn(problem)
-    phase, problems = phase_and_unfixable_problems(repo)
-    if phase is None or problems:
+    problems = contamination(repo)
+    if problems:
         end_turn("\n".join(problems) + "\nThe agent cannot fix this: you decide.")
+    broken = broken_phase(repo)
+    if broken is not None:
+        not_done(data, repo, broken, WRITE_THE_PHASE_AGAIN)
+    phase = read_phase(repo)
     frozen = frozen_report(repo, phase)
     red = run_checks(repo, phase)
     if frozen is None and red is None:
@@ -83,11 +93,18 @@ def decide(data: dict[str, object], repo: Repo) -> NoReturn:
         still_red = red.split("\n")[0]
         allow(f"The turn ended blocked: {first_line(repo)} ({still_red})")
     reasons = "\n".join(text for text in (frozen, red) if text is not None)
+    not_done(data, repo, reasons, HOW_OUT)
+
+
+def not_done(
+    data: dict[str, object], repo: Repo, reasons: str, how_out: str
+) -> NoReturn:
+    # The agent's rounds: block the stop, or end the turn once they are spent.
     blocks = blocks_so_far(repo, data)
     if blocks >= MAX_BLOCKS:
         end_turn(f"still not done after {blocks} rounds; you decide.\n{reasons}")
     save_blocks(repo, data, blocks + 1)
-    block(f"Stop hook: the turn is not done.\n{reasons}\n{HOW_OUT}")
+    block(f"Stop hook: the turn is not done.\n{reasons}\n{how_out}")
 
 
 def sandbox_problem(repo: Repo) -> str | None:
@@ -104,15 +121,18 @@ def sandbox_problem(repo: Repo) -> str | None:
     return None
 
 
-def phase_and_unfixable_problems(repo: Repo) -> tuple[Phase | None, list[str]]:
-    problems = contamination(repo)
+def broken_phase(repo: Repo) -> str | None:
+    # What is wrong with .claude/phase, which the agent writes again (D-018).
     try:
         phase = read_phase(repo)
     except PhaseError as error:
-        return None, [str(error), *problems]
-    if phase.name in ("tests", "implement"):
-        problems += commit_problems(repo, phase)
-    return phase, problems
+        return str(error)
+    if phase.name not in ("tests", "implement"):
+        return None
+    problems = commit_problems(repo, phase)
+    if not problems:
+        return None
+    return "\n".join(problems)
 
 
 def contamination(repo: Repo) -> list[str]:

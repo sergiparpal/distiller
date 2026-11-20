@@ -8,6 +8,11 @@ order that CLAUDE.md gives (D-014):
   (TESTS_PHASE_PATHSPECS; in the root pyproject.toml, all but [tool.importlinter]);
 - "implement <commit>": make the tests of <commit> pass without changing what
   that commit froze (FROZEN_PATHSPECS).
+
+A file that read_phase cannot read blocks every call of the hooks but a Read,
+Edit or Write of .claude/phase itself. That file, a phase with no commit and one
+whose commit is not here are broken: Stop blocks the stop, as it does red
+checks, until the agent writes .claude/phase again (D-018).
 """
 
 import json
@@ -101,8 +106,8 @@ class Phase:
 class PhaseError(Exception):
     def __init__(self, text: str) -> None:
         super().__init__(
-            f".claude/phase says {text.strip()!r}, which is neither 'tests' nor "
-            "'implement <commit>'. The user has to fix it."
+            f".claude/phase says {text.strip()!r}, which is neither 'tests <commit>' "
+            "nor 'implement <commit>'."
         )
 
 
@@ -130,6 +135,14 @@ def read_phase(repo: Repo) -> Phase:
             return Phase("implement", commit)
         case _:
             raise PhaseError(text)
+
+
+def can_read_phase(repo: Repo) -> bool:
+    try:
+        read_phase(repo)
+    except PhaseError:
+        return False
+    return True
 
 
 def is_inside(path: Path, directory: Path) -> bool:
@@ -174,6 +187,12 @@ def object_field(data: dict[str, object], key: str) -> dict[str, object]:
     return cast("dict[str, object]", value) if isinstance(value, dict) else {}
 
 
+def is_on_phase_file(data: dict[str, object], repo: Repo) -> bool:
+    # Whether the call's file_path is .claude/phase itself.
+    file_path = text_field(object_field(data, "tool_input"), "file_path")
+    return file_path is not None and Path(file_path).resolve() == repo.phase_file
+
+
 def run_hook(check: Callable[[dict[str, object]], str | None]) -> None:
     """Run a check; a message goes to Claude on stderr with exit code 2.
 
@@ -183,7 +202,10 @@ def run_hook(check: Callable[[dict[str, object]], str | None]) -> None:
     try:
         message = check(read_input())
     except PhaseError as error:
-        message = f"{error} Until then, this hook blocks every call it covers."
+        message = (
+            f"{error} Write it again as you meant it. Until then, this hook blocks "
+            "every call it covers but those on .claude/phase itself."
+        )
     except Exception as error:  # noqa: BLE001
         # A hook that crashes exits with 1, which lets the call through.
         message = f"The hook failed, so it blocks the call: {error!r}"

@@ -278,7 +278,7 @@ def test_the_tests_phase_checks_format_lint_and_types(repo: Path) -> None:
 def test_the_tests_phase_needs_the_commit_it_began_at(repo: Path) -> None:
     set_phase(repo, "tests\n")
 
-    assert "says tests but names no commit" in ends_turn(stop(repo))
+    assert "says tests but names no commit" in blocks(stop(repo))
 
 
 def test_the_tests_phase_lets_tests_and_stubs_be_added(repo: Path) -> None:
@@ -515,7 +515,7 @@ def test_blocked_does_not_excuse_a_changed_frozen_file(repo: Path) -> None:
     assert "tests/test_core.py" in blocks(stop(repo))
 
 
-# What the agent cannot fix ends the turn at once
+# A broken .claude/phase is the agent's to write again (D-018)
 
 
 @pytest.mark.parametrize(
@@ -524,15 +524,42 @@ def test_blocked_does_not_excuse_a_changed_frozen_file(repo: Path) -> None:
         ("implement\n", "names no commit"),
         ("implement 0000000000000000000000000000000000000000\n", "no commit here"),
         ("implement HEAD~5\n", "no commit here"),
-        ("implementing\n", "neither 'tests' nor"),
+        ("implementing\n", "neither 'tests <commit>' nor"),
     ],
 )
-def test_a_broken_phase_file_ends_the_turn(
+def test_a_broken_phase_file_blocks_the_stop(
     repo: Path, phase: str, expected: str
 ) -> None:
     set_phase(repo, phase)
 
-    assert expected in ends_turn(stop(repo))
+    reason = blocks(stop(repo))
+
+    assert expected in reason
+    assert "Write .claude/phase again" in reason
+
+
+def test_a_broken_phase_file_ends_the_turn_after_two_rounds(repo: Path) -> None:
+    set_phase(repo, "implementing\n")
+
+    blocks(stop(repo, "prompt-1"))
+    blocks(stop(repo, "prompt-1", active=True))
+    reason = ends_turn(stop(repo, "prompt-1", active=True))
+
+    assert "still not done after 2 rounds" in reason
+    assert "neither 'tests <commit>' nor" in reason
+
+
+def test_a_phase_file_written_again_lets_the_turn_end(repo: Path) -> None:
+    set_phase(repo, "implementing\n")
+    blocks(stop(repo, "prompt-1"))
+    implement(repo)
+
+    result = stop(repo, "prompt-1", active=True)
+
+    assert (result.returncode, result.stdout) == (0, "")
+
+
+# What the agent cannot fix ends the turn at once
 
 
 @pytest.mark.parametrize("phase", [None, "tests HEAD\n", "implement HEAD\n"])

@@ -172,7 +172,18 @@ def test_an_unknown_phase_blocks_every_edit(repo: Path) -> None:
     result = run_hook("freeze_tests.py", repo, call)
 
     assert result.returncode == 2
-    assert "neither 'tests' nor 'implement <commit>'" in result.stderr
+    assert "neither 'tests <commit>' nor 'implement <commit>'" in result.stderr
+    assert "but those on .claude/phase itself" in result.stderr
+
+
+@pytest.mark.parametrize("tool", ["Edit", "Write"])
+def test_an_unknown_phase_lets_the_agent_write_the_phase_file_again(
+    repo: Path, tool: str
+) -> None:
+    set_phase(repo, "implment 0123abc\n")
+    call = tool_call(repo, tool, file_path=str(repo / ".claude/phase"))
+
+    assert run_hook("freeze_tests.py", repo, call).returncode == 0
 
 
 @pytest.mark.parametrize(
@@ -404,6 +415,20 @@ def test_other_phases_read_src_unlogged(repo: Path, phase: str | None) -> None:
 def test_an_unknown_phase_blocks_every_read(repo: Path) -> None:
     set_phase(repo, "test\n")
     call = tool_call(repo, "Read", file_path=str(repo / "docs/SPEC.md"))
+
+    assert run_hook("guard_reads.py", repo, call).returncode == 2
+
+
+def test_an_unknown_phase_lets_the_agent_read_the_phase_file(repo: Path) -> None:
+    set_phase(repo, "test\n")
+    call = tool_call(repo, "Read", file_path=str(repo / ".claude/phase"))
+
+    assert run_hook("guard_reads.py", repo, call).returncode == 0
+
+
+def test_an_unknown_phase_still_blocks_bash_on_the_phase_file(repo: Path) -> None:
+    set_phase(repo, "test\n")
+    call = tool_call(repo, "Bash", command="cat .claude/phase")
 
     assert run_hook("guard_reads.py", repo, call).returncode == 2
 

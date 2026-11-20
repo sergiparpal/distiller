@@ -12,8 +12,10 @@ from pathlib import Path
 
 from phase import (
     Repo,
+    can_read_phase,
     current_repo,
     is_inside,
+    is_on_phase_file,
     object_field,
     read_phase,
     run_hook,
@@ -39,7 +41,8 @@ SRC_IS_CLOSED = (
 
 def check(data: dict[str, object]) -> str | None:
     repo = current_repo()
-    if read_phase(repo).name != "tests":
+    # A broken phase file is read without calling read_phase, which would raise.
+    if reads_a_broken_phase_file(data, repo) or read_phase(repo).name != "tests":
         return None
     tool = text_field(data, "tool_name") or ""
     tool_input = object_field(data, "tool_input")
@@ -53,6 +56,12 @@ def check(data: dict[str, object]) -> str | None:
     if tool == "Glob":
         return check_glob(repo, data, cwd, tool_input)
     return f"In the tests phase (.claude/phase) {tool} is blocked."
+
+
+def reads_a_broken_phase_file(data: dict[str, object], repo: Repo) -> bool:
+    # The agent reads a broken phase file to write it again (D-018).
+    tool = text_field(data, "tool_name")
+    return tool == "Read" and not can_read_phase(repo) and is_on_phase_file(data, repo)
 
 
 def check_command(
