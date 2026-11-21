@@ -10,14 +10,16 @@ folder already held: the node ids, and the paths with no column in
 those of the missed pull requests, were classified in D-017, which is N under
 D-021.
 
-Everything below is FACT, read from the copies of the records in this folder,
-the manifest, the clone `~/code/distiller-pilots/urllib3`, and each pull
-request's folder in the work directory, `~/code/distiller-replay/urllib3/<pr>/`:
-there, `junit.xml` is the full run at H, `rerun.xml` the rerun of its failed
-tests at H, and `junit-m.xml` the run at M that recorded the coverage. Nothing
-was run for this note. It gives no cause and no inference about one: the
-classification is the user's (Non-goals). Paths in tracebacks are relative to
-the head's worktree, and quotes keep printable ASCII only.
+Everything below is FACT, but for the user's classification and one paragraph
+marked INFERENCE. The facts are read from the copies of the records in this
+folder, the manifest, the clone `~/code/distiller-pilots/urllib3`, and each
+pull request's folder in the work directory,
+`~/code/distiller-replay/urllib3/<pr>/`: there, `junit.xml` is the full run at
+H, `rerun.xml` the rerun of its failed tests at H, and `junit-m.xml` the run at
+M that recorded the coverage. Nothing was run for this note, and the agent
+gives no cause and no inference about one: the classification is the user's
+(Non-goals). Paths in tracebacks are relative to the head's worktree, and
+quotes keep printable ASCII only.
 
 ## What the three pull requests have in common
 
@@ -299,22 +301,70 @@ and `test/contrib/test_pyopenssl.py::TestHTTPS_TLSv1_3::test_http2_probe_blocked
 
 ## The classification
 
-The user's to fill in, one cause of D-021 a row, with a word on why. Each row
-counts once (D-021): these 11 and D-017's 3 are the share's 14.
+Classified by the user on 2026-11-21 (D-023), from this note and a reading of
+the code, with no new run, by D-021's causes as D-022 applies them. Each row
+counts once (D-021): these 11 and D-017's 3 are the share's 14. The reasons
+are the user's, translated from Spanish.
 
 | Pull request | Node id | Cause | Why |
 |---|---|---|---|
-| #4962 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_invalid_cert_file` | | |
-| #4962 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_keyfile_with_invalid_password` | | |
-| #4962 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_invalid_cert_file` | | |
-| #4962 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_keyfile_with_invalid_password` | | |
-| #5050 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_invalid_cert_file` | | |
-| #5050 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_keyfile_with_invalid_password` | | |
-| #5050 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_invalid_cert_file` | | |
-| #5050 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_keyfile_with_invalid_password` | | |
-| #5097 | `test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs0]` | | |
-| #5097 | `test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs1]` | | |
-| #5097 | `test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs2]` | | |
+| #4962 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_invalid_cert_file` | O | reason a |
+| #4962 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_keyfile_with_invalid_password` | O | reason a |
+| #4962 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_invalid_cert_file` | O | reason a |
+| #4962 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_keyfile_with_invalid_password` | O | reason a |
+| #5050 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_invalid_cert_file` | O | reason a |
+| #5050 | `test/contrib/test_pyopenssl.py::TestClientCerts::test_load_keyfile_with_invalid_password` | O | reason a |
+| #5050 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_invalid_cert_file` | O | reason a |
+| #5050 | `test/with_dummyserver/test_socketlevel.py::TestClientCerts::test_load_keyfile_with_invalid_password` | O | reason a |
+| #5097 | `test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs0]` | C | reason b |
+| #5097 | `test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs1]` | C | reason b |
+| #5097 | `test/contrib/test_pyopenssl.py::TestSSL::test_create_urllib3_context_ssl_version_and_ssl_min_max_version_errors[kwargs2]` | C | reason b |
+
+- Reason a: "An error in the teardown: server_thread did not exit. The thread
+  is left behind by earlier tests that the change affected; D-022 classifies
+  this propagation between tests as O."
+- Reason b: "The pull request changes PROTOCOL_TLSv1 to PROTOCOL_SSLv23 in
+  test/test_ssl.py, imported code that the coverage does not measure. At H and
+  in the rerun the expected ValueError is not raised; at M it passed."
+- The user's note on the whole: "11 cases: 8 O and 3 C. The eight O are
+  propagation through a thread left by another test, as D-022 says. The
+  certificates are generated in a temporary directory and are not files of
+  the repository that the pull request changed. The classification rests on
+  the note and on a review of the code; no new runs were made."
+
+## The share, and what section 13.2 can conclude
+
+By D-021's rule, with the report's `clopper_pearson_upper`:
+
+| Cause | Failed tests left out |
+|---|---|
+| F, a file dependency | 0 |
+| C, code that the coverage does not measure | 3, #5097's |
+| N, a cause other than the change | 3, D-017's |
+| O, any other cause | 8, #4962's and #5050's |
+| All | 14 |
+
+- The share of file dependencies is 0 out of 14. Its one-sided 95% upper bound
+  is 19.3%, above 10%, and its lower bound, 1 minus the upper bound of 14 out
+  of 14, is 0%, below 10%: by D-021 the share is undecided, neither marginal
+  nor not marginal.
+- No failed test left out of the window came from a file dependency, and so
+  no miss did either.
+- Marginal at 10% takes at least 29 classified failed tests left out with no
+  file dependency: 0 out of 29 gives 9.8%, and 0 out of 28 gives 10.1%. The
+  window has no more to classify, so the other 15 would have to come from pull
+  requests whose figures nobody has seen (option B of the note of options).
+- The 14 are not 14 independent draws, as the bound takes them: they are the
+  same 4 tests in two pull requests that change the same two places of
+  `src/urllib3/connection.py`, 3 parametrizations of one test, and one flaky
+  test function under three classes (D-021).
+- The no-column rate is judged only on pull requests whose no-column rate
+  nobody has seen (D-021), so nothing about "low" follows from the window.
+
+INFERENCE: the window gave its 14 failed tests left out over 52 pull requests
+with a red run, in 6 of them. At that rate, 15 more would take some 56 more
+pull requests with a red run, about another window; since they come in
+bundles, the real count could be far from that.
 
 ## Where each fact comes from
 
