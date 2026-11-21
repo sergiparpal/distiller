@@ -15,6 +15,7 @@ Inputs that real tools or users can give and whose handling the SPEC does not se
 
 ### To check again
 Claims not verified yet, and behaviour to check again when a tool is upgraded.
+- **Note 102.** Check again, before the next bet is written and by 2026-12-09, whether GitHub Actions or GitLab gives affected-test selection away, as CircleCI has since 2026-10-13 (`notes/2026-11-21-native-selection-check.md`). If either does, C6's fatal objection 1 holds and C6 drops in the corpus, as the update of 2026-11-21 to C6's errata says, and that changes which next bet makes sense. On 2026-11-21 nothing of the kind was found on GitHub Actions, and GitLab's Fail fast testing only runs first the RSpec specs related to a change, in Premium and Ultimate, before the whole suite.
 
 ### To do
 Work agreed and not yet done.
