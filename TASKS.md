@@ -18,6 +18,7 @@ Claims not verified yet, and behaviour to check again when a tool is upgraded.
 
 ### To do
 Work agreed and not yet done.
+- **Note 101.** Option A of `notes/2026-11-20-next-bet-options.md`, agreed on 2026-11-21, with §13.2's thresholds fixed first (D-021). For each of the window's 11 failed tests left out that nobody has classified, at #4962, #5050 and #5097, the agent gathers what a person needs to classify it, with no run and no classification of its own, in a note: the paths that the pull request changed, the test's row at M and its run's paths with no column and import-only ones, where the test's code is and what its module imports, its failure in the full run and in the rerun, and whether it failed at M. The user then classifies each as F, C, N or O, and the agent records the classification, works out the share of file dependencies over the 14 and its two bounds, and writes what §13.2 can and cannot conclude from them.
 
 ## Behaviour no test pins
 
