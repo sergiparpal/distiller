@@ -1,0 +1,23 @@
+# PrimeIntellect-ai/verifiers' job "Unit (3.12)", for D-024's checks of a
+# finalist, not for a replay. The job runs `uv sync`, here with `--frozen`,
+# then `uv run pytest tests/unit -vv -n auto`; the path is given as testpaths
+# so that a rerun runs only its tests, and pytest-xdist is in the lock of
+# every red head. Its lock holds no pytest-timeout, which the harness adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+# verifiers' pyproject turns on uv's preview features, with which uv 0.13.8
+# keeps the project's environment in its cache under the home and makes
+# `.venv` a link to it; `--no-preview` keeps it in the worktree.
+project = "verifiers"
+repository = "PrimeIntellect-ai/verifiers"
+base_branch = "main"
+job = "Unit (3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--no-preview", "--frozen", "--python", "/usr/bin/python3.12"],
+]
+pytest = ["-n", "auto", "-o", "testpaths=tests/unit"]
+coverage_source = "verifiers"
+seconds_per_test = 120
+adds_timeout_plugin = true

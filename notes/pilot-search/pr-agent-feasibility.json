@@ -1,0 +1,105 @@
+{
+ "project": "pr-agent",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "71d4dbc9aac6d61ab416e871b01f6543192a7efc",
+   "exit_code": 2,
+   "seconds": 0.04864829999860376,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12\nerror: Required uv version `==0.12.10` does not match the running version `0.13.8`. Update `uv` by running `uv self update 0.12.10`.\n"
+  },
+  {
+   "commit": "e02133a8f2e9b40d898092c46c3f92c90fc701bd",
+   "exit_code": 2,
+   "seconds": 4.099699583020993,
+   "output_tail": "=1.45.2\n + opentelemetry-exporter-http-transport==0.66b2\n + opentelemetry-exporter-otlp-common==0.66b2\n + opentelemetry-exporter-otlp-proto-common==1.45.2\n + opentelemetry-exporter-otlp-proto-http==1.45.2\n + opentelemetry-proto==1.45.2\n + opentelemetry-sdk==1.45.2\n + opentelemetry-semantic-conventions==0.66b2\n + packaging==26.3\n + pluggy==1.6.0\n + pr-agent==0.49.0 (from file://<work>/feasibility/e02133a8f2e9)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==7.36.2\n + pyasn1==0.6.5\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.3\n + pydantic-core==2.50.4\n + pydantic-settings==2.16.2\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.2.0\n + pytest-asyncio==1.4.1.post1\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.11.7\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + rpds-py==2026.6.3\n + ruff==0.17.5\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==4.0\n + sse-starlette==3.0.3\n + starlette==1.10.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.1.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + uvicorn-worker==0.4.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/e02133a8f2e9/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.8` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "35121424526",
+   "base": "785bb828270ec9016915fcfd4d71a4647426066f",
+   "build": 2,
+   "runs": [],
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12\nerror: Required uv version `==0.12.10` does not match the running version `0.13.8`. Update `uv` by running `uv self update 0.12.10`.\n"
+  },
+  {
+   "run_id": "39283830529",
+   "base": "59638246e41d37caf1d95435e00718859e35b69b",
+   "build": 2,
+   "runs": [],
+   "output_tail": "opentelemetry-exporter-otlp-proto-common==1.43.0\n + opentelemetry-exporter-otlp-proto-http==1.43.0\n + opentelemetry-proto==1.43.0\n + opentelemetry-sdk==1.43.0\n + opentelemetry-semantic-conventions==0.64b0\n + packaging==25.0\n + platformdirs==4.10.0\n + pluggy==1.6.0\n + pr-agent==0.48.0 (from file://<work>/feasibility/base-59638246e41d)\n + pre-commit==4.6.2\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==6.33.6\n + py==1.11.0\n + pyasn1==0.6.4\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.0\n + pydantic-core==2.50.0\n + pydantic-settings==2.15.0\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.1.1\n + pytest-asyncio==1.4.0\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-discovery==1.6.1\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.6.28\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + retry==0.9.2\n + rpds-py==2026.6.3\n + ruff==0.17.0\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==3.0.3\n + sse-starlette==3.0.3\n + starlette==1.7.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.0.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + virtualenv==21.14.2\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/base-59638246e41d/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.12.10` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  },
+  {
+   "run_id": "44948590921",
+   "base": "db4c4add9cffacbb65badc6bc29c3f9ef6eac9a8",
+   "build": 2,
+   "runs": [],
+   "output_tail": " opentelemetry-exporter-http-transport==0.66b2\n + opentelemetry-exporter-otlp-common==0.66b2\n + opentelemetry-exporter-otlp-proto-common==1.45.2\n + opentelemetry-exporter-otlp-proto-http==1.45.2\n + opentelemetry-proto==1.45.2\n + opentelemetry-sdk==1.45.2\n + opentelemetry-semantic-conventions==0.66b2\n + packaging==26.3\n + pluggy==1.6.0\n + pr-agent==0.49.0 (from file://<work>/feasibility/base-db4c4add9cff)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==7.36.2\n + pyasn1==0.6.5\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.3\n + pydantic-core==2.50.4\n + pydantic-settings==2.16.2\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.2.0\n + pytest-asyncio==1.4.1.post1\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.11.7\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + rpds-py==2026.6.3\n + ruff==0.17.5\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==4.0\n + sse-starlette==3.0.3\n + starlette==1.10.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.1.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + uvicorn-worker==0.4.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/base-db4c4add9cff/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.8` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "deselected": [],
+ "sample": [
+  {
+   "pull_request": "3248",
+   "run_id": "35121424526",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12\nerror: Required uv version `==0.12.10` does not match the running version `0.13.8`. Update `uv` by running `uv self update 0.12.10`.\n"
+  },
+  {
+   "pull_request": "3446",
+   "run_id": "35131114238",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12\nerror: Required uv version `==0.12.10` does not match the running version `0.13.8`. Update `uv` by running `uv self update 0.12.10`.\n"
+  },
+  {
+   "pull_request": "3524",
+   "run_id": "35755194571",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12\nerror: Required uv version `==0.12.10` does not match the running version `0.13.8`. Update `uv` by running `uv self update 0.12.10`.\n"
+  },
+  {
+   "pull_request": "3820",
+   "run_id": "37081839746",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12\nerror: Required uv version `==0.12.10` does not match the running version `0.13.8`. Update `uv` by running `uv self update 0.12.10`.\n"
+  },
+  {
+   "pull_request": "4039",
+   "run_id": "37972578529",
+   "build": 2,
+   "output_tail": "i==2.44.0\n + opentelemetry-api==1.43.0\n + opentelemetry-exporter-otlp-proto-common==1.43.0\n + opentelemetry-exporter-otlp-proto-http==1.43.0\n + opentelemetry-proto==1.43.0\n + opentelemetry-sdk==1.43.0\n + opentelemetry-semantic-conventions==0.64b0\n + packaging==25.0\n + platformdirs==4.10.0\n + pluggy==1.6.0\n + pr-agent==0.47.0 (from file://<work>/feasibility/head-37972578529)\n + pre-commit==4.6.2\n + prometheus-client==0.21.1\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==6.33.6\n + py==1.11.0\n + pyasn1==0.6.4\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.13.3\n + pydantic-core==2.46.3\n + pydantic-settings==2.14.2\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.1.1\n + pytest-asyncio==1.4.0\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-discovery==1.6.1\n + python-dotenv==1.2.2\n + python-gitlab==8.3.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.6.28\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + retry==0.9.2\n + rpds-py==2026.6.3\n + ruff==0.16.10\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + sse-starlette==3.0.3\n + starlette==1.6.0\n + starlette-context==0.3.6\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + typing-extensions==4.16.0\n + typing-inspection==0.4.2\n + ujson==5.13.0\n + unidiff==0.7.5\n + urllib3==2.8.0\n + uvicorn==0.52.4\n + virtualenv==21.14.2\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.24.2\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/head-37972578529/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.12.10` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  },
+  {
+   "pull_request": "4323",
+   "run_id": "40064854607",
+   "build": 2,
+   "output_tail": " + opentelemetry-exporter-http-transport==0.66b1\n + opentelemetry-exporter-otlp-common==0.66b1\n + opentelemetry-exporter-otlp-proto-common==1.45.1\n + opentelemetry-exporter-otlp-proto-http==1.45.1\n + opentelemetry-proto==1.45.1\n + opentelemetry-sdk==1.45.1\n + opentelemetry-semantic-conventions==0.66b1\n + packaging==25.0\n + pluggy==1.6.0\n + pr-agent==0.48.0 (from file://<work>/feasibility/head-40064854607)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==6.33.6\n + py==1.11.0\n + pyasn1==0.6.4\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.1\n + pydantic-core==2.50.1\n + pydantic-settings==2.16.0\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.1.1\n + pytest-asyncio==1.4.0\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.6.28\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + retry==0.9.2\n + rpds-py==2026.6.3\n + ruff==0.17.2\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==3.0.3\n + sse-starlette==3.0.3\n + starlette==1.8.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.0.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/head-40064854607/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.5` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  },
+  {
+   "pull_request": "4462",
+   "run_id": "40808430874",
+   "build": 2,
+   "output_tail": " + opentelemetry-exporter-http-transport==0.66b1\n + opentelemetry-exporter-otlp-common==0.66b1\n + opentelemetry-exporter-otlp-proto-common==1.45.1\n + opentelemetry-exporter-otlp-proto-http==1.45.1\n + opentelemetry-proto==1.45.1\n + opentelemetry-sdk==1.45.1\n + opentelemetry-semantic-conventions==0.66b1\n + packaging==26.3\n + pluggy==1.6.0\n + pr-agent==0.49.0 (from file://<work>/feasibility/head-40808430874)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==6.33.6\n + py==1.11.0\n + pyasn1==0.6.4\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.1\n + pydantic-core==2.50.1\n + pydantic-settings==2.16.0\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.1.1\n + pytest-asyncio==1.4.0\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.6.28\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + retry==0.9.2\n + rpds-py==2026.6.3\n + ruff==0.17.2\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==3.0.3\n + sse-starlette==3.0.3\n + starlette==1.8.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.0.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/head-40808430874/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.5` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  },
+  {
+   "pull_request": "4656",
+   "run_id": "41858121580",
+   "build": 2,
+   "output_tail": "5.1\n + opentelemetry-exporter-http-transport==0.66b1\n + opentelemetry-exporter-otlp-common==0.66b1\n + opentelemetry-exporter-otlp-proto-common==1.45.1\n + opentelemetry-exporter-otlp-proto-http==1.45.1\n + opentelemetry-proto==1.45.1\n + opentelemetry-sdk==1.45.1\n + opentelemetry-semantic-conventions==0.66b1\n + packaging==26.3\n + pluggy==1.6.0\n + pr-agent==0.49.0 (from file://<work>/feasibility/head-41858121580)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==6.33.6\n + pyasn1==0.6.5\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.2\n + pydantic-core==2.50.2\n + pydantic-settings==2.16.2\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.2.0\n + pytest-asyncio==1.4.1\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.6.28\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + rpds-py==2026.6.3\n + ruff==0.17.3\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==3.0.3\n + sse-starlette==3.0.3\n + starlette==1.10.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.0.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + uvicorn-worker==0.4.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/head-41858121580/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.5` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  },
+  {
+   "pull_request": "4850",
+   "run_id": "42881473513",
+   "build": 2,
+   "output_tail": " opentelemetry-exporter-http-transport==0.66b1\n + opentelemetry-exporter-otlp-common==0.66b1\n + opentelemetry-exporter-otlp-proto-common==1.45.1\n + opentelemetry-exporter-otlp-proto-http==1.45.1\n + opentelemetry-proto==1.45.1\n + opentelemetry-sdk==1.45.1\n + opentelemetry-semantic-conventions==0.66b1\n + packaging==26.3\n + pluggy==1.6.0\n + pr-agent==0.49.0 (from file://<work>/feasibility/head-42881473513)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==7.36.2\n + pyasn1==0.6.5\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.3\n + pydantic-core==2.50.4\n + pydantic-settings==2.16.2\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.2.0\n + pytest-asyncio==1.4.1.post1\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.11.7\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + rpds-py==2026.6.3\n + ruff==0.17.4\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==3.0.3\n + sse-starlette==3.0.3\n + starlette==1.10.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.1.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + uvicorn-worker==0.4.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/head-42881473513/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.7` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  },
+  {
+   "pull_request": "5088",
+   "run_id": "44948590921",
+   "build": 2,
+   "output_tail": " + opentelemetry-exporter-http-transport==0.66b2\n + opentelemetry-exporter-otlp-common==0.66b2\n + opentelemetry-exporter-otlp-proto-common==1.45.2\n + opentelemetry-exporter-otlp-proto-http==1.45.2\n + opentelemetry-proto==1.45.2\n + opentelemetry-sdk==1.45.2\n + opentelemetry-semantic-conventions==0.66b2\n + packaging==26.3\n + pluggy==1.6.0\n + pr-agent==0.49.0 (from file://<work>/feasibility/head-44948590921)\n + prometheus-client==0.26.0\n + propcache==0.5.2\n + proto-plus==1.28.0\n + protobuf==7.36.2\n + pyasn1==0.6.5\n + pyasn1-modules==0.4.2\n + pycparser==3.0\n + pydantic==2.14.3\n + pydantic-core==2.50.4\n + pydantic-settings==2.16.2\n + pygithub==2.10.0\n + pygments==2.20.0\n + pyjwt==2.15.1\n + pynacl==1.6.2\n + pyopenssl==26.4.0\n + pytest==9.2.0\n + pytest-asyncio==1.4.1.post1\n + pytest-cov==7.1.0\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.2\n + python-gitlab==8.6.0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.11.7\n + requests==2.34.2\n + requests-oauthlib==2.0.0\n + requests-toolbelt==1.0.0\n + rpds-py==2026.6.3\n + ruff==0.17.5\n + s3transfer==0.19.2\n + six==1.17.0\n + smmap==5.0.3\n + sniffio==1.3.1\n + soupsieve==4.0\n + sse-starlette==3.0.3\n + starlette==1.10.0\n + starlette-context==0.5.1\n + tenacity==8.2.3\n + tiktoken==0.14.0\n + tokenizers==0.23.1\n + tqdm==4.68.3\n + truststore==0.10.5\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + ujson==6.1.0\n + unidiff==1.0.1\n + urllib3==2.8.0\n + uvicorn==0.54.0\n + uvicorn-worker==0.4.0\n + websockets==15.0.1\n + wrapt==1.17.3\n + yarl==1.25.1\n + zipp==4.1.0\n\n$ uv pip install --python <work>/feasibility/head-44948590921/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.8` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "red_in_sample": 0
+}

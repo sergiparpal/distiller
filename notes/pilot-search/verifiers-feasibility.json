@@ -1,0 +1,192 @@
+{
+ "project": "verifiers",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "2f328d4f90a27460f50fd21b295aefd309fc32b8",
+   "exit_code": 0,
+   "seconds": 2.1765207889839076
+  },
+  {
+   "commit": "25caa6e41f05ec23653548517fe6e304bf51c9a4",
+   "exit_code": 0,
+   "seconds": 1.8554386899922974
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "39321599662",
+   "base": "512b8f77f14de2a7323bd4f497610d029a8bf148",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "40325627261",
+   "base": "ace1f44bedd2001939e94afcf9144cdd94875ef9",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/unit/test_api.py::test_config_tree_imports_without_the_runtime"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/unit/test_api.py::test_config_tree_imports_without_the_runtime"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "44636202511",
+   "base": "18a4635274fa66889be06875b89e73d1d07ecb0f",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/unit/test_api.py::test_config_tree_imports_without_the_runtime"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/unit/test_api.py::test_config_tree_imports_without_the_runtime"
+     ]
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "tests/unit/test_api.py::test_config_tree_imports_without_the_runtime"
+ ],
+ "sample": [
+  {
+   "pull_request": "2890",
+   "run_id": "39321599662",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2949",
+   "run_id": "39765896516",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2756",
+   "run_id": "39781976034",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2973",
+   "run_id": "40099771527",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2974",
+   "run_id": "40199070203",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2918",
+   "run_id": "40436448337",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2994",
+   "run_id": "40608901981",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/unit/test_checkpoint.py::test_settling_without_a_retry_stops_waiting"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3073",
+   "run_id": "42726638949",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "failed_twice": [
+    "tests/unit/test_retry_ids.py::test_a_restore_that_leads_nowhere_is_not_picked_again",
+    "tests/unit/test_retry_ids.py::test_agent_retries_keep_the_trace_id"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3144",
+   "run_id": "43991582534",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3120",
+   "run_id": "44636202511",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  }
+ ],
+ "red_in_sample": 2
+}

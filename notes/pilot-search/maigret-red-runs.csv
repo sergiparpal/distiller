@@ -1,0 +1,26 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+maigret,2205,23402019072,2026-03-22T11:24:58Z,7f9ecf85b83ad0e64fa9167d3dc6e808ff752526,"failed, steps no longer given",
+maigret,2333,23454903554,2026-03-23T19:01:04Z,f18571dcd252a3afed1fbef95cae0d02c43dc1fe,"failed, steps no longer given",
+maigret,2659,25914808292,2026-05-15T11:12:56Z,e9a369c0a16d29a54d6f68f9e45ab6d54cb4a5d9,"failed, steps no longer given",
+maigret,2682,26117521936,2026-05-19T18:36:58Z,deb5d51f4e92881b9b807af5c78a02b5496a2599,"failed, steps no longer given",
+maigret,2707,26550208998,2026-05-28T02:05:52Z,b82f9b9efc616e0d0814daf759ca416f8cc42130,"failed, steps no longer given",
+maigret,2717,26684911209,2026-05-30T13:23:19Z,e6528ec17342589384dfb9b911f65d3371e45323,"failed, steps no longer given",
+maigret,2758,27332511203,2026-06-11T07:57:35Z,4e2ab00ec16126942fa12a94fb62634013c0a0d9,"failed, steps no longer given",
+maigret,2759,27339364522,2026-06-11T10:05:32Z,4e2ab00ec16126942fa12a94fb62634013c0a0d9,"failed, steps no longer given",
+maigret,2760,27341688257,2026-06-11T10:50:58Z,b3f16a25bb1926b0d946153c15b12fdf4b1f55dd,"failed, steps no longer given",
+maigret,2761,27344447767,2026-06-11T11:45:17Z,2cc1d84727be97beeaa423ed342eda7c5e7977ad,"failed, steps no longer given",
+maigret,2813,28345081637,2026-06-29T02:35:55Z,ff2d81ab5ef12e7ea268310b95470137a6612f72,"failed, steps no longer given",
+maigret,2804,28490271747,2026-07-01T02:55:16Z,427d83aef6b86ff37a8ec8029027d3c8851a5fde,"failed, steps no longer given",
+maigret,2836,28738031561,2026-07-05T10:40:38Z,4198c7726e9bb0f6a59ca4ca4ae8643620f237d9,"failed, steps no longer given",
+maigret,2888,29750801207,2026-07-20T14:28:38Z,62b609907fd24901402ef8f107b091ba1a991c5e,"failed, steps no longer given",
+maigret,2894,29792770996,2026-07-21T01:18:32Z,f8f6aa0d75a597b26130ed59194079d9c2bc662d,"failed, steps no longer given",
+maigret,2902,30413991929,2026-07-29T01:24:44Z,79109032e503497a55bd067716e17f47d9f80ae2,"failed, steps no longer given",
+maigret,2958,31509487386,2026-08-11T15:53:33Z,674ec8e39dc31de5597831635d28b29b082cf1da,"failed, steps no longer given",
+maigret,3016,32847769159,2026-08-25T12:49:34Z,866341071011fe1ccb246be2bfca885bd5ef3279,"failed, steps no longer given",
+maigret,3026,33185424627,2026-08-28T15:29:59Z,ac16eddf3ed4efdfdb303a016a32225d1dac7fb4,"failed, steps no longer given",
+maigret,3033,33187245473,2026-08-28T15:52:21Z,c8a3bdb2e64b0b3686007269a641c36708d85519,"failed, steps no longer given",
+maigret,3048,33335244962,2026-08-30T21:01:27Z,06ea7171e9bf04e01e8e4224a9550f6d1c1a0528,"failed, steps no longer given",
+maigret,3058,33547313424,2026-09-01T19:03:58Z,3700a15b4dc8d9126982f8cb9c401ca632a9275f,"failed, steps no longer given",
+maigret,3404,43956701028,2026-11-16T21:06:45Z,35c82af2b950b0e2407e1becf3ccfaf424cbe78a,failed in a test step,Test with Coverage and Pytest (fail if coverage is low)
+maigret,3458,44632954693,2026-11-19T22:54:40Z,9207c4f008b467ce0624ce882a670a39f2b602d3,failed in a test step,Test with Coverage and Pytest (fail if coverage is low)
+maigret,3467,44794469471,2026-11-20T18:37:09Z,7a79f4077eea16d4064b6ce005eac1a826ff56f8,failed in a test step,Test with Coverage and Pytest (fail if coverage is low)

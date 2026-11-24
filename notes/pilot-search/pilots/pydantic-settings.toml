@@ -1,0 +1,23 @@
+# pydantic-settings' job "test py3.12 on ubuntu-latest", for D-024's checks
+# of a finalist (notes/2026-11-21-new-pilot-search.md), not for a replay. The
+# environment is built as the job builds it, `uv sync --group testing
+# --all-extras`, with `--frozen`, so that it is the commit's own uv.lock as it
+# is. The job runs `make test`, `coverage run -m pytest --durations=10` over
+# its testpaths, and runs it again after uninstalling PyYAML: only the first
+# run is the suite here. Its lock holds no pytest-timeout, which the harness
+# adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "pydantic-settings"
+repository = "pydantic/pydantic-settings"
+base_branch = "main"
+job = "test py3.12 on ubuntu-latest"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--group", "testing", "--all-extras"],
+]
+pytest = ["--durations=10"]
+coverage_source = "pydantic_settings"
+seconds_per_test = 120
+adds_timeout_plugin = true

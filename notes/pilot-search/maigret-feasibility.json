@@ -1,0 +1,296 @@
+{
+ "project": "maigret",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "7f9ecf85b83ad0e64fa9167d3dc6e808ff752526",
+   "exit_code": 0,
+   "seconds": 8.58151894697221
+  },
+  {
+   "commit": "7a79f4077eea16d4064b6ce005eac1a826ff56f8",
+   "exit_code": 0,
+   "seconds": 7.827647735015489
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "23402019072",
+   "base": "f3b741d2833f90f6794a77b1e4e4100813041b92",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_maigret.py::test_self_check_db",
+      "tests/test_maigret.py::test_extract_ids_from_page",
+      "tests/test_submit.py::test_detect_known_engine",
+      "tests/test_submit.py::test_check_features_manually_success",
+      "tests/test_submit.py::test_dialog_adds_site_positive",
+      "tests/test_submit.py::test_dialog_replace_site",
+      "tests/test_submit.py::test_dialog_adds_site_negative"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_maigret.py::test_self_check_db",
+      "tests/test_maigret.py::test_extract_ids_from_page",
+      "tests/test_submit.py::test_detect_known_engine",
+      "tests/test_submit.py::test_check_features_manually_success",
+      "tests/test_submit.py::test_dialog_adds_site_positive",
+      "tests/test_submit.py::test_dialog_replace_site",
+      "tests/test_submit.py::test_dialog_adds_site_negative"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "28738031561",
+   "base": "c74bad1ebf04f20c709d7dcbed3d16e991ae11e3",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_maigret.py::test_self_check_db",
+      "tests/test_maigret.py::test_extract_ids_from_page",
+      "tests/test_submit.py::test_detect_known_engine",
+      "tests/test_submit.py::test_check_features_manually_success",
+      "tests/test_submit.py::test_check_features_manually_cloudflare",
+      "tests/test_submit.py::test_dialog_adds_site_positive",
+      "tests/test_submit.py::test_dialog_replace_site",
+      "tests/test_submit.py::test_dialog_adds_site_negative",
+      "tests/test_twitter.py::test_twitter_graphql_probe_claimed_vs_unclaimed"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_maigret.py::test_self_check_db",
+      "tests/test_maigret.py::test_extract_ids_from_page",
+      "tests/test_submit.py::test_detect_known_engine",
+      "tests/test_submit.py::test_check_features_manually_success",
+      "tests/test_submit.py::test_check_features_manually_cloudflare",
+      "tests/test_submit.py::test_dialog_adds_site_positive",
+      "tests/test_submit.py::test_dialog_replace_site",
+      "tests/test_submit.py::test_dialog_adds_site_negative",
+      "tests/test_twitter.py::test_twitter_graphql_probe_claimed_vs_unclaimed"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "44794469471",
+   "base": "cd6f022624e977954c8f187240c8cd7d4dc4e02b",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_maigret.py::test_self_check_db",
+      "tests/test_maigret.py::test_extract_ids_from_page",
+      "tests/test_submit.py::test_detect_known_engine",
+      "tests/test_submit.py::test_check_features_manually_cloudflare",
+      "tests/test_submit.py::test_dialog_adds_site_positive",
+      "tests/test_submit.py::test_dialog_replace_site",
+      "tests/test_submit.py::test_dialog_adds_site_negative",
+      "tests/test_twitter.py::test_twitter_graphql_probe_claimed_vs_unclaimed"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_maigret.py::test_self_check_db",
+      "tests/test_maigret.py::test_extract_ids_from_page",
+      "tests/test_submit.py::test_detect_known_engine",
+      "tests/test_submit.py::test_check_features_manually_cloudflare",
+      "tests/test_submit.py::test_dialog_adds_site_positive",
+      "tests/test_submit.py::test_dialog_replace_site",
+      "tests/test_submit.py::test_dialog_adds_site_negative",
+      "tests/test_twitter.py::test_twitter_graphql_probe_claimed_vs_unclaimed"
+     ]
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "tests/test_maigret.py::test_extract_ids_from_page",
+  "tests/test_maigret.py::test_self_check_db",
+  "tests/test_submit.py::test_check_features_manually_cloudflare",
+  "tests/test_submit.py::test_check_features_manually_success",
+  "tests/test_submit.py::test_detect_known_engine",
+  "tests/test_submit.py::test_dialog_adds_site_negative",
+  "tests/test_submit.py::test_dialog_adds_site_positive",
+  "tests/test_submit.py::test_dialog_replace_site",
+  "tests/test_twitter.py::test_twitter_graphql_probe_claimed_vs_unclaimed"
+ ],
+ "sample": [
+  {
+   "pull_request": "2205",
+   "run_id": "23402019072",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2682",
+   "run_id": "26117521936",
+   "build": 1,
+   "output_tail": "s (2.5.3)\n  - Installing pytokens (0.4.1)\n  - Installing pyvis (0.3.2)\n  - Installing pyyaml (6.0.2)\n  - Installing qrcode (8.0)\n  - Installing reportlab (4.5.1)\n  - Installing requests (2.34.2)\n  - Installing requests-futures (1.0.2)\n  - Installing requests-toolbelt (1.0.0)\n  - Installing rich (14.3.3)\n  - Installing rlpycairo (0.4.0)\n  - Installing six (1.17.0)\n  - Installing socid-extractor (0.0.28)\n  - Installing soupsieve (2.8.3)\n  - Installing stack-data (0.6.3)\n  - Installing stem (1.8.2)\n  - Installing svglib (1.6.0)\n  - Installing tinycss2 (1.4.0)\n  - Installing tokenize-rt (6.1.0)\n  - Installing torrequest (0.1.0)\n  - Installing traitlets (5.14.3)\n  - Installing tuna (0.5.13)\n  - Installing typing-extensions (4.15.0)\n  - Installing tzlocal (5.2)\n  - Installing uritools (4.0.3)\n  - Installing urllib3 (2.7.0)\n  - Installing wcwidth (0.2.13)\n  - Installing webencodings (0.5.1)\n  - Installing werkzeug (3.1.6)\n  - Installing xhtml2pdf (0.2.17)\n  - Installing xmind (1.2.0)\n  - Installing yarl (1.24.0)\n\n    | Unable to find installation candidates for yarl (1.24.0)\n    | \n    | This is likely not a Poetry issue.\n    | \n    |   - 15 candidate(s) were identified for the package\n    |   - 15 wheel(s) were skipped as your project's environment does not support the identified abi tags\n    | \n    | Solutions:\n    | Make sure the lockfile is up-to-date. You can try one of the following;\n    | \n    |     1. Regenerate lockfile: poetry lock --no-cache --regenerate\n    |     2. Update package     : poetry update --no-cache yarl\n    | \n    | If any of those solutions worked, you will have to clear your caches using (poetry cache clear --all).\n    | \n    | If neither works, please first check to verify that the yarl has published wheels available from your configured source that are compatible with your environment- ie. operating system, architecture (x86_64, arm64 etc.), python interpreter.\n    | \n    | You can also run your poetry command with -v to see more information.\n\n"
+  },
+  {
+   "pull_request": "2717",
+   "run_id": "26684911209",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "failed_twice": [
+    "tests/test_cli.py::test_args_exclude_tags",
+    "tests/test_cli.py::test_args_multiple_sites",
+    "tests/test_cli.py::test_args_search_mode",
+    "tests/test_cli.py::test_args_search_mode_several_usernames",
+    "tests/test_cli.py::test_args_self_check_mode",
+    "tests/test_cli.py::test_args_tags_with_exclude_tags"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2760",
+   "run_id": "27341688257",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 7
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 7
+   },
+   "failed_twice": [
+    "tests/test_checking.py::test_detect_error_page_403",
+    "tests/test_error_detection.py::test_http_403",
+    "tests/test_report.py::test_generate_csv_report",
+    "tests/test_report.py::test_generate_csv_report_broken",
+    "tests/test_report.py::test_save_csv_report",
+    "tests/test_report.py::test_save_xmind_report",
+    "tests/test_report.py::test_save_xmind_report_broken"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2804",
+   "run_id": "28490271747",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2888",
+   "run_id": "29750801207",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "failed_twice": [
+    "tests/test_cli.py::test_args_exclude_tags",
+    "tests/test_cli.py::test_args_multiple_sites",
+    "tests/test_cli.py::test_args_search_mode",
+    "tests/test_cli.py::test_args_search_mode_several_usernames",
+    "tests/test_cli.py::test_args_self_check_mode",
+    "tests/test_cli.py::test_args_tags_with_exclude_tags"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2958",
+   "run_id": "31509487386",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_checking.py::test_hackernews_requires_profile_marker"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3033",
+   "run_id": "33187245473",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "failed_twice": [
+    "tests/test_country_tags.py::test_country_tags_are_officially_assigned_iso",
+    "tests/test_country_tags.py::test_no_reserved_uk_or_eu"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3058",
+   "run_id": "33547313424",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "failed_twice": [
+    "tests/test_api_unit.py::TestJobManager::test_cancel_job",
+    "tests/test_api_unit.py::TestJobManager::test_set_error",
+    "tests/test_api_unit.py::TestJobManager::test_update_status"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3467",
+   "run_id": "44794469471",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "failed_twice": [
+    "tests/test_data.py::test_cgtrader_disabled_behind_aws_waf",
+    "tests/test_mastodon_engine.py::test_confirmed_instances_use_engine"
+   ],
+   "red": true
+  }
+ ],
+ "red_in_sample": 7
+}

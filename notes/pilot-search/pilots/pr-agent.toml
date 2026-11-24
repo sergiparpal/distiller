@@ -1,0 +1,22 @@
+# The-PR-Agent/pr-agent's job "Unit tests (Python 3.12)", for D-024's checks
+# of a finalist, not for a replay. The job runs `uv sync --frozen --python
+# 3.12`, then `uv run --frozen --python 3.12 pytest -v tests/unittest`; the
+# path is given as testpaths, as its pyproject does now, so that a rerun runs
+# only its tests. Its variables PYTHONPATH and LITELLM_LOCAL_MODEL_COST_MAP do
+# not reach a suite run (Rule 5). Its lock holds no pytest-timeout, which the
+# harness adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "pr-agent"
+repository = "The-PR-Agent/pr-agent"
+base_branch = "main"
+job = "Unit tests (Python 3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12"],
+]
+pytest = ["-o", "testpaths=tests/unittest"]
+coverage_source = "pr_agent"
+seconds_per_test = 120
+adds_timeout_plugin = true

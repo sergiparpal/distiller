@@ -1,0 +1,20 @@
+# electricitymaps/electricitymaps-contrib's job "Python / Tests (3.12)", for
+# D-024's checks of a finalist, not for a replay. The job runs `uv sync --group
+# dev --extra parsers`, here with `--frozen`, then `uv run test`, which runs
+# `pytest` with no option (scripts/tooling.py). Its lock holds no
+# pytest-timeout, which the harness adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "electricitymaps-contrib"
+repository = "electricitymaps/electricitymaps-contrib"
+base_branch = "master"
+job = "Python / Tests (3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--group", "dev", "--extra", "parsers"],
+]
+pytest = []
+coverage_source = "electricitymap"
+seconds_per_test = 120
+adds_timeout_plugin = true

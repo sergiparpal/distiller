@@ -1,0 +1,183 @@
+{
+ "project": "python-sdk",
+ "heads_not_in_clone": [
+  "21068951903",
+  "21069462837"
+ ],
+ "environments": [
+  {
+   "commit": "3b0aa12e5411a22965654a59bd4aad90910cc1bd",
+   "exit_code": 0,
+   "seconds": 3.160301582014654
+  },
+  {
+   "commit": "48ac5194f4d78951477fc1bdc95830b9d118c99f",
+   "exit_code": 0,
+   "seconds": 5.464339165017009
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "21094432502",
+   "base": "dcc9b4f8e0f3cadf7cf6ba441817d9c77c0fd5e0",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/client/test_config.py::test_command_execution"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/client/test_config.py::test_command_execution"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "29509860899",
+   "base": "e464f72c1236cb0a8e616821a2f8ab0bd36a6676",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "44902970958",
+   "base": "77001c96f9507be0f4d009b83210a384a5e08bda",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "tests/client/test_config.py::test_command_execution"
+ ],
+ "sample": [
+  {
+   "pull_request": "1902",
+   "run_id": "21094432502",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2078",
+   "run_id": "22113293528",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2273",
+   "run_id": "22964087651",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2443",
+   "run_id": "25069118971",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2865",
+   "run_id": "27494770555",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/interaction/test_coverage.py::test_every_test_exercises_a_requirement"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3208",
+   "run_id": "30447470124",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2853",
+   "run_id": "32432614649",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3468",
+   "run_id": "34123314563",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3672",
+   "run_id": "38072189184",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3890",
+   "run_id": "44902970958",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  }
+ ],
+ "red_in_sample": 1
+}

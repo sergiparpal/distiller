@@ -1,0 +1,37 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+click,3180,20639714913,2026-01-01T13:52:27Z,2497ddec81ed49b11c235dc46fefd45fe7cf7d33,"failed, steps no longer given",
+click,3187,21331576257,2026-01-25T11:06:39Z,7a9108e798ac98f2825fd8fc17b83eec613bb113,"failed, steps no longer given",
+click,3232,22428940777,2026-02-26T05:17:02Z,6c1610069777c389d2bc420570aaf91b43bf8d44,"failed, steps no longer given",
+click,3151,22563144325,2026-03-02T05:45:43Z,33d6cc1f28b13b4af790de140f8f2ce78fcf5fa9,"failed, steps no longer given",
+click,3240,22576027023,2026-03-02T12:28:38Z,65b4c48f44c8dd1eb1adb9202efbb2e79db5e561,"failed, steps no longer given",
+click,3254,22823664645,2026-03-08T15:05:33Z,382027e2ee5fd49f1766dd4495abd6e5971bd173,"failed, steps no longer given",
+click,3255,22827295396,2026-03-08T18:37:16Z,172c62a3201f9cc938b55cc3656848cedb7a8a3a,"failed, steps no longer given",
+click,3323,24088825873,2026-04-07T15:09:59Z,f766d3999fecee7cb12b17fcfdd78a1fc961609d,"failed, steps no longer given",
+click,3324,24089000659,2026-04-07T15:13:39Z,3996c4e35e5d9d4bc30ae0a16eb03d373d49c28a,"failed, steps no longer given",
+click,3335,24301036255,2026-04-12T07:01:57Z,d158592c76e6f652053cc7eba7d6218dfede71c0,"failed, steps no longer given",
+click,3338,24398862966,2026-04-14T12:27:39Z,27fc6902615aafccb352cc18e4bd0f6eb555853c,"failed, steps no longer given",
+click,3351,24595683988,2026-04-18T03:15:08Z,05319a0ee40b85f414c37beefe029b78409f716e,"failed, steps no longer given",
+click,3381,24974880795,2026-04-27T03:17:47Z,4026eda4d2d7d113285b55c4185398029f244508,"failed, steps no longer given",
+click,3256,25154809242,2026-04-30T08:12:48Z,3dac31185776ddad4320b24a0de354387b3a9e52,"failed, steps no longer given",
+click,3407,25389400840,2026-05-05T16:39:31Z,352db9b056e3249d70c73f3faa0b4a53ff7f81c3,"failed, steps no longer given",
+click,3404,25486145652,2026-05-07T08:57:04Z,fd50ce9c318bdcb0804eea25155a13087cb755e1,"failed, steps no longer given",
+click,3412,25609563743,2026-05-09T19:15:14Z,e6cfbbf0aa9f770db120fac5ab55499711e73395,"failed, steps no longer given",
+click,2864,25852487364,2026-05-14T09:25:23Z,6cc592979cf91f23456be4f7b0eff78ee79680cd,"failed, steps no longer given",
+click,3471,26061411203,2026-05-18T21:26:19Z,d8bf3bc034610836a0842ef0c05e9db9b31e0be6,"failed, steps no longer given",
+click,3520,26545698232,2026-05-27T23:52:05Z,b66defb4fa8ed98a5c7316438a630a708cbbc764,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3599,27591786995,2026-06-16T03:19:34Z,4adc228e21aa587a427d89b549ea09f76d5b41e0,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3610,27713768788,2026-06-17T19:19:16Z,2962de375559d70129f136811d0ce2b7d69bd846,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3611,27716232059,2026-06-17T20:02:54Z,9acd6cd388d1d0c908daff85a3fa8c908d05a8a2,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3661,28606852783,2026-07-02T16:48:41Z,6471c3bfb8ea98ae2cad6cdbda0cd359102a7832,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3663,28770588851,2026-07-06T05:46:02Z,07d20bf62c825b34f8485fc08f57d190e59939fd,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3677,28946390767,2026-07-08T13:29:02Z,4860fa974a079fef7ddccab1296afaf8762af73d,"failed, steps no longer given",
+click,3690,29430987508,2026-07-15T16:05:58Z,27e252aa7558a1d17653d42c84a67f56e8dbfcba,"failed, steps no longer given",
+click,3717,29983263065,2026-07-23T05:50:50Z,519dc213440979288dfae7291a44cd0c2bf9a635,"failed, steps no longer given",
+click,3719,29983329758,2026-07-23T05:52:13Z,9d07dadfb47d9cdefc1e265a9bc8736e07fb9e73,"failed, steps no longer given",
+click,3742,30694416786,2026-08-01T09:46:46Z,b954d83acdd5bc9266615e60c943cc7da30d6456,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3833,33754513327,2026-09-03T12:19:01Z,349162a0a820f79f0231581dba4fa0e2d60f4785,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3834,33760631267,2026-09-03T13:21:00Z,e50f62cdbdcd26ca19889fcc3ad741628e63a922,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3867,34727203300,2026-09-13T00:08:28Z,e87809d434994ca574bf10a08fb202bac2d0f6e2,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3871,35073314422,2026-09-16T08:21:21Z,e05912a7c97628477b6cecb3cb3afbdacd6761d6,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3872,35100037841,2026-09-16T13:08:38Z,b8db3a92329608f5ed15936827a18ee5f4011c36,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run
+click,3873,35101002079,2026-09-16T13:17:49Z,86851b5691d3c14f7db41f259496808483632236,failed in a test step,Run uv run --locked --no-default-groups --group dev tox run

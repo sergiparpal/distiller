@@ -1,0 +1,288 @@
+{
+ "project": "EvoScientist",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "c0274a14c3e4e3c57bce7b14a08ab3d5f1920fb5",
+   "exit_code": 0,
+   "seconds": 2.2478603670024313
+  },
+  {
+   "commit": "c243a2b8694de49c464a445c56ee4cefd4ba9fe0",
+   "exit_code": 0,
+   "seconds": 1.247808927029837
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "27200844631",
+   "base": "4b6a969df2387e69ce67f68443a2ec3a44568171",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "38322005996",
+   "base": "2d00646d0290c4fa085a64bbe2025dc29654604b",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_agent_shell.py::test_agent_gitconfig_overrides_the_shipped_settings",
+      "tests/test_agent_shell.py::test_system_git_config_resolves"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_agent_shell.py::test_agent_gitconfig_overrides_the_shipped_settings",
+      "tests/test_agent_shell.py::test_system_git_config_resolves"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "44784690008",
+   "base": "7ae773e7038930b1706d6e25f475caa3979a997f",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_agent_shell.py::test_agent_gitconfig_overrides_the_shipped_settings",
+      "tests/test_agent_shell.py::test_system_git_config_resolves"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_agent_shell.py::test_agent_gitconfig_overrides_the_shipped_settings",
+      "tests/test_agent_shell.py::test_system_git_config_resolves"
+     ]
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "tests/test_agent_shell.py::test_agent_gitconfig_overrides_the_shipped_settings",
+  "tests/test_agent_shell.py::test_system_git_config_resolves"
+ ],
+ "sample": [
+  {
+   "pull_request": "271",
+   "run_id": "27200844631",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 7
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 7
+   },
+   "failed_twice": [
+    "tests/test_backends.py::TestExecuteStderr::test_execute_mixed_stdout_stderr",
+    "tests/test_backends.py::TestExecuteStderr::test_execute_nonzero_exit_code_in_output",
+    "tests/test_backends.py::TestExecuteStderr::test_execute_stderr_attribution",
+    "tests/test_backends.py::TestExecuteTimeoutRecovery::test_non_timeout_not_enhanced",
+    "tests/test_backends.py::TestVirtualMountResolution::test_execute_e2e_global_tier_skill",
+    "tests/test_backends.py::TestVirtualMountResolution::test_execute_e2e_workspace_tier_shadows_global",
+    "tests/test_backends.py::TestVirtualMountResolution::test_execute_e2e_workspace_tier_skill"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "367",
+   "run_id": "29618851180",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "failed_twice": [
+    "tests/test_llm.py::TestThirdPartyRouting::test_openrouter_429_added_to_retryable_status_codes",
+    "tests/test_llm.py::TestThirdPartyRouting::test_openrouter_429_retried_on_the_wire"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "441",
+   "run_id": "34236935135",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_ask_user.py::test_for_async_subagent_omits_ask_user_middleware"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "544",
+   "run_id": "36902493014",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "failed_twice": [],
+   "red": false
+  },
+  {
+   "pull_request": "616",
+   "run_id": "38321995317",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "574",
+   "run_id": "39271940986",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 8
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 7
+   },
+   "failed_twice": [
+    "tests/test_graph_gateway.py::test_local_process_status_connect_error_returns_unknown",
+    "tests/test_graph_gateway.py::test_local_process_status_falls_back_to_dev_server[error]",
+    "tests/test_graph_gateway.py::test_local_process_status_falls_back_to_dev_server[running]",
+    "tests/test_graph_gateway.py::test_local_process_status_falls_back_to_dev_server[success]",
+    "tests/test_graph_gateway.py::test_local_process_status_falls_back_to_dev_server[unknown]",
+    "tests/test_graph_gateway.py::test_local_process_status_no_dev_server_returns_unknown",
+    "tests/test_graph_gateway.py::test_local_process_status_timeout_propagates"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "704",
+   "run_id": "40901844206",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "759",
+   "run_id": "42406898874",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 14
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 14
+   },
+   "failed_twice": [
+    "tests/test_mcp_client.py::TestEnsureNodeForStdio::test_a_command_with_its_windows_extension_is_found",
+    "tests/test_setup_git.py::test_activate_runtime_leaves_a_system_git_alone",
+    "tests/test_setup_git.py::test_arm64_still_uses_a_system_git",
+    "tests/test_setup_git.py::test_intact_install_is_recorded_again_without_download",
+    "tests/test_setup_git.py::test_non_windows_git_does_not_count",
+    "tests/test_setup_git.py::test_private_git_on_path_is_false_for_a_recorded_system_git",
+    "tests/test_setup_git.py::test_recorded_git_reads_a_system_git_record",
+    "tests/test_setup_git.py::test_shim_on_path_resolves_the_real_install",
+    "tests/test_setup_git.py::test_system_git_for_windows_is_used_without_download",
+    "tests/test_setup_git.py::test_system_git_without_bash_leads_to_portablegit",
+    "tests/test_setup_install.py::test_clean_path_drops_windows_drive_relative_entries",
+    "tests/test_setup_install.py::test_clean_path_reads_quoted_entries_on_windows",
+    "tests/test_setup_install.py::test_which_on_path_reads_quoted_entries",
+    "tests/test_setup_install.py::test_which_on_path_skips_a_bat_wrapper_in_the_current_directory"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "829",
+   "run_id": "43892654267",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 24
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 24
+   },
+   "failed_twice": [
+    "tests/test_webui_launcher.py::test_backend_defaults_to_loopback",
+    "tests/test_webui_launcher.py::test_backend_host_reaches_start",
+    "tests/test_webui_launcher.py::test_backend_outlives_webui",
+    "tests/test_webui_launcher.py::test_blank_webui_host_falls_back_to_loopback[   ]",
+    "tests/test_webui_launcher.py::test_blank_webui_host_falls_back_to_loopback[]",
+    "tests/test_webui_launcher.py::test_closed_terminal_does_not_skip_cleanup",
+    "tests/test_webui_launcher.py::test_hostname_env_carries_webui_host",
+    "tests/test_webui_launcher.py::test_hostname_env_defaults_to_loopback",
+    "tests/test_webui_launcher.py::test_inherited_ignored_hangup_stays_ignored",
+    "tests/test_webui_launcher.py::test_installed_server_runs_without_npx_or_flags",
+    "tests/test_webui_launcher.py::test_missing_python_hint_is_printed_by_the_launcher",
+    "tests/test_webui_launcher.py::test_no_public_bind_warning_when_backend_on_loopback",
+    "tests/test_webui_launcher.py::test_no_remote_hint_when_backend_answers_public",
+    "tests/test_webui_launcher.py::test_node_output_goes_to_webui_log_next_to_the_backend_log",
+    "tests/test_webui_launcher.py::test_port_env_set",
+    "tests/test_webui_launcher.py::test_public_bind_warning_when_backend_exposed",
+    "tests/test_webui_launcher.py::test_public_bind_warning_when_frontend_exposed",
+    "tests/test_webui_launcher.py::test_remote_backend_hint_when_frontend_exposed_but_backend_is_not",
+    "tests/test_webui_launcher.py::test_stop_signals_clean_up_webui[SIGHUP-wait]",
+    "tests/test_webui_launcher.py::test_stop_signals_clean_up_webui[SIGINT-wait]",
+    "tests/test_webui_launcher.py::test_stop_signals_clean_up_webui[SIGTERM-wait]",
+    "tests/test_webui_launcher.py::test_the_spinner_says_when_it_waits_for_another_start",
+    "tests/test_webui_launcher.py::test_update_check_starts_once_the_ui_is_up",
+    "tests/test_webui_launcher.py::test_warnings_with_brackets_print_as_they_are"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "872",
+   "run_id": "44784690008",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 4
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 4
+   },
+   "failed_twice": [
+    "tests/test_backends.py::TestCmdExeRemovalChecks::test_backslash_traversal_is_refused[cd ..\\\\.. && dir]",
+    "tests/test_backends.py::TestCmdExeRemovalChecks::test_backslash_traversal_is_refused[rd /s /q ..\\\\..]",
+    "tests/test_backends.py::TestCmdExeRemovalChecks::test_backslash_traversal_is_refused[rmdir /s /q ..\\\\..]",
+    "tests/test_backends.py::TestCmdExeRemovalChecks::test_backslash_traversal_is_refused[type ..\\\\secret.txt]"
+   ],
+   "red": true
+  }
+ ],
+ "red_in_sample": 7
+}

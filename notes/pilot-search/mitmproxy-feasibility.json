@@ -1,0 +1,246 @@
+{
+ "project": "mitmproxy",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "189ebab2413b872e76800fdccb4a084d561acd3d",
+   "exit_code": 0,
+   "seconds": 6.0125520110013895
+  },
+  {
+   "commit": "76df7ccccaf95b35173a8cafe5f8c8e9f02fa830",
+   "exit_code": 0,
+   "seconds": 5.335693700995762
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20308646156",
+   "base": "116e3cd149c895b814df2ab754adc0e97e77703a",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+      "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+      "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+      "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+      "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "29298712794",
+   "base": "a67fc64596c472cb468be6b3ac188511e8e9ff94",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+      "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+      "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+      "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+      "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "43512433510",
+   "base": "3da37a52218f47478ae992c49447136c0a44fa54",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+      "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+      "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+      "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+      "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+     ]
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+  "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+  "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode"
+ ],
+ "sample": [
+  {
+   "pull_request": "7985",
+   "run_id": "20308646156",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "8087",
+   "run_id": "22124843097",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 8
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 8
+   },
+   "failed_twice": [
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[charles]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[chrome]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[firefox]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[head-content-length]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[insomnia]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[postdata]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[safari]",
+    "test/mitmproxy/io/test_har.py::test_har_to_flow[with-bom]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8164",
+   "run_id": "24001575629",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "test/mitmproxy/addons/test_script.py::test_order"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8222",
+   "run_id": "25618784852",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "test/mitmproxy/proxy/test_mode_servers.py::test_wireguard_eaddrinuse_error"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8284",
+   "run_id": "27674747413",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "test/mitmproxy/test_http.py::TestRequestCore::test_repr"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8227",
+   "run_id": "32522801871",
+   "build": 0,
+   "full_run": {
+    "exit_code": 4,
+    "failed": 0,
+    "output_tail": "code-distiller/36c22ee2-48e6-4704-8fa7-fd752c605d4c/scratchpad/pilot-search/feasibility/mitmproxy --dev /dev --proc /proc --clearenv --chdir <work>/feasibility/head-32522801871 --setenv HOME <work>/home --setenv PATH <work>/feasibility/head-32522801871/.venv/bin:/usr/local/bin:/usr/bin:/bin --setenv LANG C.UTF-8 <work>/feasibility/head-32522801871/.venv/bin/python <work>/replay-wrapper.py <work>/head-32522801871-full.xml.failed --continue-on-collection-errors --deselect test/mitmproxy/addons/test_dns_resolver.py::test_name_servers --deselect test/mitmproxy/addons/test_proxyserver.py::test_dns --deselect test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode --timeout=120 --junitxml=<work>/feasibility/head-32522801871-full.xml\nERROR: <work>/feasibility/head-32522801871/pyproject.toml: Cannot use both [tool.pytest] (native TOML types) and [tool.pytest.ini_options] (string-based INI format) simultaneously. Please use [tool.pytest] with native TOML types (recommended) or [tool.pytest.ini_options] for backwards compatibility.\n\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "8424",
+   "run_id": "34000151028",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "test/mitmproxy/tools/web/test_app.py::test_generated_files[filename4]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8383",
+   "run_id": "36932604572",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "8504",
+   "run_id": "39792232098",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "test/mitmproxy/contentviews/test__view_yaml.py::test_view_yaml"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8598",
+   "run_id": "43512433510",
+   "build": 0,
+   "full_run": {
+    "exit_code": 4,
+    "failed": 0,
+    "output_tail": "code-distiller/36c22ee2-48e6-4704-8fa7-fd752c605d4c/scratchpad/pilot-search/feasibility/mitmproxy --dev /dev --proc /proc --clearenv --chdir <work>/feasibility/head-43512433510 --setenv HOME <work>/home --setenv PATH <work>/feasibility/head-43512433510/.venv/bin:/usr/local/bin:/usr/bin:/bin --setenv LANG C.UTF-8 <work>/feasibility/head-43512433510/.venv/bin/python <work>/replay-wrapper.py <work>/head-43512433510-full.xml.failed --continue-on-collection-errors --deselect test/mitmproxy/addons/test_dns_resolver.py::test_name_servers --deselect test/mitmproxy/addons/test_proxyserver.py::test_dns --deselect test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode --timeout=120 --junitxml=<work>/feasibility/head-43512433510-full.xml\nERROR: <work>/feasibility/head-43512433510/pyproject.toml: Cannot use both [tool.pytest] (native TOML types) and [tool.pytest.ini_options] (string-based INI format) simultaneously. Please use [tool.pytest] with native TOML types (recommended) or [tool.pytest.ini_options] for backwards compatibility.\n\n"
+   },
+   "red": false
+  }
+ ],
+ "red_in_sample": 6
+}

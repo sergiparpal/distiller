@@ -1,0 +1,25 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+mitmproxy,7985,20308646156,2025-12-17T15:47:25Z,189ebab2413b872e76800fdccb4a084d561acd3d,"failed, steps no longer given",
+mitmproxy,8060,21554482772,2026-02-01T01:47:24Z,140f15de09e55cad28229d3a5b30cade36102f2a,"failed, steps no longer given",
+mitmproxy,8080,21838389833,2026-02-09T19:55:14Z,e8e6fb0b6cb8d4388fa050b0c465676e8a10ea14,"failed, steps no longer given",
+mitmproxy,8087,22124843097,2026-02-18T03:05:37Z,9cb5f9be2dda67cbb8bb52c7d5217f73a7ba245e,"failed, steps no longer given",
+mitmproxy,8144,23522131302,2026-03-25T02:33:38Z,95ab9d24f4916d5ccf5f9edaf9647a16477498e3,"failed, steps no longer given",
+mitmproxy,8164,24001575629,2026-04-05T12:31:45Z,8416db99a20421409eaf11938aac7f88f0b83eb9,"failed, steps no longer given",
+mitmproxy,8168,24247582642,2026-04-10T14:20:52Z,ffb8e5deb4ec5d6343905fbd3fe7038a68eae337,"failed, steps no longer given",
+mitmproxy,8221,25617917011,2026-05-10T02:42:11Z,2baa095b040baf93e255f17e7138925e6d7aa57b,"failed, steps no longer given",
+mitmproxy,8222,25618784852,2026-05-10T03:30:30Z,b13b0c4fcc62f02ebf3017f57e8bf260f9a1092f,"failed, steps no longer given",
+mitmproxy,8277,27121048054,2026-06-08T06:54:16Z,dd22e898e70e6dfdedc9be4180df791aff1e7cd7,failed in another step,Run mhils/workflows/uv-sync@8fe88b311a66c441e01edfebe4cd90d8a47fa335
+mitmproxy,8284,27674747413,2026-06-17T08:03:52Z,7fef03ec36091fcf20601cbc925378d927cb9215,failed in a test step,Run tox -e py3.12
+mitmproxy,8297,28466150084,2026-06-30T18:13:54Z,9ec3b465ccc0882f385f42f460f379ad60e02a23,failed in a test step,Run tox -e py3.12
+mitmproxy,8324,29298712794,2026-07-14T01:30:24Z,e4792abf30859d88137de5102419480889de2a82,"failed, steps no longer given",
+mitmproxy,8227,32522801871,2026-08-21T20:17:28Z,3d61adfa77556d9463c24cb93b3b743840237aae,failed in a test step,Run tox -e py3.12
+mitmproxy,8406,32879584798,2026-08-25T17:43:41Z,282f37a48b795fecbd3d60644b08f3fb20f84376,failed in a test step,Run tox -e py3.12
+mitmproxy,8424,34000151028,2026-09-06T00:00:38Z,f9210c5c867d2aa0f5333a461f3779b50d76dc1c,failed in a test step,Run tox -e py3.12
+mitmproxy,8456,36787791179,2026-09-30T22:49:54Z,67f0292e151a1d5b99d1da9a9d0a75bac1aba2e8,failed in a test step,Run tox -e py3.12
+mitmproxy,8459,36884623266,2026-10-01T15:29:09Z,c08b947f60d5a6d7d701cbc085553bdc865d9790,failed in a test step,Run tox -e py3.12
+mitmproxy,8383,36932604572,2026-10-01T22:02:42Z,d9c4a06a783680ecc0dc93010e0d8bc6632aa1a8,failed in a test step,Run tox -e py3.12
+mitmproxy,8499,39616446936,2026-10-21T14:23:40Z,ecc2bad8b4854f1b138be26a0ec5b4cd1151ca49,failed in a test step,Run tox -e py3.12
+mitmproxy,8504,39792232098,2026-10-22T14:02:16Z,83a46c09fbefaddb28dbd1a2d32d1199a5432266,failed in a test step,Run tox -e py3.12
+mitmproxy,8524,40227472287,2026-10-25T19:44:42Z,d22871b9edf82e9402524f6f8a2c1c577328306c,failed in another step,Run mhils/workflows/uv-sync@e6b54c0368640a2201137f00272b978b51d26268
+mitmproxy,8543,40820886896,2026-10-29T05:00:30Z,e83f12d4338754b0187f98368e3bf81e9f7a6496,failed in a test step,Run tox -e py3.12
+mitmproxy,8598,43512433510,2026-11-13T21:38:06Z,76df7ccccaf95b35173a8cafe5f8c8e9f02fa830,failed in a test step,Run tox -e py3.12

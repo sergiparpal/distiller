@@ -1,0 +1,26 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+gdsfactory,4515,29744011858,2026-07-20T12:54:24Z,8cf535ced59112ab3b43a144840531ab11283659,"failed, steps no longer given",
+gdsfactory,4693,29854429483,2026-07-21T17:47:22Z,2992f05b177778b37fc96454d2827c2bf66816cb,"failed, steps no longer given",
+gdsfactory,4697,29855025215,2026-07-21T17:55:46Z,a43ec22f68af1f16dded410bf57ac70a5c047a41,"failed, steps no longer given",
+gdsfactory,4700,29856201022,2026-07-21T18:12:13Z,03ac07a4f9d8c46aef641d66774fbfd4585509a9,"failed, steps no longer given",
+gdsfactory,4714,29860513391,2026-07-21T19:12:21Z,f68282e02a604f5b5a274dc8cbeef9ee22852600,"failed, steps no longer given",
+gdsfactory,4717,29862230609,2026-07-21T19:36:27Z,00731ed9803f5278f8a8d21b6433be7c0122a643,"failed, steps no longer given",
+gdsfactory,4680,29851061392,2026-07-21T19:42:01Z,0951f82480171d2d7663b49cc922d7164287ce87,"failed, steps no longer given",
+gdsfactory,4737,30293235590,2026-07-27T18:19:22Z,738b96fc9160587a49f6aff9bdf38693ff1b3a0a,failed in a test step,Test with pytest
+gdsfactory,4736,30473981079,2026-07-29T17:08:36Z,39efef118e0b40d8ae631cdc8675d768ffb3e1d7,failed in a test step,Test with pytest
+gdsfactory,4746,30478663675,2026-07-29T18:09:57Z,7699a5776a082f2bb8ea1bbdd3eb950bd31495d0,failed in a test step,Test with pytest
+gdsfactory,4778,31810275866,2026-08-14T14:35:43Z,7b531e09f39e2d50223939c84114bed2de5ee1d5,failed in a test step,Test with pytest
+gdsfactory,4785,31891670276,2026-08-20T01:09:20Z,d40220e50987bfea39fa44a50d0caf07ad5c3983,failed in a test step,Test with pytest
+gdsfactory,4789,32319798471,2026-08-20T05:20:46Z,1fec7cb477fd63b412251c706629618d354ce6d2,failed in a test step,Test with pytest
+gdsfactory,4800,32911190655,2026-08-25T23:32:04Z,068448d40d6b5bf13fa0b82f9b66b6016189a28c,failed in a test step,Test with pytest
+gdsfactory,4816,33979195305,2026-09-05T16:52:19Z,382fb02362f27d5330373a905f0205bf179b570f,failed in a test step,Test with pytest
+gdsfactory,4818,34185926832,2026-09-08T04:08:26Z,e5122b7630c42a5df73dc6ca098f089e63f076d6,failed in a test step,Test with pytest
+gdsfactory,4827,34289262917,2026-09-08T23:08:24Z,456d0b0b0ca41bdbf185352ac0ec7e478acaa0ce,failed in another step,Install dependencies
+gdsfactory,4832,34294334993,2026-09-09T00:16:56Z,9e8269805f8d337a5c2d14618eae90d65ad479e1,failed in a test step,Test with pytest
+gdsfactory,4838,34436947970,2026-09-10T04:22:44Z,a5bd8920f94aa30399bdb623abcd0f8b84dc14d8,failed in a test step,Test with pytest
+gdsfactory,4845,34512010638,2026-09-10T18:03:50Z,69a01b2892cb11d8727d29489027b7ab7eacaae6,failed in a test step,Test with pytest
+gdsfactory,4871,36844595217,2026-10-01T09:54:15Z,972ef09e961976b0b389bce8616ce657bd3250f7,failed in a test step,Test with pytest
+gdsfactory,4889,37538241536,2026-10-11T13:00:06Z,d25153ba9f53512da15e11e94244334cb96582b0,failed in a test step,Test with pytest
+gdsfactory,4896,38782672285,2026-10-15T18:05:06Z,0d23d614ea95397bed40d4e85ed5a70656894157,failed in a test step,Test with pytest
+gdsfactory,4920,41522174909,2026-11-02T20:45:52Z,5998ac156fd6c73efad66b5d41e62cdc414c6894,failed in a test step,Test with pytest
+gdsfactory,4939,43917676271,2026-11-16T18:45:34Z,fd2a47960cf0c47c85a3c31f1cb0d37490e41f57,failed in a test step,Test with pytest

@@ -1,0 +1,248 @@
+{
+ "project": "pydantic-settings",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "76a5d5f2fd14a854263f21c8c33e0a2a93bfb9f2",
+   "exit_code": 0,
+   "seconds": 4.677285666984972
+  },
+  {
+   "commit": "07c0c3646901fa629196f6cb0a74fcde198c3346",
+   "exit_code": 0,
+   "seconds": 4.568905909021851
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20446773970",
+   "base": "cab6fc0f176e5cc095cf143c47b0f6d70a07cb88",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "27463151512",
+   "base": "c340c624423842ae33b91aa167b0067e371f1c96",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "43219438127",
+   "base": "cfbe8ad08734bbbeb2dae568035f3f1997d6d5b6",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  }
+ ],
+ "deselected": [],
+ "sample": [
+  {
+   "pull_request": "729",
+   "run_id": "20446773970",
+   "build": 0,
+   "full_run": {
+    "exit_code": 2,
+    "failed": 0,
+    "output_tail": "11: in <module>\n    from pydantic_settings import (\npydantic_settings/__init__.py:2: in <module>\n    from .main import BaseSettings, CliApp, SettingsConfigDict\npydantic_settings/main.py:20: in <module>\n    from .sources import (\npydantic_settings/sources/__init__.py:30: in <module>\n    from .providers.keyring import KeyringConfigSettingsSource\npydantic_settings/sources/providers/__init__.py:20: in <module>\n    from .keyring import KeyringConfigSettingsSource\npydantic_settings/sources/providers/keyring.py:26: in <module>\n    class KeyringConfigSettingsSource(EnvSettingsSource):\npydantic_settings/sources/providers/keyring.py:29: in KeyringConfigSettingsSource\n    settings_cls: type[BaseSettings],\n                       ^^^^^^^^^^^^\nE   NameError: name 'BaseSettings' is not defined\n__________________ ERROR collecting tests/test_source_yaml.py __________________\ntests/test_source_yaml.py:10: in <module>\n    from pydantic_settings import (\npydantic_settings/__init__.py:2: in <module>\n    from .main import BaseSettings, CliApp, SettingsConfigDict\npydantic_settings/main.py:20: in <module>\n    from .sources import (\npydantic_settings/sources/__init__.py:30: in <module>\n    from .providers.keyring import KeyringConfigSettingsSource\npydantic_settings/sources/providers/__init__.py:20: in <module>\n    from .keyring import KeyringConfigSettingsSource\npydantic_settings/sources/providers/keyring.py:26: in <module>\n    class KeyringConfigSettingsSource(EnvSettingsSource):\npydantic_settings/sources/providers/keyring.py:29: in KeyringConfigSettingsSource\n    settings_cls: type[BaseSettings],\n                       ^^^^^^^^^^^^\nE   NameError: name 'BaseSettings' is not defined\n- generated xml file: <work>/feasibility/head-20446773970-full.xml -\n!!!!!!!!!!!!!!!!!!! Interrupted: 11 errors during collection !!!!!!!!!!!!!!!!!!!\nResults (1.32s):\n        11 errors\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "767",
+   "run_id": "21476424213",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_source_gcp_secret_manager.py::TestGoogleSecretManagerSettingsSource::test_secret_version_annotation_duplicate_alias_fail"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "807",
+   "run_id": "22765924100",
+   "build": 0,
+   "full_run": {
+    "exit_code": 2,
+    "failed": 0,
+    "output_tail": "occurred:\ntests/test_source_gcp_secret_manager.py:18: in <module>\n    import_gcp_secret_manager()\npydantic_settings/sources/providers/gcp.py:36: in import_gcp_secret_manager\n    from google.cloud.secretmanager import SecretManagerServiceClient\n.venv/lib/python3.12/site-packages/google/cloud/secretmanager/__init__.py:21: in <module>\n    from google.cloud.secretmanager_v1.services.secret_manager_service.async_client import (\n.venv/lib/python3.12/site-packages/google/cloud/secretmanager_v1/__init__.py:31: in <module>\n    from .services.secret_manager_service import (\n.venv/lib/python3.12/site-packages/google/cloud/secretmanager_v1/services/secret_manager_service/__init__.py:16: in <module>\n    from .async_client import SecretManagerServiceAsyncClient\n.venv/lib/python3.12/site-packages/google/cloud/secretmanager_v1/services/secret_manager_service/async_client.py:33: in <module>\n    from google.api_core import gapic_v1\n.venv/lib/python3.12/site-packages/google/api_core/gapic_v1/__init__.py:16: in <module>\n    from google.api_core.gapic_v1 import config\n.venv/lib/python3.12/site-packages/google/api_core/gapic_v1/config.py:26: in <module>\n    from google.api_core import retry\n.venv/lib/python3.12/site-packages/google/api_core/retry/__init__.py:17: in <module>\n    from .retry_base import exponential_sleep_generator\n.venv/lib/python3.12/site-packages/google/api_core/retry/retry_base.py:30: in <module>\n    import requests.exceptions\n.venv/lib/python3.12/site-packages/requests/__init__.py:113: in <module>\n    warnings.warn(\nE   requests.exceptions.RequestsDependencyWarning: urllib3 (2.6.3) or chardet (7.0.1)/charset_normalizer (3.4.4) doesn't match a supported version!\n- generated xml file: <work>/feasibility/head-22765924100-full.xml -\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!\nResults (1.45s):\n         2 errors\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "852",
+   "run_id": "25144072505",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_docs.py::test_docs_examples[docs/index.md:579-622]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "862",
+   "run_id": "25860471651",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_source_gcp_secret_manager.py::TestGoogleSecretManagerSettingsSource::test_secret_manager_mapping_getitem_access_error"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "893",
+   "run_id": "28209471652",
+   "build": 0,
+   "full_run": {
+    "exit_code": 2,
+    "failed": 0,
+    "output_tail": "nv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec\n    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n.venv/lib/python3.12/site-packages/_pytest/python.py:250: in pytest_pycollect_makeitem\n    return list(collector._genfunctions(name, obj))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n.venv/lib/python3.12/site-packages/_pytest/python.py:476: in _genfunctions\n    self.ihook.pytest_generate_tests.call_extra(methods, dict(metafunc=metafunc))\n.venv/lib/python3.12/site-packages/pluggy/_hooks.py:573: in call_extra\n    return self._hookexec(self.name, hookimpls, kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n.venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec\n    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n.venv/lib/python3.12/site-packages/_pytest/python.py:124: in pytest_generate_tests\n    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)\n.venv/lib/python3.12/site-packages/_pytest/python.py:1316: in parametrize\n    argnames, parametersets = ParameterSet._for_parametrize(\n.venv/lib/python3.12/site-packages/_pytest/mark/structures.py:203: in _for_parametrize\n    warnings.warn(\nE   pytest.PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.\nE   Test: tests/test_docs.py::test_docs_examples, argvalues type: generator\nE   Please convert to a list or tuple.\nE   See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators\n- generated xml file: <work>/feasibility/head-28209471652-full.xml -\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\nResults (1.91s):\n         1 error\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "924",
+   "run_id": "30593997084",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 28
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 28
+   },
+   "failed_twice": [
+    "tests/test_docs.py::test_docs_examples[docs/index.md:1277-1310]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:1354-1390]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:23-83]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2417-2458]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2473-2516]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2522-2553]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2563-2596]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2622-2670]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2705-2740]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2767-2797]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2809-2842]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2881-2914]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2945-2971]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:2989-3027]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:3049-3096]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:3165-3188]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:3197-3275]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:3281-3305]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:3311-3343]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:407-440]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:450-491]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:498-514]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:519-540]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:583-605]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:610-635]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:867-899]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:909-930]",
+    "tests/test_docs.py::test_docs_examples[docs/index.md:943-960]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "953",
+   "run_id": "33201227128",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_docs.py::test_docs_examples[docs/index.md:322-363]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "1110",
+   "run_id": "40705410611",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "failed_twice": [
+    "tests/test_settings.py::test_nested_settings_with_discriminator",
+    "tests/test_settings.py::test_nested_settings_with_discriminator_and_alias",
+    "tests/test_settings.py::test_nested_settings_with_discriminator_and_another_attributes"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "1147",
+   "run_id": "43219438127",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_docs.py::test_docs_examples[docs/index.md:3482-3492]"
+   ],
+   "red": true
+  }
+ ],
+ "red_in_sample": 7
+}

@@ -1,0 +1,21 @@
+# EvoScientist/EvoScientist's job "pytest (ubuntu-latest, 3.12)", for D-024's
+# checks of a finalist, not for a replay. The job runs `uv sync --dev --extra
+# all-channels`, here with `--frozen`, then `uv run pytest -v -n 4 --dist
+# worksteal`: pytest-xdist is in the lock of 22 of its 53 red heads, so its
+# options are left out. Its pyproject's timeout of 60 s gives way to the
+# harness's 120; pytest-timeout is in the lock of every red head.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "EvoScientist"
+repository = "EvoScientist/EvoScientist"
+base_branch = "main"
+job = "pytest (ubuntu-latest, 3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--dev", "--extra", "all-channels"],
+]
+pytest = []
+coverage_source = "EvoScientist"
+seconds_per_test = 120
+adds_timeout_plugin = false

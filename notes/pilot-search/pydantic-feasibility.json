@@ -1,0 +1,213 @@
+{
+ "project": "pydantic",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "c67993b9c0ac48f47e138770e736c5f47284114a",
+   "exit_code": 0,
+   "seconds": 31.15046238899231
+  },
+  {
+   "commit": "fe5c2e511f1d04d3f80d93ff428b79d245dc0585",
+   "exit_code": 2,
+   "seconds": 31.00071874598507,
+   "output_tail": "\n + click==8.4.2\n + cloudpickle==3.1.2\n + coverage==7.13.5\n + devtools==0.12.2\n + dirty-equals==0.9.0\n + dnspython==2.9.2\n + email-validator==2.2.0\n + executing==2.2.0\n + faker==35.0.0\n + greenlet==3.5.6\n + hypothesis==6.147.0\n + idna==3.15\n + iniconfig==2.0.0\n + inline-snapshot==0.32.2\n + jinja2==3.1.6\n + jsonschema==4.26.0\n + jsonschema-specifications==2024.10.1\n + linkify-it-py==2.0.3\n + markdown-it-py==3.0.0\n + markupsafe==3.0.3\n + maturin==1.16.0\n + mdit-py-plugins==0.4.2\n + mdurl==0.1.2\n + memray==1.19.3\n + mypy-extensions==1.0.0\n + numpy==2.3.4\n + packaging==26.3\n + pandas==2.3.3\n + pathspec==1.1.1\n + platformdirs==4.13.5\n + pluggy==1.5.0\n + py-cpuinfo==9.0.0\n + pydantic==2.15.0a0+dev (from file://<work>/feasibility/fe5c2e511f1d)\n + pydantic-core==2.50.0 (from file://<work>/feasibility/fe5c2e511f1d/pydantic-core)\n + pygments==2.20.0\n + pytest==9.1.1\n + pytest-benchmark==5.1.0\n + pytest-codspeed==5.0.4\n + pytest-examples==0.0.15\n + pytest-memray==1.7.0\n + pytest-mock==3.14.0\n + pytest-pretty==1.2.0\n + pytest-run-parallel==0.7.1\n + pytest-timeout==2.4.0\n + python-dateutil==2.9.0.post0\n + pytokens==0.4.1\n + pytz==2024.2\n + referencing==0.36.1\n + rich==15.0.0\n + rpds-py==2026.9.1\n + ruff==0.17.3\n + six==1.17.0\n + sortedcontainers==2.4.0\n + sqlalchemy==2.0.37\n + textual==1.0.0\n + time-machine==3.3.0\n + typing-extensions==4.16.0\n + typing-inspection==0.4.5\n + tzdata==2025.1\n + uc-micro-py==1.0.3\n\n$ uv pip install --python <work>/feasibility/fe5c2e511f1d/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.0` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20539496553",
+   "base": "4815eec6dfb9c3f25ab31833b18d66bed2b63e93",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 139,
+     "failed": [],
+     "output_tail": "s.py\", line 675 in bad_recursive\n  ...\n\nExtension modules: black.const, black.mode, black.cache, black._width_table, blib2to3.pgen2.token, blib2to3.pgen2.grammar, blib2to3.pytree, black.strings, blib2to3.pgen2.tokenize, blib2to3.pgen2.parse, blib2to3.pgen2.pgen, blib2to3.pgen2.driver, blib2to3.pygram, black.nodes, black.comments, black.handle_ipynb_magics, black.brackets, black.lines, black.numerics, black.rusty, black.trans, black.linegen, black.parsing, black.ranges, black, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, memray._memray, sqlalchemy.cyextension.collections, sqlalchemy.cyextension.immutabledict, sqlalchemy.cyextension.processors, sqlalchemy.cyextension.resultproxy, sqlalchemy.cyextension.util, greenlet._greenlet, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._mt19937, numpy.random._generator, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.properties, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing (total: 83)\n"
+    },
+    {
+     "exit_code": 139,
+     "failed": [],
+     "output_tail": "s.py\", line 675 in bad_recursive\n  ...\n\nExtension modules: black.const, black.mode, black.cache, black._width_table, blib2to3.pgen2.token, blib2to3.pgen2.grammar, blib2to3.pytree, black.strings, blib2to3.pgen2.tokenize, blib2to3.pgen2.parse, blib2to3.pgen2.pgen, blib2to3.pgen2.driver, blib2to3.pygram, black.nodes, black.comments, black.handle_ipynb_magics, black.brackets, black.lines, black.numerics, black.rusty, black.trans, black.linegen, black.parsing, black.ranges, black, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, memray._memray, sqlalchemy.cyextension.collections, sqlalchemy.cyextension.immutabledict, sqlalchemy.cyextension.processors, sqlalchemy.cyextension.resultproxy, sqlalchemy.cyextension.util, greenlet._greenlet, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._mt19937, numpy.random._generator, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.properties, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing (total: 83)\n"
+    }
+   ]
+  },
+  {
+   "run_id": "28079169635",
+   "base": "5d4a3c8cb356fcdad925b7276b5338c24e6cf653",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_version.py::test_version_info"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_version.py::test_version_info"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "43757410037",
+   "base": "cd1d8be820a8036818d6e82603a3ab07e0f855b5",
+   "build": 2,
+   "runs": [],
+   "output_tail": "2\n + cloudpickle==3.1.2\n + coverage==7.13.5\n + devtools==0.12.2\n + dirty-equals==0.9.0\n + dnspython==2.9.2\n + email-validator==2.2.0\n + executing==2.2.0\n + faker==35.0.0\n + greenlet==3.5.6\n + hypothesis==6.147.0\n + idna==3.15\n + iniconfig==2.0.0\n + inline-snapshot==0.32.2\n + jinja2==3.1.6\n + jsonschema==4.26.0\n + jsonschema-specifications==2024.10.1\n + linkify-it-py==2.0.3\n + markdown-it-py==3.0.0\n + markupsafe==3.0.3\n + maturin==1.16.0\n + mdit-py-plugins==0.4.2\n + mdurl==0.1.2\n + memray==1.19.3\n + mypy-extensions==1.0.0\n + numpy==2.3.4\n + packaging==26.3\n + pandas==2.3.3\n + pathspec==1.1.1\n + platformdirs==4.13.5\n + pluggy==1.5.0\n + py-cpuinfo==9.0.0\n + pydantic==2.15.0a0+dev (from file://<work>/feasibility/base-cd1d8be820a8)\n + pydantic-core==2.50.0 (from file://<work>/feasibility/base-cd1d8be820a8/pydantic-core)\n + pygments==2.20.0\n + pytest==9.1.1\n + pytest-benchmark==5.1.0\n + pytest-codspeed==5.0.4\n + pytest-examples==0.0.15\n + pytest-memray==1.7.0\n + pytest-mock==3.14.0\n + pytest-pretty==1.2.0\n + pytest-run-parallel==0.7.1\n + pytest-timeout==2.4.0\n + python-dateutil==2.9.0.post0\n + pytokens==0.4.1\n + pytz==2024.2\n + referencing==0.36.1\n + rich==15.0.0\n + rpds-py==2026.9.1\n + ruff==0.17.3\n + six==1.17.0\n + sortedcontainers==2.4.0\n + sqlalchemy==2.0.37\n + textual==1.0.0\n + time-machine==3.3.0\n + typing-extensions==4.16.0\n + typing-inspection==0.4.5\n + tzdata==2025.1\n + uc-micro-py==1.0.3\n\n$ uv pip install --python <work>/feasibility/base-cd1d8be820a8/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.0` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "deselected": [
+  "tests/test_version.py::test_version_info"
+ ],
+ "sample": [
+  {
+   "pull_request": "12660",
+   "run_id": "20539496553",
+   "build": 0,
+   "full_run": {
+    "exit_code": 139,
+    "failed": 1,
+    "output_tail": "s.py\", line 675 in bad_recursive\n  ...\n\nExtension modules: black.const, black.mode, black.cache, black._width_table, blib2to3.pgen2.token, blib2to3.pgen2.grammar, blib2to3.pytree, black.strings, blib2to3.pgen2.tokenize, blib2to3.pgen2.parse, blib2to3.pgen2.pgen, blib2to3.pgen2.driver, blib2to3.pygram, black.nodes, black.comments, black.handle_ipynb_magics, black.brackets, black.lines, black.numerics, black.rusty, black.trans, black.linegen, black.parsing, black.ranges, black, numpy._core._multiarray_umath, numpy.linalg._umath_linalg, memray._memray, sqlalchemy.cyextension.collections, sqlalchemy.cyextension.immutabledict, sqlalchemy.cyextension.processors, sqlalchemy.cyextension.resultproxy, sqlalchemy.cyextension.util, greenlet._greenlet, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._pcg64, numpy.random._mt19937, numpy.random._generator, numpy.random._philox, numpy.random._sfc64, numpy.random.mtrand, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.properties, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing (total: 83)\n"
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/benchmarks/test_validators_build.py::test_validators_build"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "12758",
+   "run_id": "21710530072",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/pydantic_core/validators/test_union.py::test_list_smart_union_omit"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "12950",
+   "run_id": "23410293503",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_docs.py::test_docs_examples[docs/concepts/validators.md:561-616]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "13110",
+   "run_id": "25167153486",
+   "build": 0,
+   "full_run": {
+    "exit_code": 2,
+    "failed": 0,
+    "output_tail": "on_sequence\nParameters:     obj\nParameter sets: [1], [1.0], ['1'], [b'1'], [<class 'int'>], [None], [<function test_class_attribute at 0x731ad22fc2c0>], [<built-in function len>], [<code object test_class_attribute at 0x237c6a10, file \"<work>...fd752c605d4c/scratchpad/pilot-search/feasibility/pydantic/feasibility/head-25167153486/tests/test_utils.py\", line 334>], [<function <lambda> at 0x731ad22fc360>], [Ellipsis]\nIDs:            1, 1.0, 1, 1, int, None, test_class_attribute, len, obj8, <lambda>, obj10\nDuplicates:     1\n\nYou can fix this problem using `@pytest.mark.parametrize(..., ids=...)` or `pytest.param(..., id=...)`.\n__________________ ERROR collecting tests/test_validators.py ___________________\nDuplicate parametrization IDs detected, but strict_parametrization_ids is set.\n\nTest name:      tests/test_validators.py::test_int_overflow_validation\nParameters:     value\nParameter sets: [inf], [nan], [inf]\nIDs:            inf, nan, inf\nDuplicates:     inf\n\nYou can fix this problem using `@pytest.mark.parametrize(..., ids=...)` or `pytest.param(..., id=...)`.\n________________ ERROR collecting tests/types/test_dataclass.py ________________\nDuplicate parametrization IDs detected, but strict_parametrization_ids is set.\n\nTest name:      tests/types/test_dataclass.py::test_polymorphic_serialization\nParameters:     dataclass_decorator\nParameter sets: [<function dataclass at 0x731b0ede2ac0>], [<function dataclass at 0x731b08f459e0>]\nIDs:            dataclass, dataclass\nDuplicates:     dataclass\n\nYou can fix this problem using `@pytest.mark.parametrize(..., ids=...)` or `pytest.param(..., id=...)`.\n- generated xml file: <work>/feasibility/head-25167153486-full.xml -\n!!!!!!!!!!!!!!!!!!! Interrupted: 17 errors during collection !!!!!!!!!!!!!!!!!!!\nResults (8.62s):\n         1 deselected\n        17 errors\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "13274",
+   "run_id": "26949983316",
+   "build": 0,
+   "full_run": {
+    "exit_code": 4,
+    "failed": 0,
+    "output_tail": "<work>/feasibility/head-26949983316 --setenv HOME <work>/home --setenv PATH <work>/feasibility/head-26949983316/.venv/bin:/usr/local/bin:/usr/bin:/bin --setenv LANG C.UTF-8 <work>/feasibility/head-26949983316/.venv/bin/python <work>/replay-wrapper.py <work>/head-26949983316-full.xml.failed --durations=10 --deselect tests/test_version.py::test_version_info --timeout=120 --junitxml=<work>/feasibility/head-26949983316-full.xml\nImportError while loading conftest '<work>/feasibility/head-26949983316/tests/conftest.py'.\ntests/conftest.py:21: in <module>\n    from pydantic._internal._generate_schema import GenerateSchema\nE     File \"<work>/feasibility/head-26949983316/pydantic/_internal/_generate_schema.py\", line 1391\nE       def _literal_schema(self, literal_type: Any) -> CoreSchema:\nE                                                                  ^\nE   IndentationError: unindent does not match any outer indentation level\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "13397",
+   "run_id": "28645749458",
+   "build": 0,
+   "full_run": {
+    "exit_code": 4,
+    "failed": 0,
+    "output_tail": "v /dev --proc /proc --clearenv --chdir <work>/feasibility/head-28645749458 --setenv HOME <work>/home --setenv PATH <work>/feasibility/head-28645749458/.venv/bin:/usr/local/bin:/usr/bin:/bin --setenv LANG C.UTF-8 <work>/feasibility/head-28645749458/.venv/bin/python <work>/replay-wrapper.py <work>/head-28645749458-full.xml.failed --durations=10 --deselect tests/test_version.py::test_version_info --timeout=120 --junitxml=<work>/feasibility/head-28645749458-full.xml\nImportError while loading conftest '<work>/feasibility/head-28645749458/tests/conftest.py'.\ntests/conftest.py:22: in <module>\n    from pydantic import BaseModel\npydantic/__init__.py:446: in __getattr__\n    module = import_module(module_name, package=package)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE     File \"<work>/feasibility/head-28645749458/pydantic/main.py\", line 1734\nE       \"\"\"Create Model.\nE       ^^^\nE   SyntaxError: invalid syntax\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "13591",
+   "run_id": "30995648364",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 15
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 15
+   },
+   "failed_twice": [
+    "tests/test_deprecated_fields.py::test_deprecated_fields_model_validator",
+    "tests/test_docs.py::test_docs_examples[docs/examples/custom_validators.md:185-227]",
+    "tests/test_docs.py::test_docstrings_examples[pydantic/functional_validators.py:686-713]",
+    "tests/test_generics.py::test_value_validation",
+    "tests/test_model_validator.py::test_after_validator_wrong_signature",
+    "tests/test_model_validator.py::test_model_validator_after",
+    "tests/test_model_validator.py::test_model_validator_wrap",
+    "tests/test_model_validator.py::test_root_model_validator_execution",
+    "tests/test_root_model.py::test_model_validator_after",
+    "tests/test_validators.py::test_after_and_wrap_combo_called_once",
+    "tests/test_validators.py::test_after_val_called_once",
+    "tests/test_validators.py::test_model_validator_many_values_change",
+    "tests/test_validators.py::test_model_validator_returns_ignore",
+    "tests/test_validators.py::test_nested_model_validator_not_reexecuted",
+    "tests/test_validators.py::test_non_self_return_val_warns"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "13710",
+   "run_id": "32913728600",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_docs.py::test_docs_examples[docs/integrations/logfire.md:95-98]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "13918",
+   "run_id": "36930909008",
+   "build": 1,
+   "output_tail": "ferent versions of crate `num_bigint` in the dependency graph\n            --> ~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-bigint-0.5.1/src/bigint.rs:60:1\n             |\n          60 | pub struct BigInt {\n             | ^^^^^^^^^^^^^^^^^ this is the expected type\n             |\n            ::: ~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-bigint-0.4.8/src/bigint.rs:60:1\n             |\n          60 | pub struct BigInt {\n             | ----------------- this is the found type\n             = help: you can use `cargo tree` to explore your dependency tree\n         note: tuple variant defined here\n            --> src/input/return_enums.rs:563:5\n             |\n         563 |     BigInt(BigInt),\n             |     ^^^^^^\n\n         Some errors have detailed explanations: E0277, E0308, E0599.\n         For more information about an error, try `rustc --explain E0277`.\n         error: could not compile `pydantic-core` (lib) due to 17 previous errors\n         \ud83d\udca5 maturin failed\n           Caused by: Failed to build a native library through cargo\n           Caused by: Cargo build finished with \"exit status: 101\": `env -u CARGO PYO3_BUILD_EXTENSION_MODULE=\"1\" PYO3_ENVIRONMENT_SIGNATURE=\"cpython-3.12-64bit\" PYO3_PYTHON=\"~/.cache/uv/builds-v0/.tmpOdoPTX/bin/python\" PYTHON_SYS_EXECUTABLE=\"~/.cache/uv/builds-v0/.tmpOdoPTX/bin/python\" \"cargo\" \"rustc\" \"--profile\" \"dev\" \"--message-format\" \"json-render-diagnostics\" \"--manifest-path\" \"<work>/feasibility/head-36930909008/pydantic-core/Cargo.toml\" \"--lib\" \"--crate-type\" \"cdylib\"`\n         Error: command ['maturin', 'pep517', 'build-wheel', '-i', '~/.cache/uv/builds-v0/.tmpOdoPTX/bin/python', '--compatibility', 'off', '--editable'] returned non-zero exit status 1\n\nhint: Build failures usually indicate a problem with the package or the build environment\n"
+  },
+  {
+   "pull_request": "14290",
+   "run_id": "43757410037",
+   "build": 2,
+   "output_tail": ".4.2\n + cloudpickle==3.1.2\n + coverage==7.13.5\n + devtools==0.12.2\n + dirty-equals==0.9.0\n + dnspython==2.9.2\n + email-validator==2.2.0\n + executing==2.2.0\n + faker==35.0.0\n + greenlet==3.5.6\n + hypothesis==6.147.0\n + idna==3.15\n + iniconfig==2.0.0\n + inline-snapshot==0.32.2\n + jinja2==3.1.6\n + jsonschema==4.26.0\n + jsonschema-specifications==2024.10.1\n + linkify-it-py==2.0.3\n + markdown-it-py==3.0.0\n + markupsafe==3.0.3\n + maturin==1.16.0\n + mdit-py-plugins==0.4.2\n + mdurl==0.1.2\n + memray==1.19.3\n + mypy-extensions==1.0.0\n + numpy==2.3.4\n + packaging==26.3\n + pandas==2.3.3\n + pathspec==1.1.1\n + platformdirs==4.13.5\n + pluggy==1.5.0\n + py-cpuinfo==9.0.0\n + pydantic==2.15.0a0+dev (from file://<work>/feasibility/head-43757410037)\n + pydantic-core==2.50.0 (from file://<work>/feasibility/head-43757410037/pydantic-core)\n + pygments==2.20.0\n + pytest==9.1.1\n + pytest-benchmark==5.1.0\n + pytest-codspeed==5.0.4\n + pytest-examples==0.0.15\n + pytest-memray==1.7.0\n + pytest-mock==3.14.0\n + pytest-pretty==1.2.0\n + pytest-run-parallel==0.7.1\n + pytest-timeout==2.4.0\n + python-dateutil==2.9.0.post0\n + pytokens==0.4.1\n + pytz==2024.2\n + referencing==0.36.1\n + rich==15.0.0\n + rpds-py==2026.9.1\n + ruff==0.17.3\n + six==1.17.0\n + sortedcontainers==2.4.0\n + sqlalchemy==2.0.37\n + textual==1.0.0\n + time-machine==3.3.0\n + typing-extensions==4.16.0\n + typing-inspection==0.4.5\n + tzdata==2025.1\n + uc-micro-py==1.0.3\n\n$ uv pip install --python <work>/feasibility/head-43757410037/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.0` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "red_in_sample": 5
+}

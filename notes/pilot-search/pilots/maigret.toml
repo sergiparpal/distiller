@@ -1,0 +1,20 @@
+# soxoj/maigret's job "build (3.12)", for D-024's checks of a finalist, not for
+# a replay. The job installs libcairo2-dev, which no package of its lock
+# needs, then `poetry install --with dev`, here with poetry 2.5.1 as the poetry
+# pilot's, and runs `coverage run -m pytest --reruns 3 --reruns-delay 5 tests`;
+# pytest-rerunfailures is in the lock of every red head, and the path is given
+# as testpaths so that a rerun runs only its tests. Its lock holds no
+# pytest-timeout, which the harness adds.
+project = "maigret"
+repository = "soxoj/maigret"
+base_branch = "main"
+job = "build (3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "poetry==2.5.1", "poetry", "env", "use", "/usr/bin/python3.12"],
+    ["uv", "tool", "run", "--from", "poetry==2.5.1", "poetry", "install", "--with", "dev"],
+]
+pytest = ["--reruns", "3", "--reruns-delay", "5", "-o", "testpaths=tests"]
+coverage_source = "maigret"
+seconds_per_test = 120
+adds_timeout_plugin = true

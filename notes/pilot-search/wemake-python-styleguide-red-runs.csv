@@ -1,0 +1,37 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+wemake-python-styleguide,3577,20377128956,2025-12-19T17:12:00Z,6446ad782bac885b17368affb3fd59c4de9afbe9,"failed, steps no longer given",
+wemake-python-styleguide,3578,20438250806,2025-12-22T16:47:21Z,270f8eb0fd91c0c3834b7a9549c84eedfbd76429,"failed, steps no longer given",
+wemake-python-styleguide,3579,20441281199,2025-12-22T19:00:57Z,2ad81f86ff8ed92688eeb8f11ff73d622aed6268,"failed, steps no longer given",
+wemake-python-styleguide,3583,20661010552,2026-01-02T15:30:46Z,05e055a17f7426c96ad0e94562a1ed7cad83d4bd,"failed, steps no longer given",
+wemake-python-styleguide,3587,21145411813,2026-01-19T16:49:50Z,a236ebb3f79855ad0602f5bb25ea5a89e1751936,"failed, steps no longer given",
+wemake-python-styleguide,3602,22080078777,2026-02-16T23:05:17Z,d7180b134f1b29cde9f623e16b77d0ee12073831,"failed, steps no longer given",
+wemake-python-styleguide,3605,22276824906,2026-02-22T12:07:07Z,00ecdb4ecfbe39c35bbc83f0ddf4fa398db25c32,"failed, steps no longer given",
+wemake-python-styleguide,3604,22298406638,2026-02-23T08:42:19Z,7441f22f7b7713b35b14ae90395021b19e778247,"failed, steps no longer given",
+wemake-python-styleguide,3608,22411305143,2026-02-25T18:56:14Z,dd8faf9aafea39c3a6ce0ab68e75c0a49065c806,"failed, steps no longer given",
+wemake-python-styleguide,3609,22432471739,2026-02-26T07:37:08Z,7118d346294a0de76e5bf6e5bd1d8abded1635c5,"failed, steps no longer given",
+wemake-python-styleguide,3620,23219874076,2026-03-18T06:43:22Z,63f84b98ef2e41c29be80d34af5612bc2f12082b,"failed, steps no longer given",
+wemake-python-styleguide,3631,24625766238,2026-04-19T09:29:37Z,82b35a862b4e1dbab6b9bc4e87a63d9beca0143a,"failed, steps no longer given",
+wemake-python-styleguide,3633,24754829153,2026-04-22T01:09:16Z,73d1b296b7057322e161c9476162421f00c41f67,"failed, steps no longer given",
+wemake-python-styleguide,3634,24967753478,2026-04-26T21:41:59Z,844bfa7a12accef80aabe48a61f7e76ce6d2a727,"failed, steps no longer given",
+wemake-python-styleguide,3636,24978587576,2026-04-27T05:43:49Z,ed25b09a599a11f4db15fc0f4faf2fc814c18fc7,"failed, steps no longer given",
+wemake-python-styleguide,3642,26203409518,2026-05-21T06:47:02Z,0239d9be537d3c51d03ce4d3c68f51603f136d52,"failed, steps no longer given",
+wemake-python-styleguide,3657,26641479946,2026-05-29T13:57:07Z,819f4e2317f8d878f0f0c854b9c5f48f88ad5258,failed in a test step,Run tests
+wemake-python-styleguide,3687,28394744189,2026-06-29T18:42:38Z,d912e692bf108d16dce67aa7d9f5e5fcc96806cf,failed in a test step,Run tests
+wemake-python-styleguide,3730,29761360243,2026-07-20T16:51:24Z,894b984e3cece0b8eaec67a09ebab17a705a7c3c,"failed, steps no longer given",
+wemake-python-styleguide,3731,29767029569,2026-07-20T18:46:53Z,52347d045347d96f7935bb4a9df6d90a437f8aaa,"failed, steps no longer given",
+wemake-python-styleguide,3733,29794813789,2026-07-21T02:03:35Z,0aa6764569fe9cadc589970eb607678c35ed2b47,"failed, steps no longer given",
+wemake-python-styleguide,3736,30060627213,2026-07-24T02:03:36Z,c2d6dda6532da7496926a575bd4119c041459516,"failed, steps no longer given",
+wemake-python-styleguide,3737,30082016278,2026-07-24T09:17:23Z,5a87e3ac5e4ec3354f88736deb8ec311722cc777,"failed, steps no longer given",
+wemake-python-styleguide,3739,30165168813,2026-07-25T16:12:45Z,a4653c54fa688c1a1d45400539c0696b2f9ed212,failed in a test step,Run tests
+wemake-python-styleguide,3702,30235072414,2026-07-27T03:38:13Z,8b4b9152eee2c1ac310d87b777d68fd4d292aef9,failed in a test step,Run tests
+wemake-python-styleguide,3758,31692263715,2026-08-13T10:42:09Z,be6261813f6cbaad791bb2f243d96cd15a21a029,failed in a test step,Run tests
+wemake-python-styleguide,3763,31851909296,2026-08-14T23:54:01Z,89900ab3a03b5cb6a57ed28853ce567f7b84b605,failed in a test step,Run tests
+wemake-python-styleguide,3773,32482579207,2026-08-21T12:37:42Z,dd8ce36a2a33637811c2a7b02bb6b179d743abd9,failed in a test step,Run tests
+wemake-python-styleguide,3806,34650409694,2026-09-11T21:39:11Z,a2fa7b9ed639a0d1d0d52257da9d8443dc9206d7,failed in a test step,Run tests
+wemake-python-styleguide,3810,34681999249,2026-09-12T07:56:29Z,debf226e611a07be461dd035c8a7b398c65bc7a6,failed in a test step,Run tests
+wemake-python-styleguide,3818,36031561574,2026-09-24T17:02:49Z,e755a0d0f161ca4dd69d28ff02d54f538f9d3f3e,failed in a test step,Run tests
+wemake-python-styleguide,3822,36188601462,2026-09-25T21:17:56Z,062484e574209dbc99e7719c7e72e82c7e87b78d,failed in a test step,Run tests
+wemake-python-styleguide,3826,36686929749,2026-09-30T08:30:04Z,c52b7beee47905214a91b87c1599c5443d4518c9,failed in a test step,Run tests
+wemake-python-styleguide,3864,39963389204,2026-10-23T13:42:04Z,b81361a633a20680eeb1fda89a7a0cf0ff233223,failed in a test step,Run tests
+wemake-python-styleguide,3867,40082667193,2026-10-24T09:37:08Z,7cb38320400cc49dad2ff42bd7edc0b95bac9e56,failed in a test step,Run tests
+wemake-python-styleguide,3882,43251216665,2026-11-12T16:13:35Z,a2e2e90030f045f6f101f88329e16b56e1c42f0e,failed in a test step,Run tests

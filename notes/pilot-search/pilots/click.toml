@@ -1,0 +1,23 @@
+# pallets/click's job "3.12", for D-024's checks of a finalist, not for a
+# replay. The job runs tox's py3.12, whose runner, tox-uv's
+# uv-venv-lock-runner, syncs the lock file with the dependency group tests and
+# installs click as a wheel, here `uv sync --frozen` with that group, which
+# installs it editable; then `pytest -v --tb=short --basetemp=...`.
+# pytest-randomly is in the lock of 25 of its 36 red heads, where it shuffles
+# the tests as in the CI. Its lock holds no pytest-timeout, which the harness
+# adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "click"
+repository = "pallets/click"
+base_branch = "main"
+job = "3.12"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--no-default-groups", "--group", "tests"],
+]
+pytest = ["--tb=short"]
+coverage_source = "click"
+seconds_per_test = 120
+adds_timeout_plugin = true

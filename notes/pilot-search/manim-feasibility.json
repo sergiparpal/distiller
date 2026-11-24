@@ -1,0 +1,183 @@
+{
+ "project": "manim",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "f04aa570b1267159b14ced8d9a6e9f35d997a18e",
+   "exit_code": 0,
+   "seconds": 22.742442123999353
+  },
+  {
+   "commit": "42aacf1f66062b0ba4153bbad1aa9fede149caef",
+   "exit_code": 0,
+   "seconds": 20.357988201023545
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20911763392",
+   "base": "0d2533231b0f91a189e12b4c4004628b4cd66b90",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 3,
+     "failed": [],
+     "output_tail": "   return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 513, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 139, in _multicall\nINTERNALERROR>     raise exception.with_traceback(exception.__traceback__)\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 103, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+    },
+    {
+     "exit_code": 3,
+     "failed": [],
+     "output_tail": "   return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 513, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 139, in _multicall\nINTERNALERROR>     raise exception.with_traceback(exception.__traceback__)\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 103, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-0d2533231b0f/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+    }
+   ]
+  },
+  {
+   "run_id": "27500677509",
+   "base": "d999d422c9e3e01c2058a722043f0b825d8dd9b8",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 3,
+     "failed": [],
+     "output_tail": " line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+    },
+    {
+     "exit_code": 3,
+     "failed": [],
+     "output_tail": " line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-d999d422c9e3/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+    }
+   ]
+  },
+  {
+   "run_id": "43875139020",
+   "base": "e8afc6398bc7ac4d4beaa2debd79325f9167d374",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 3,
+     "failed": [],
+     "output_tail": " line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+    },
+    {
+     "exit_code": 3,
+     "failed": [],
+     "output_tail": " line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/base-e8afc6398bc7/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+    }
+   ]
+  }
+ ],
+ "deselected": [],
+ "sample": [
+  {
+   "pull_request": "4385",
+   "run_id": "20911763392",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-20911763392/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-20911763392/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-20911763392/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-20911763392/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-20911763392/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4487",
+   "run_id": "22329571362",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-22329571362/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-22329571362/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-22329571362/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-22329571362/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-22329571362/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4682",
+   "run_id": "24277167130",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-24277167130/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-24277167130/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-24277167130/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-24277167130/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-24277167130/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4728",
+   "run_id": "25673502713",
+   "build": 0,
+   "full_run": {
+    "exit_code": 4,
+    "failed": 0,
+    "output_tail": "/mnt --bind <work> <work> --dev /dev --proc /proc --clearenv --chdir <work>/feasibility/head-25673502713 --setenv HOME <work>/home --setenv PATH <work>/feasibility/head-25673502713/.venv/bin:/usr/local/bin:/usr/bin:/bin --setenv LANG C.UTF-8 <work>/feasibility/head-25673502713/.venv/bin/python <work>/replay-wrapper.py <work>/head-25673502713-full.xml.failed --timeout=120 --junitxml=<work>/feasibility/head-25673502713-full.xml\nImportError while loading conftest '<work>/feasibility/head-25673502713/tests/conftest.py'.\ntests/conftest.py:11: in <module>\n    import manim\nmanim/__init__.py:42: in <module>\n    from .animation.updaters.mobject_update_utils import *\nmanim/animation/updaters/mobject_update_utils.py:32: in <module>\n    M = TypeVar(\"M\", bound=mn.Mobject)\n                           ^^\nE   NameError: name 'mn' is not defined\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4169",
+   "run_id": "27238141200",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-27238141200/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-27238141200/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-27238141200/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-27238141200/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-27238141200/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4846",
+   "run_id": "28438761557",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-28438761557/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-28438761557/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-28438761557/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-28438761557/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-28438761557/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4916",
+   "run_id": "31092897086",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-31092897086/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-31092897086/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-31092897086/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-31092897086/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-31092897086/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4994",
+   "run_id": "34766361576",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-34766361576/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-34766361576/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-34766361576/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-34766361576/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-34766361576/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "5075",
+   "run_id": "39448052941",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": ".py\", line 79, in fixed_hook\nINTERNALERROR>     return hook(**kw)\nINTERNALERROR>            ^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-39448052941/.venv/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\nINTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-39448052941/.venv/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\nINTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\nINTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-39448052941/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\nINTERNALERROR>     raise exception\nINTERNALERROR>   File \"<work>/feasibility/head-39448052941/.venv/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\nINTERNALERROR>     res = hook_impl.function(*args)\nINTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-39448052941/tests/conftest.py\", line 20, in pytest_report_header\nINTERNALERROR>     raise Exception(\"Error while creating moderngl context\") from e\nINTERNALERROR> Exception: Error while creating moderngl context\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "5139",
+   "run_id": "43875139020",
+   "build": 0,
+   "full_run": {
+    "exit_code": 3,
+    "failed": 0,
+    "output_tail": " \"<work>/feasibility/head-43875139020/.venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py\", line 185, in exec_module\nINTERNALERROR>     exec(co, module.__dict__)\nINTERNALERROR>   File \"<work>/feasibility/head-43875139020/.venv/lib/python3.12/site-packages/xdist/dsession.py\", line 5, in <module>\nINTERNALERROR>     from xdist.scheduler import (\nINTERNALERROR>   File \"<work>/feasibility/head-43875139020/.venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py\", line 185, in exec_module\nINTERNALERROR>     exec(co, module.__dict__)\nINTERNALERROR>   File \"<work>/feasibility/head-43875139020/.venv/lib/python3.12/site-packages/xdist/scheduler/__init__.py\", line 1, in <module>\nINTERNALERROR>     from xdist.scheduler.each import EachScheduling  # noqa\nINTERNALERROR>     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR>   File \"<work>/feasibility/head-43875139020/.venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py\", line 185, in exec_module\nINTERNALERROR>     exec(co, module.__dict__)\nINTERNALERROR>   File \"<work>/feasibility/head-43875139020/.venv/lib/python3.12/site-packages/xdist/scheduler/each.py\", line 1, in <module>\nINTERNALERROR>     from py.log import Producer\nINTERNALERROR> ModuleNotFoundError: No module named 'py.log'; 'py' is not a package\n"
+   },
+   "red": false
+  }
+ ],
+ "red_in_sample": 0
+}

@@ -1,0 +1,27 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+electricitymaps-contrib,8589,20921938950,2026-01-12T14:08:48Z,d289f1566255a9e7a908e7571c13e18ef57efaf3,"failed, steps no longer given",
+electricitymaps-contrib,8591,20960244662,2026-01-13T14:24:03Z,33d3dd82c4f12341b560f5f7be288b616fe0d00f,"failed, steps no longer given",
+electricitymaps-contrib,8603,21066393358,2026-01-16T12:18:57Z,f97dc2b80b2d0062836bb80cbe32601af0ebf384,"failed, steps no longer given",
+electricitymaps-contrib,8609,21143283594,2026-01-19T15:37:19Z,2f636c02e8b59a918a6430d8b15d90c93d069254,"failed, steps no longer given",
+electricitymaps-contrib,8622,21399164254,2026-01-27T13:32:30Z,11671a04cfb5afd4466717e7e1fe5c7a8f3fb2c8,"failed, steps no longer given",
+electricitymaps-contrib,8638,21637695791,2026-02-03T16:07:32Z,3938540c1b6c76dfd6a6bc390d078357f7a7ed05,"failed, steps no longer given",
+electricitymaps-contrib,8660,22449680129,2026-02-26T15:50:22Z,fc78eb88a69ffc696b17a6ccad34a2914f51dce1,"failed, steps no longer given",
+electricitymaps-contrib,8649,22480166383,2026-02-27T09:15:26Z,1d2ea1ba491613ad7e7f05f6f4df0a968d961e58,"failed, steps no longer given",
+electricitymaps-contrib,8658,23137394103,2026-03-16T09:44:13Z,049416bd9a375f3fcac223cd716ae417a42cf514,"failed, steps no longer given",
+electricitymaps-contrib,8666,23437926661,2026-03-23T12:44:56Z,6064f848b60fd894de8c98362bca7bb033b135a1,"failed, steps no longer given",
+electricitymaps-contrib,8674,23443926431,2026-03-23T14:58:24Z,eeff068ac1c3e2d1d3e29c557e7296542a97fcc9,"failed, steps no longer given",
+electricitymaps-contrib,8695,24557578348,2026-04-17T09:16:31Z,bc3019b3842e4786e0079ff451edf3529c134aa9,"failed, steps no longer given",
+electricitymaps-contrib,8702,24860665950,2026-04-23T21:50:41Z,bc8b15bff47700eec16814bcf6a86b420acde3e0,"failed, steps no longer given",
+electricitymaps-contrib,8704,24903119040,2026-04-24T17:33:47Z,fc2e0d0ce2485eedc252f33e367dff17abdc24d6,"failed, steps no longer given",
+electricitymaps-contrib,8719,25497108743,2026-05-07T12:56:00Z,f5dac0541a2d9aa919b0049bcee305a0e4846027,"failed, steps no longer given",
+electricitymaps-contrib,8726,25796311606,2026-05-13T11:30:06Z,b4ad114064c969fb134859b2155179328a24a52a,"failed, steps no longer given",
+electricitymaps-contrib,8515,27272163882,2026-06-10T11:11:08Z,0cbc973a485434c6b7885b9e34a97c0460cc66e2,failed in a test step,Run tests
+electricitymaps-contrib,8698,27294969108,2026-06-10T17:47:38Z,1d15bccdb40b22e9b373d6b61591b264d6dc4abe,failed in a test step,Run tests
+electricitymaps-contrib,8788,29503394793,2026-07-16T13:43:15Z,3e168426089f24e1e82bf928c4c9e9fa61238468,"failed, steps no longer given",
+electricitymaps-contrib,8799,29945898462,2026-07-22T18:15:40Z,4b34b3475ac2f1c00c0e3701133e213d64cca97b,"failed, steps no longer given",
+electricitymaps-contrib,8806,31625987291,2026-08-12T18:06:30Z,823fa23da401781e8e3e18455d61b4aa4ab0b9df,failed in a test step,Run tests
+electricitymaps-contrib,8820,32227382535,2026-08-19T07:20:37Z,0996f127893f94789dc00227860876568eb80c34,failed in a test step,Run tests
+electricitymaps-contrib,8856,35218637928,2026-09-17T11:59:50Z,c8308ce99547ff03d283c077eccf2bf467d8c7e2,failed in a test step,Run tests
+electricitymaps-contrib,8863,36116956067,2026-09-25T09:10:29Z,b8b4f30b79678156f4e49c866c0e6b2b8dfb0867,failed in a test step,Run tests
+electricitymaps-contrib,8742,36721183622,2026-09-30T13:22:37Z,dc71d21ffaa9c6a154d4524ac22d21596b942ef5,failed in a test step,Run tests
+electricitymaps-contrib,8897,40842769724,2026-10-29T08:31:40Z,2ea0d3b31e00a9ba0b8060e012ccdf799ead9d2f,failed in a test step,Run tests

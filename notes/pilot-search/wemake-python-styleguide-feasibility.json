@@ -1,0 +1,223 @@
+{
+ "project": "wemake-python-styleguide",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "6446ad782bac885b17368affb3fd59c4de9afbe9",
+   "exit_code": 0,
+   "seconds": 6.6372849000035785
+  },
+  {
+   "commit": "a2e2e90030f045f6f101f88329e16b56e1c42f0e",
+   "exit_code": 0,
+   "seconds": 8.132036708993837
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20377128956",
+   "base": "986b73461a952cae981e0433936b0b272a13d187",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "29761360243",
+   "base": "4863352ebf33b609d5b0268c64a4859b18c74dc8",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt[0]}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt()}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value1:{fmt1}} {value2:{fmt2}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value=:{fmt}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value1=:{fmt1}} {value2=:{fmt2}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt}}']"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt()}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value1:{fmt1}} {value2:{fmt2}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt[0]}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value1=:{fmt1}} {value2=:{fmt2}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value=:{fmt}}']",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt}}']"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "43251216665",
+   "base": "8307cd29e7cb35706c2311189ca3d935aa351bad",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt[0]}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value1:{{fmt1}}}} {{value2:{{fmt2}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value1=:{{fmt1}}}} {{value2=:{{fmt2}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value=:{{fmt}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt()}}}}'-f]"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value1:{{fmt1}}}} {{value2:{{fmt2}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value1=:{{fmt1}}}} {{value2=:{{fmt2}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt[0]}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt()}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value=:{{fmt}}}}'-f]",
+      "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt}}}}'-f]"
+     ]
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value1:{fmt1}} {value2:{fmt2}}']",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value1=:{fmt1}} {value2=:{fmt2}}']",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt()}}']",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt[0]}}']",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value:{fmt}}']",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_f_string[f'{value=:{fmt}}']",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value1:{{fmt1}}}} {{value2:{{fmt2}}}}'-f]",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value1=:{{fmt1}}}} {{value2=:{{fmt2}}}}'-f]",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt()}}}}'-f]",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt[0]}}}}'-f]",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value:{{fmt}}}}'-f]",
+  "tests/test_visitors/test_ast/test_builtins/test_strings/test_formatted_string.py::test_simple_formatted_string[{0}'{{value=:{{fmt}}}}'-f]"
+ ],
+ "sample": [
+  {
+   "pull_request": "3577",
+   "run_id": "20377128956",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 0,
+    "output_tail": "........................................ [ 97%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n......\nERROR: Coverage failure: total of 99 is less than fail-under=100\n                                                                         [100%]\n- generated xml file: <work>/feasibility/head-20377128956-full.xml -\n================================ tests coverage ================================\n_______________ coverage: platform linux, python 3.12.3-final-0 ________________\n\nName                                                          Stmts   Miss Branch BrPart  Cover   Missing\n---------------------------------------------------------------------------------------------------------\nwemake_python_styleguide/visitors/ast/complexity/imports.py      60      1     14      1    97%   103\n---------------------------------------------------------------------------------------------------------\nTOTAL                                                         12264      1   1690      1    99%\n\n393 files skipped due to complete coverage.\nCoverage HTML written to dir htmlcov\nCoverage XML written to file coverage.xml\nFAIL Required test coverage of 100% not reached. Total coverage: 99.99%\n================= 27274 passed, 21 skipped in 70.62s (0:01:10) =================\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3587",
+   "run_id": "21145411813",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3608",
+   "run_id": "22411305143",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3633",
+   "run_id": "24754829153",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3657",
+   "run_id": "26641479946",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 0,
+    "output_tail": ".... [ 97%]\n........................................................................ [ 97%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n..................\nERROR: Coverage failure: total of 99 is less than fail-under=100\n                                                                         [100%]\n- generated xml file: <work>/feasibility/head-26641479946-full.xml -\n================================ tests coverage ================================\n_______________ coverage: platform linux, python 3.12.3-final-0 ________________\n\nName                                               Stmts   Miss Branch BrPart  Cover   Missing\n----------------------------------------------------------------------------------------------\nwemake_python_styleguide/visitors/ast/imports.py      96      1     38      1    99%   80\n----------------------------------------------------------------------------------------------\nTOTAL                                              12399      1   1714      1    99%\n\n393 files skipped due to complete coverage.\nCoverage HTML written to dir htmlcov\nCoverage XML written to file coverage.xml\nFAIL Required test coverage of 100% not reached. Total coverage: 99.99%\n================= 27430 passed, 21 skipped in 78.66s (0:01:18) =================\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3731",
+   "run_id": "29767029569",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3739",
+   "run_id": "30165168813",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "failed_twice": [
+    "tests/test_checker/test_presets.py::test_all_visitors_contained_in_checker",
+    "tests/test_cli/test_explain.py::test_command",
+    "tests/test_cli/test_explain.py::test_command_on_not_found[wps explain 10000]",
+    "tests/test_cli/test_explain.py::test_command_on_not_found[wps explain NOT_A_CODE]",
+    "tests/test_cli/test_explain.py::test_command_on_not_found[wps explain WPS10000]",
+    "tests/test_cli/test_explain.py::test_no_command_specified"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3773",
+   "run_id": "32482579207",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3822",
+   "run_id": "36188601462",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 0,
+    "output_tail": "........... [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n........................................................................ [ 98%]\n.....ss.s.......................................................s....... [ 99%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n........................................................................ [ 99%]\n..................\nERROR: Coverage failure: total of 99 is less than fail-under=100\n                                                                         [100%]\n- generated xml file: <work>/feasibility/head-36188601462-full.xml -\n================================ tests coverage ================================\n_______________ coverage: platform linux, python 3.12.3-final-0 ________________\n\nName                                                        Stmts   Miss Branch BrPart  Cover   Missing\n-------------------------------------------------------------------------------------------------------\nwemake_python_styleguide/visitors/ast/complexity/jones.py      65      0     28      1    99%   152->149\n-------------------------------------------------------------------------------------------------------\nTOTAL                                                       12805      0   1772      1    99%\n\n399 files skipped due to complete coverage.\nCoverage HTML written to dir htmlcov\nCoverage XML written to file coverage.xml\nFAIL Required test coverage of 100% not reached. Total coverage: 99.99%\n--------------------------- snapshot report summary ----------------------------\n41 snapshots passed.\n================ 27588 passed, 151 skipped in 70.05s (0:01:10) =================\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3882",
+   "run_id": "43251216665",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  }
+ ],
+ "red_in_sample": 1
+}

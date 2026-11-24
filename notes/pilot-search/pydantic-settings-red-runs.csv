@@ -1,0 +1,21 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+pydantic-settings,729,20446773970,2025-12-22T23:29:14Z,76a5d5f2fd14a854263f21c8c33e0a2a93bfb9f2,"failed, steps no longer given",
+pydantic-settings,749,20696174954,2026-01-04T16:58:19Z,a21c683adfe799c46789de8e92b5a6a9d3929c19,"failed, steps no longer given",
+pydantic-settings,767,21476424213,2026-01-29T11:29:35Z,cc0fac8c3e0a16fee705ad17c2976d3d64b5a66b,"failed, steps no longer given",
+pydantic-settings,793,22249598454,2026-02-21T03:37:30Z,ccdfb82b20c2bf69715821ae1219f8d8397695ad,"failed, steps no longer given",
+pydantic-settings,807,22765924100,2026-03-06T13:40:29Z,a380840b8edbfde36f0a22687557fbcc10dc7361,"failed, steps no longer given",
+pydantic-settings,822,23410293759,2026-03-22T19:05:52Z,25329d4cf513966301e91312823a665e7614ed73,"failed, steps no longer given",
+pydantic-settings,852,25144072505,2026-04-30T02:22:38Z,63d86dfda85a2c9e9d76dbfb13405b8edad6243d,"failed, steps no longer given",
+pydantic-settings,761,25180963362,2026-04-30T17:56:21Z,6aed1be8b31ff4e9dfd266d09782a7a4d60995f6,"failed, steps no longer given",
+pydantic-settings,862,25860471651,2026-05-14T12:39:41Z,9df7f2c42374d6d509607600eab824b42bb4bf23,"failed, steps no longer given",
+pydantic-settings,882,26986688555,2026-06-04T23:54:05Z,06dd02176dd8ceeffcd0e2c541ec8da32843e822,failed in a test step,test
+pydantic-settings,884,27463151512,2026-06-13T09:39:51Z,372f34bc54b71a452a38e3c072612940653cd6f1,failed in a test step,test
+pydantic-settings,893,28209471652,2026-06-26T00:35:29Z,dd8bbea134177beba55209198414c15b30afac6e,failed in a test step,test
+pydantic-settings,906,29319688395,2026-07-14T08:53:50Z,5c8af1a55f81a43fa2eec5fa4add16d0c23f0230,"failed, steps no longer given",
+pydantic-settings,924,30593997084,2026-07-31T00:35:54Z,d1d2522d5dd9af2ab1c8d234d544fc1408849b44,failed in a test step,test
+pydantic-settings,940,32475523833,2026-08-21T11:04:24Z,d11d5d568aa2564ea78036df43b383ceb536b25b,failed in a test step,test
+pydantic-settings,953,33201227128,2026-08-28T18:51:39Z,19d06cae218e3bbbf19f219547ce4848f4e35085,failed in a test step,test
+pydantic-settings,988,36129630621,2026-09-25T11:29:05Z,ad67b22bcc2c896052098ab3b4ec4fbd41daaa70,failed in a test step,test
+pydantic-settings,1110,40705410611,2026-10-28T14:23:15Z,f6f67250d7dd12810bb073ef3b1dc6d9845d31c4,failed in a test step,test
+pydantic-settings,1140,42394838282,2026-11-07T17:08:45Z,c1d50a0eaf9ae4ddcaa9fee9264aecae1ae6a272,failed in a test step,test
+pydantic-settings,1147,43219438127,2026-11-12T12:36:23Z,07c0c3646901fa629196f6cb0a74fcde198c3346,failed in a test step,test

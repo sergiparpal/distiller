@@ -1,0 +1,244 @@
+{
+ "project": "rally",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "505d494f55ffae813fdd9f4fd84e134d754399db",
+   "exit_code": 0,
+   "seconds": 23.32297615299467
+  },
+  {
+   "commit": "b9bcc18c0715962ee1456c55ba154d2b51531128",
+   "exit_code": 1,
+   "seconds": 2.463513268972747,
+   "output_tail": "lity/rally/feasibility/b9bcc18c0715\nDownloading pip (1.7MiB)\nDownloading aiohttp (1.7MiB)\n Downloaded aiohttp\n Downloaded pip\nerror: Failed to build `esrally @ file://<work>/feasibility/b9bcc18c0715`\n  cause: The build backend returned an error\n  cause: Call to `hatchling.build.get_requires_for_build_editable` failed (exit status: 1)\n\n         [stderr]\n         Traceback (most recent call last):\n           File \"<string>\", line 14, in <module>\n           File \"~/.cache/uv/builds-v0/.tmpGsCm8A/lib/python3.12/site-packages/hatchling/build.py\", line 69, in get_requires_for_build_editable\n             return [*builder.config.dependencies, EDITABLES_REQUIREMENT]\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n           File \"/usr/lib/python3.12/functools.py\", line 995, in __get__\n             val = self.func(instance)\n                   ^^^^^^^^^^^^^^^^^^^\n           File \"~/.cache/uv/builds-v0/.tmpGsCm8A/lib/python3.12/site-packages/hatchling/builders/config.py\", line 579, in dependencies\n             for dependency in self.dynamic_dependencies:\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^\n           File \"/usr/lib/python3.12/functools.py\", line 995, in __get__\n             val = self.func(instance)\n                   ^^^^^^^^^^^^^^^^^^^\n           File \"~/.cache/uv/builds-v0/.tmpGsCm8A/lib/python3.12/site-packages/hatchling/builders/config.py\", line 595, in dynamic_dependencies\n             build_hook = build_hook_cls(\n                          ^^^^^^^^^^^^^^^\n           File \"~/.cache/uv/builds-v0/.tmpGsCm8A/lib/python3.12/site-packages/hatchling/builders/hooks/custom.py\", line 33, in __new__\n             raise OSError(message)\n         OSError: Build script does not exist: dependency_constraints_build_hook.py\n\nhint: Build failures usually indicate a problem with the package or the build environment\n"
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20229537004",
+   "base": "1f027e3f01f1d9801afec17a0319b8fdcbb9a0a5",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "23965290269",
+   "base": "c328356acc042a0dcb81321b2c71ff6e02c5d5fd",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "33943980361",
+   "base": "afaa2eed082dfb395bca8f57f6749e52112bb43b",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  }
+ ],
+ "deselected": [],
+ "sample": [
+  {
+   "pull_request": "2016",
+   "run_id": "20229537004",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "failed_twice": [
+    "tests/driver/runner_test.py::TestForceMergeRunner::test_force_merge_with_polling",
+    "tests/driver/runner_test.py::TestForceMergeRunner::test_force_merge_with_polling_and_params",
+    "tests/driver/runner_test.py::TestForceMergeRunner::test_force_merge_with_polling_no_timeout"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "1868",
+   "run_id": "21066656184",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 18
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 18
+   },
+   "failed_twice": [
+    "tests/driver/driver_test.py::TestAsyncExecutor::test_execute_schedule_in_throughput_mode",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_error",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_error_logs_warning_with_detailed_stats_body",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_error_no_shards",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_error_produces_detailed_stats_body_with_limit",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_with_metadata",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_with_refresh_default",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_with_refresh_true",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_with_refresh_wait_for",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_with_timeout",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_without_metadata_and_without_doc_type",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_bulk_index_success_without_metadata_with_doc_type",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_mixed_bulk_with_detailed_stats_body_as_string",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_mixed_bulk_with_simple_stats",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_simple_bulk_with_detailed_stats_body_as_bytes",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_simple_bulk_with_detailed_stats_body_as_list",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_simple_bulk_with_detailed_stats_body_as_unrecognized_type",
+    "tests/driver/runner_test.py::TestBulkIndexRunner::test_simple_bulk_with_timeout_and_headers"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2024",
+   "run_id": "21706593325",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 6
+   },
+   "failed_twice": [
+    "tests/client/asynchronous_test.py::test_perform_request[distribution_8_sets_compat_headers]",
+    "tests/client/asynchronous_test.py::test_perform_request[distribution_9_bulk_sets_ndjson_compat]",
+    "tests/client/asynchronous_test.py::test_perform_request[explicit_compatibility_mode_overrides]",
+    "tests/client/asynchronous_test.py::test_perform_request[no_body_no_default_headers]",
+    "tests/client/asynchronous_test.py::test_perform_request[passthrough_method_path_params]",
+    "tests/client/asynchronous_test.py::test_perform_request[serverless_uses_default_compat_mode]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2056",
+   "run_id": "23183473478",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/track/loader_test.py::TestRenderTrack::test_render_track_to_stdout"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2052",
+   "run_id": "23779654629",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/client/factory_test.py::TestRestLayer::test_connection_protocol_error"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2098",
+   "run_id": "24233116506",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/track/loader_test.py::test_install_dependencies[simple]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2120",
+   "run_id": "26035271579",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "2126",
+   "run_id": "26186892960",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/driver/driver_test.py::TestMetricsAggregation::test_windowed_throughput"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2144",
+   "run_id": "28174695763",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/racecontrol_test.py::test_benchmark_actor_reports_rally_error_from_setup_without_traceback"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "2181",
+   "run_id": "33943980361",
+   "build": 1,
+   "output_tail": "ode-distiller/36c22ee2-48e6-4704-8fa7-fd752c605d4c/scratchpad/pilot-search/feasibility/rally/feasibility/head-33943980361\nerror: Failed to build `esrally @ file://<work>/feasibility/head-33943980361`\n  cause: The build backend returned an error\n  cause: Call to `hatchling.build.get_requires_for_build_editable` failed (exit status: 1)\n\n         [stderr]\n         Traceback (most recent call last):\n           File \"<string>\", line 14, in <module>\n           File \"~/.cache/uv/builds-v0/.tmpanbmAg/lib/python3.12/site-packages/hatchling/build.py\", line 69, in get_requires_for_build_editable\n             return [*builder.config.dependencies, EDITABLES_REQUIREMENT]\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n           File \"/usr/lib/python3.12/functools.py\", line 995, in __get__\n             val = self.func(instance)\n                   ^^^^^^^^^^^^^^^^^^^\n           File \"~/.cache/uv/builds-v0/.tmpanbmAg/lib/python3.12/site-packages/hatchling/builders/config.py\", line 579, in dependencies\n             for dependency in self.dynamic_dependencies:\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^\n           File \"/usr/lib/python3.12/functools.py\", line 995, in __get__\n             val = self.func(instance)\n                   ^^^^^^^^^^^^^^^^^^^\n           File \"~/.cache/uv/builds-v0/.tmpanbmAg/lib/python3.12/site-packages/hatchling/builders/config.py\", line 595, in dynamic_dependencies\n             build_hook = build_hook_cls(\n                          ^^^^^^^^^^^^^^^\n           File \"~/.cache/uv/builds-v0/.tmpanbmAg/lib/python3.12/site-packages/hatchling/builders/hooks/custom.py\", line 33, in __new__\n             raise OSError(message)\n         OSError: Build script does not exist: dependency_constraints_build_hook.py\n\nhint: Build failures usually indicate a problem with the package or the build environment\n"
+  }
+ ],
+ "red_in_sample": 8
+}

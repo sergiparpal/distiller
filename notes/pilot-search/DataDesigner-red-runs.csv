@@ -1,0 +1,43 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+DataDesigner,142,20279304591,2025-12-16T18:56:37Z,601ca0d239e00ce3aa064ad3a40f7ae9b350241b,"failed, steps no longer given",
+DataDesigner,118,20313584127,2025-12-17T18:42:07Z,f6678c5cc9053c734d30be93296356d4f938ba60,"failed, steps no longer given",
+DataDesigner,191,20833154774,2026-01-08T21:58:32Z,71b20303f2a6bc0474a4570d8d31fc8302308f70,"failed, steps no longer given",
+DataDesigner,184,20858529753,2026-01-09T16:31:35Z,906683c49583275805a52adc5bccb902069a5167,"failed, steps no longer given",
+DataDesigner,195,20865480804,2026-01-09T21:03:09Z,1c68fd8ad519ed4620ed7dd5aae90c1181d5b0cc,"failed, steps no longer given",
+DataDesigner,213,21001969088,2026-01-14T16:36:04Z,c60fe5d268945e2b5d19029d60a7affce70b1dbd,"failed, steps no longer given",
+DataDesigner,222,21040633131,2026-01-15T17:39:52Z,f53d3cf644e7b3c88e08a438f1b0343945b5272d,"failed, steps no longer given",
+DataDesigner,226,21078345853,2026-01-16T19:29:59Z,ec2c919caf4f35700a39adb333b02841adc521e2,"failed, steps no longer given",
+DataDesigner,240,21268318431,2026-01-22T23:15:19Z,7b54ba16c767baf435ec816a94460ac3bf44eaa7,"failed, steps no longer given",
+DataDesigner,253,21415977274,2026-01-27T22:03:54Z,d5a982110a2ec7724775837469066ff1241a9ecf,"failed, steps no longer given",
+DataDesigner,259,21455429821,2026-01-28T21:06:26Z,a36457f34e1bbd5eab59dcec4fa12d53f39cc640,"failed, steps no longer given",
+DataDesigner,248,21572872199,2026-02-02T00:08:26Z,cf1ba2e1775378567797eceacc2bde924890dde5,"failed, steps no longer given",
+DataDesigner,277,21607599567,2026-02-02T21:39:29Z,9650828bc2dcf7a46a4e7e2fc4a2a8f6240ef612,"failed, steps no longer given",
+DataDesigner,254,21649635336,2026-02-03T22:05:15Z,7aee1f7c9a97cce9c95705f5827e026368d5c10a,"failed, steps no longer given",
+DataDesigner,293,21650309700,2026-02-03T22:28:27Z,eb46055931882f9cfef8526e953d923893d252ce,"failed, steps no longer given",
+DataDesigner,280,21773343566,2026-02-07T03:22:31Z,8f1652a09d4d81fe1eddf98cb91ec4271d0caf7f,"failed, steps no longer given",
+DataDesigner,308,21832633852,2026-02-09T16:09:27Z,9e0595cfad43259e41bab87c1865032540117c39,"failed, steps no longer given",
+DataDesigner,317,21915527177,2026-02-11T17:24:38Z,1e43394b142b77acfb589f0e0cec0d567587acf9,"failed, steps no longer given",
+DataDesigner,333,22155413596,2026-02-18T19:57:59Z,e392f2e309e6adaf16ab59cdd7feea23ee1e257c,"failed, steps no longer given",
+DataDesigner,330,22157757188,2026-02-18T21:10:55Z,3cb495701c41125dd53bce436e4092c3e5846b5b,"failed, steps no longer given",
+DataDesigner,365,22627913044,2026-03-03T14:38:10Z,bc4e7f7db45e7dd2a64b73e13fcaf4a944b038f8,"failed, steps no longer given",
+DataDesigner,385,22867390300,2026-03-09T17:58:35Z,ea45df53bfbe44af754d9429a3b80a7eadc54bce,"failed, steps no longer given",
+DataDesigner,419,23119167605,2026-03-15T20:57:42Z,9359dce8cc0fce029df4536de2bfa459bf4b70f5,"failed, steps no longer given",
+DataDesigner,429,23328050651,2026-03-20T03:40:17Z,d3c27126ab56b8c9462e7a22b1c638dc82c8d35d,"failed, steps no longer given",
+DataDesigner,502,24095449565,2026-04-07T17:36:08Z,569fb168c92dc75982373a96693bdf64e071e4e0,"failed, steps no longer given",
+DataDesigner,524,24218194717,2026-04-09T23:22:31Z,38d282b65fbb92b5d003eba507da66e9bf2d9297,"failed, steps no longer given",
+DataDesigner,557,24578589201,2026-04-17T17:39:46Z,a630d1bbca0f450f6cb1ed3c7067a2826a7b6e6b,"failed, steps no longer given",
+DataDesigner,540,24928111130,2026-04-27T16:16:41Z,59e6895e155d73d6ef6922f962bb3b04a2e2e0d9,"failed, steps no longer given",
+DataDesigner,592,25323321039,2026-05-04T13:59:35Z,7a0b77d44c354c62ba89b48f718186270233a7eb,"failed, steps no longer given",
+DataDesigner,624,25582868237,2026-05-08T22:35:32Z,15adb275dc3abc58df19dc6fe6214f18cc6ee966,"failed, steps no longer given",
+DataDesigner,618,25763299948,2026-05-12T21:28:53Z,830fc45ccd39ee84fa67490b6c98af5d23e19cd2,"failed, steps no longer given",
+DataDesigner,670,26048559585,2026-05-18T17:11:08Z,a1b8d864520bbe146d79b678cf4eaa01a029ae2c,"failed, steps no longer given",
+DataDesigner,703,26470973384,2026-05-26T19:41:44Z,1a55006725684ca65a7dcfb4a3ce7f9fadec39e6,"failed, steps no longer given",
+DataDesigner,712,26957127351,2026-06-04T14:09:59Z,88f1314cec0e12899a2c52d9ec38d3e8c0f84e75,failed in a test step,Check all tests passed
+DataDesigner,777,28612265592,2026-07-02T18:20:28Z,d23fc95b378c168b884fd1d59a2459a8fbbe895c,failed in a test step,Check all tests passed
+DataDesigner,801,28876550441,2026-07-07T15:04:33Z,d37328b9395ebde52284f3540e99f1a42c5955aa,failed in a test step,Check all tests passed
+DataDesigner,808,29268271277,2026-07-13T16:53:45Z,258f38de4051b18748f28e695d5ed9a5ac1f500a,"failed, steps no longer given",
+DataDesigner,817,29377531259,2026-07-14T23:55:02Z,f30205e9d9ff34c43c88e946b27577e23fe4d524,"failed, steps no longer given",
+DataDesigner,926,34249681201,2026-09-08T16:12:59Z,063f3487173f5e56baf872791a56796c9d531a89,failed in a test step,Check all tests passed
+DataDesigner,954,35744390825,2026-09-22T15:01:15Z,e70a119a29336e4e95cc94c3751fd654dcde7ceb,failed in a test step,Check all tests passed
+DataDesigner,1100,40692335037,2026-10-28T12:58:55Z,90965942da9b286366c345bef06d721b2a871eda,failed in a test step,Check all tests passed
+DataDesigner,1040,40693261958,2026-10-28T13:05:14Z,28442e595891e1563c19764fd76c1620067ce95a,failed in a test step,Check all tests passed

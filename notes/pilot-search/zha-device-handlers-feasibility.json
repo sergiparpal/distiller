@@ -1,0 +1,259 @@
+{
+ "project": "zha-device-handlers",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "781550b63e1cbb963b82629ae4ca25f7b18b5eef",
+   "exit_code": 0,
+   "seconds": 1.3674938370240852
+  },
+  {
+   "commit": "c49fcb22f4925ae0f14b011edd6324a0f31af0a2",
+   "exit_code": 0,
+   "seconds": 1.2936393370036967
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20352938706",
+   "base": "35d1fc161c3f88b23c8efd0702c4f1bef232cbd7",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "26729912095",
+   "base": "386e5ec3563fdbfce2ed370c64a338e9d92d2a4e",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "44691756505",
+   "base": "b07fa76876e081d48744968f9fb806e7f1fee0ee",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  }
+ ],
+ "deselected": [],
+ "sample": [
+  {
+   "pull_request": "4123",
+   "run_id": "20352938706",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 14
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 14
+   },
+   "failed_twice": [
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11f\\n\\xf1\\xffA\\t\\x00\\x05\\x01\\x04\\x15\\x00U\\x01\\x01-2-calls0]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11l\\n\\xf1\\xffA\\x0c\\x00\\x05\\xd0\\x04\\x15\\x02\\xbc\\x040203-3-calls1]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11m\\n\\xf1\\xffA\\n\\x00\\x05\\xd1\\rh\\x00U\\x02\\x00!-2-calls2]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11n\\n\\xf1\\xffA\\x0c\\x00\\x05\\xd2\\ri\\x00U\\x04\\x00\\x00\\x01\\x08-2-calls3]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11o\\n\\xf1\\xffA\\t\\x00\\x05\\xd3\\r\\x0b\\x00U\\x01\\x00-2-calls4]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11p\\n\\xf1\\xffA\\t\\x00\\x05\\x05\\x04\\x16\\x00U\\x01\\x01-2-calls5]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11r\\n\\xf1\\xffA\\t\\x00\\x05\\t\\x04\\x17\\x00U\\x01\\x01-2-calls6]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11s\\n\\xf1\\xffA\\t\\x00\\x05\\x0b\\x04\\x18\\x00U\\x01\\x01-2-calls7]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11u\\n\\xf1\\xffA\\t\\x00\\x05\\x0f\\x0e_\\x00U\\x01\\x06-2-calls8]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11v\\n\\xf1\\xffA\\t\\x00\\x05\\x11\\x0e\\\\x00U\\x01\\x02-2-calls9]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11{\\n\\xf7\\x00A\\x0e\\x05!\\x0e\\x00\\r#!%\\x00\\x00\\t!\\x02\\x03-1-calls10]",
+    "tests/test_xiaomi.py::test_aqara_feeder_attr_reports[\\x1c_\\x11}\\n\\xf1\\xffA(\\x00\\x05\\x15\\x08\\x00\\x08\\xc8 7F09000100,7F0D000100,7F13000100-2-calls11]",
+    "tests/test_xiaomi.py::test_aqara_feeder_feeding_event_generation",
+    "tests/test_xiaomi.py::test_aqara_feeder_write_bad_schedule[[]-]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4671",
+   "run_id": "21152584047",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_quirks_v2.py::test_translation_key_and_fallback_name_match"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4498",
+   "run_id": "22014420766",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_tuya_power.py::test_matseeplus_unsupported_attributes"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4868",
+   "run_id": "23591735613",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_quirks_v2.py::test_manufacturer_model_metadata_unique"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4988",
+   "run_id": "25683539967",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_tuya_garage.py::test_handle_get_data[_TZE200_nklqjk62-\\x01\\x13\\x02\\x00\\xe9\\x05\\x02\\x00\\x04\\x00\\x00\\x00x\\x03c-open_alarm_time-60]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "5085",
+   "run_id": "27375818420",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_quirks_v2.py::test_translation_key_and_fallback_name_match"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "5209",
+   "run_id": "30302078622",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_quirks_v2_builder.py::test_quirks_v2_subscribes_to_multicast_group_on_configure"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "5436",
+   "run_id": "38143850873",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 16
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 16
+   },
+   "failed_twice": [
+    "tests/test_lixee.py::test_zlinky_electrical_reports[active_power-1291-2820-W-power-2360]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[active_power_max-1293-2820-apparent_power_max_phase_1-VA-apparent_power-1482]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[active_power_max_ph_b-2317-2820-apparent_power_max_phase_2-VA-apparent_power-2098]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[active_power_max_ph_c-2573-2820-apparent_power_max_phase_3-VA-apparent_power-2357]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[active_power_ph_b-2315-2820-active_power_ph_b-W-power-2296]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[apparent_power-1295-2820-apparent_power-VA-apparent_power-69]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[apparent_power_ph_b-2319-2820-apparent_power_ph_b-VA-apparent_power-1148]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[apparent_power_ph_c-2575-2820-apparent_power_ph_c-VA-apparent_power-1964]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[rms_current-1288-2820-rms_current-A-current-9]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[rms_current_ph_b-2312-2820-rms_current_ph_b-A-current-2]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[rms_current_ph_c-2568-2820-rms_current_ph_c-A-current-3]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[rms_voltage-1285-2820-rms_voltage-V-voltage-230]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[rms_voltage_ph_b-2309-2820-rms_voltage_ph_b-V-voltage-224]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[rms_voltage_ph_c-2565-2820-rms_voltage_ph_c-V-voltage-231]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[total_active_power-772-2820-apparent_power_max_total-VA-apparent_power-5302]",
+    "tests/test_lixee.py::test_zlinky_electrical_reports[total_apparent_power-774-2820-total_apparent_power-VA-apparent_power-3181]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "5410",
+   "run_id": "40584656990",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 0,
+    "output_tail": "60zbtpf.py - ImportError while importing test module...\nERROR tests/test_thirdreality.py - ImportError while importing test module '/...\nERROR tests/test_tuya.py - ImportError while importing test module '/tmp/clau...\nERROR tests/test_tuya_air.py - ImportError while importing test module '/tmp/...\nERROR tests/test_tuya_builder.py - ImportError while importing test module '/...\nERROR tests/test_tuya_cover.py - ImportError while importing test module '/tm...\nERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/t...\nERROR tests/test_tuya_gas.py - ImportError while importing test module '/tmp/...\nERROR tests/test_tuya_mcu.py - ImportError while importing test module '/tmp/...\nERROR tests/test_tuya_motion.py - ImportError while importing test module '/t...\nERROR tests/test_tuya_power.py - ImportError while importing test module '/tm...\nERROR tests/test_tuya_rain.py - ImportError while importing test module '/tmp...\nERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/tmp...\nERROR tests/test_tuya_sensor.py - ImportError while importing test module '/t...\nERROR tests/test_tuya_siren.py - ImportError while importing test module '/tm...\nERROR tests/test_tuya_smoke.py - ImportError while importing test module '/tm...\nERROR tests/test_tuya_spells.py - ImportError while importing test module '/t...\nERROR tests/test_tuya_thermostat.py - ImportError while importing test module...\nERROR tests/test_tuya_trv.py - ImportError while importing test module '/tmp/...\nERROR tests/test_tuya_valve.py - ImportError while importing test module '/tm...\nERROR tests/test_ubisys.py - ImportError while importing test module '/tmp/cl...\nERROR tests/test_xbee.py - ImportError while importing test module '/tmp/clau...\nERROR tests/test_xiaomi.py - ImportError while importing test module '/tmp/cl...\nERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test ...\n======================== 19 passed, 54 errors in 7.07s =========================\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "5759",
+   "run_id": "44691756505",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_sonoff_mini_zbdim.py::test_sonoff_mini_zbdim_entity_metadata"
+   ],
+   "red": true
+  }
+ ],
+ "red_in_sample": 9
+}

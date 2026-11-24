@@ -1,0 +1,23 @@
+# gdsfactory/gdsfactory's job "test_code (3.12, ubuntu-latest)", for D-024's
+# checks of a finalist, not for a replay. The job runs `make install
+# test-data`, `uv sync --all-extras --no-extra full`, here with `--frozen`, and
+# the commit's own way to get its test data, a clone of gdsfactory-test-data at
+# 22 of its 25 red heads and a submodule at the other three; then `make test`,
+# `uv run pytest -s -n logical`. pytest-xdist is in the lock of every red head,
+# pytest-timeout of 19, and the harness adds it.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "gdsfactory"
+repository = "gdsfactory/gdsfactory"
+base_branch = "main"
+job = "test_code (3.12, ubuntu-latest)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--all-extras", "--no-extra", "full"],
+    ["make", "test-data"],
+]
+pytest = ["-s", "-n", "logical"]
+coverage_source = "gdsfactory"
+seconds_per_test = 120
+adds_timeout_plugin = true

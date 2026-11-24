@@ -1,0 +1,241 @@
+{
+ "project": "gdsfactory",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "8cf535ced59112ab3b43a144840531ab11283659",
+   "exit_code": 0,
+   "seconds": 11.264195449010003
+  },
+  {
+   "commit": "fd2a47960cf0c47c85a3c31f1cb0d37490e41f57",
+   "exit_code": 0,
+   "seconds": 8.014308809011709
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "29744011858",
+   "base": "2938f01d932caea05ce13087717ad75b77ebb87e",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/components/test_components.py::test_gds[greek_cross_with_pads]",
+      "tests/components/test_components.py::test_gds[resonator_lumped]",
+      "tests/components/test_components.py::test_gds[flux_qubit_asymmetric]",
+      "tests/components/test_components.py::test_gds[resonator_cpw]",
+      "tests/components/test_components.py::test_gds[interdigital_capacitor]",
+      "tests/components/test_components.py::test_gds[spiral_inductor]"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/components/test_components.py::test_gds[interdigital_capacitor]",
+      "tests/components/test_components.py::test_gds[greek_cross_with_pads]",
+      "tests/components/test_components.py::test_gds[resonator_lumped]",
+      "tests/components/test_components.py::test_gds[flux_qubit_asymmetric]",
+      "tests/components/test_components.py::test_gds[resonator_cpw]",
+      "tests/components/test_components.py::test_gds[spiral_inductor]"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "32319798471",
+   "base": "bbaa8a2fd39e439035afe674d441429b7656d55b",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/components/test_components.py::test_gds[resonator_lumped]",
+      "tests/components/test_components.py::test_gds[resonator_cpw]",
+      "tests/components/test_components.py::test_gds[flux_qubit_asymmetric]",
+      "tests/components/test_components.py::test_gds[interdigital_capacitor]",
+      "tests/components/test_components.py::test_gds[spiral_inductor]"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "tests/components/test_components.py::test_gds[interdigital_capacitor]",
+      "tests/components/test_components.py::test_gds[flux_qubit_asymmetric]",
+      "tests/components/test_components.py::test_gds[resonator_lumped]",
+      "tests/components/test_components.py::test_gds[resonator_cpw]",
+      "tests/components/test_components.py::test_gds[spiral_inductor]"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "43917676271",
+   "base": "7407836dd5d872c704fc06f38562a2ffc88049dc",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  }
+ ],
+ "deselected": [
+  "tests/components/test_components.py::test_gds[flux_qubit_asymmetric]",
+  "tests/components/test_components.py::test_gds[greek_cross_with_pads]",
+  "tests/components/test_components.py::test_gds[interdigital_capacitor]",
+  "tests/components/test_components.py::test_gds[resonator_cpw]",
+  "tests/components/test_components.py::test_gds[resonator_lumped]",
+  "tests/components/test_components.py::test_gds[spiral_inductor]"
+ ],
+ "sample": [
+  {
+   "pull_request": "4515",
+   "run_id": "29744011858",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4700",
+   "run_id": "29856201022",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 3
+   },
+   "failed_twice": [
+    "tests/components/test_components.py::test_settings[greek_cross_with_pads]",
+    "tests/components/test_netlists.py::test_netlists[greek_cross_with_pads]",
+    "tests/read/test_updk.py::test_updk_generic"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4717",
+   "run_id": "29862230609",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 4
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 4
+   },
+   "failed_twice": [
+    "tests/components/test_components.py::test_gds[die]",
+    "tests/components/test_components.py::test_gds[litho_steps]",
+    "tests/components/test_components.py::test_gds[text]",
+    "tests/components/test_components.py::test_gds[wafer]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4736",
+   "run_id": "30473981079",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/components/test_awg.py::test_awg_constant_length_increment"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4785",
+   "run_id": "31891670276",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 2
+   },
+   "rerun": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "failed_twice": [],
+   "red": false
+  },
+  {
+   "pull_request": "4800",
+   "run_id": "32911190655",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4827",
+   "run_id": "34289262917",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12 --all-extras --no-extra full\nUsing CPython 3.12.3 interpreter at: /usr/bin/python3.12\nCreating virtual environment at: .venv\nerror: Failed to determine installation plan\n  cause: Distribution not found at: file://<work>/feasibility/kfactory\n"
+  },
+  {
+   "pull_request": "4845",
+   "run_id": "34512010638",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "4889",
+   "run_id": "37538241536",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/components/test_components.py::test_gds[coupler_adiabatic]"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "4939",
+   "run_id": "43917676271",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/components/test_components.py::test_gds[taper_adiabatic]"
+   ],
+   "red": true
+  }
+ ],
+ "red_in_sample": 5
+}

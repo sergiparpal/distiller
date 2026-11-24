@@ -1,0 +1,22 @@
+# modelcontextprotocol/python-sdk's job "checks / test (3.12, locked,
+# ubuntu-latest)", for D-024's checks of a finalist
+# (notes/2026-11-21-new-pilot-search.md), not for a replay. The job runs
+# `uv sync --frozen --all-extras --python 3.12`, then `coverage run -m pytest
+# -n auto`; pytest-xdist is in the lock of every red head. Its variables
+# MCP_EXAMPLES_SMOKE and PYTHONWARNDEFAULTENCODING do not reach a suite run
+# (Rule 5). Its lock holds no pytest-timeout, which the harness adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "python-sdk"
+repository = "modelcontextprotocol/python-sdk"
+base_branch = "main"
+job = "checks / test (3.12, locked, ubuntu-latest)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--all-extras"],
+]
+pytest = ["-n", "auto"]
+coverage_source = "mcp"
+seconds_per_test = 120
+adds_timeout_plugin = true

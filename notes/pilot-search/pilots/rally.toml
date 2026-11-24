@@ -1,0 +1,23 @@
+# elastic/rally's job "unit Ubuntu 3.12", for D-024's checks of a finalist,
+# not for a replay. The job runs `make test-3.12`: its Makefile makes the
+# environment with `uv venv --seed` and `uv sync --locked --extra=develop`,
+# here `--frozen`, and runs `uv run -- pytest -s --log-file=... tests/`; the
+# path is given as testpaths, so that a rerun runs only its tests and no
+# collection reaches it/, its integration tests. Its lock holds no
+# pytest-timeout, which the harness adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every
+# uv command here, with the system's Python 3.12: an interpreter that uv
+# installs lives under the home, which the suite's sandbox hides (2026-11-22).
+project = "rally"
+repository = "elastic/rally"
+base_branch = "master"
+job = "unit Ubuntu 3.12"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "venv", "--python", "/usr/bin/python3.12", "--seed", "--allow-existing", ".venv"],
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--extra", "develop"],
+]
+pytest = ["-s", "-o", "testpaths=tests"]
+coverage_source = "esrally"
+seconds_per_test = 120
+adds_timeout_plugin = true

@@ -1,0 +1,205 @@
+{
+ "project": "electricitymaps-contrib",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "d289f1566255a9e7a908e7571c13e18ef57efaf3",
+   "exit_code": 2,
+   "seconds": 0.03853310097474605,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12 --group dev --extra parsers\nerror: Required uv version `>=0.9, <0.10` does not match the running version `0.13.8`\n"
+  },
+  {
+   "commit": "2ea0d3b31e00a9ba0b8060e012ccdf799ead9d2f",
+   "exit_code": 2,
+   "seconds": 4.5508835559594445,
+   "output_tail": "balls==2.6.1\n + aiohttp==3.14.3\n + aiosignal==1.4.0\n + asyncio==4.0.0\n + attrs==25.4.0\n + beautifulsoup4==4.6.3\n + certifi==2026.10.23\n + cffi==2.1.1\n + charset-normalizer==3.4.4\n + click==8.3.1\n + cryptography==50.0.2\n + defusedxml==0.7.1\n + demjson3==3.0.6\n + electricitymap-contrib==2.14.2 (from file://<work>/feasibility/2ea0d3b31e00)\n + electricitymap-contrib-types==1.9.0 (from file://<work>/feasibility/2ea0d3b31e00/libs/types)\n + et-xmlfile==2.0.0\n + freezegun==0.3.15\n + frozenlist==1.8.0\n + idna==3.15\n + iniconfig==2.3.0\n + lxml==6.1.0\n + multidict==6.7.0\n + nest-asyncio==1.6.0\n + numpy==2.4.4\n + odfpy==1.4.1\n + openpyxl==3.1.5\n + packaging==25.0\n + pandas==2.3.3\n + pdfminer-six==20260107\n + pdfplumber==0.11.10\n + pillow==12.3.0\n + pluggy==1.6.0\n + propcache==0.4.1\n + pycountry==22.3.5\n + pycparser==3.11\n + pydantic==1.10.26\n + pydataxm==0.3.16\n + pygments==2.20.0\n + pypdfium2==5.14.0\n + pytesseract==0.2.0\n + pytest==9.0.3\n + python-dateutil==2.9.0.post0\n + pytz==2025.2\n + pyyaml==6.0.3\n + requests==2.33.0\n + requests-mock==1.12.1\n + ruamel-yaml==0.17.40\n + ruamel-yaml-clib==0.2.15\n + ruff==0.16.8\n + setuptools==83.0.0\n + signalr-client-threads==0.0.12\n + six==1.17.0\n + sseclient==0.0.27\n + syrupy==5.1.0\n + testfixtures==7.2.2\n + typing-extensions==4.15.0\n + tzdata==2025.3\n + urllib3==2.7.0\n + websocket-client==1.9.0\n + xlrd==2.0.2\n + yarl==1.22.0\n\n$ uv pip install --python <work>/feasibility/2ea0d3b31e00/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.4` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20921938950",
+   "base": "de820b003015f8094409b92857ddd29949ea252e",
+   "build": 1,
+   "runs": [],
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12 --group dev --extra parsers\nerror: Unable to find lockfile at `uv.lock`, but `--frozen` was provided. To create a lockfile, run `uv lock` or `uv sync` without the flag.\n"
+  },
+  {
+   "run_id": "24903119040",
+   "base": "3c54745a9bad2b34ed9a3ccbf604caecd933e8cb",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 1,
+     "failed": [
+      "electricitymap/contrib/parsers/tests/test_JP_SK.py::test_fetch_nuclear_image",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_nonzero",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_zero",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_ignore_data_older_than_one_hour",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_allow_remote_clock_to_be_slightly_ahead",
+      "electricitymap/contrib/parsers/tests/test_utils.py::test_TOKEN_WIKI_URL",
+      "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response",
+      "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_text",
+      "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_soup"
+     ]
+    },
+    {
+     "exit_code": 1,
+     "failed": [
+      "electricitymap/contrib/parsers/tests/test_JP_SK.py::test_fetch_nuclear_image",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_nonzero",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_zero",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_ignore_data_older_than_one_hour",
+      "electricitymap/contrib/parsers/tests/test_SG.py::test_allow_remote_clock_to_be_slightly_ahead",
+      "electricitymap/contrib/parsers/tests/test_utils.py::test_TOKEN_WIKI_URL",
+      "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response",
+      "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_text",
+      "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_soup"
+     ]
+    }
+   ]
+  },
+  {
+   "run_id": "40842769724",
+   "base": "107adcf509a619ddb80a70d43a9f11272a71004a",
+   "build": 2,
+   "runs": [],
+   "output_tail": " aiohttp==3.14.3\n + aiosignal==1.4.0\n + asyncio==4.0.0\n + attrs==25.4.0\n + beautifulsoup4==4.6.3\n + certifi==2026.10.23\n + cffi==2.1.1\n + charset-normalizer==3.4.4\n + click==8.3.1\n + cryptography==50.0.2\n + defusedxml==0.7.1\n + demjson3==3.0.6\n + electricitymap-contrib==2.14.2 (from file://<work>/feasibility/base-107adcf509a6)\n + electricitymap-contrib-types==1.9.0 (from file://<work>/feasibility/base-107adcf509a6/libs/types)\n + et-xmlfile==2.0.0\n + freezegun==0.3.15\n + frozenlist==1.8.0\n + idna==3.15\n + iniconfig==2.3.0\n + lxml==6.1.0\n + multidict==6.7.0\n + nest-asyncio==1.6.0\n + numpy==2.4.4\n + odfpy==1.4.1\n + openpyxl==3.1.5\n + packaging==25.0\n + pandas==2.3.3\n + pdfminer-six==20260107\n + pdfplumber==0.11.10\n + pillow==12.3.0\n + pluggy==1.6.0\n + propcache==0.4.1\n + pycountry==22.3.5\n + pycparser==3.11\n + pydantic==1.10.26\n + pydataxm==0.3.16\n + pygments==2.20.0\n + pypdfium2==5.14.0\n + pytesseract==0.2.0\n + pytest==9.0.3\n + python-dateutil==2.9.0.post0\n + pytz==2025.2\n + pyyaml==6.0.3\n + requests==2.33.0\n + requests-mock==1.12.1\n + ruamel-yaml==0.17.40\n + ruamel-yaml-clib==0.2.15\n + ruff==0.16.8\n + setuptools==83.0.0\n + signalr-client-threads==0.0.12\n + six==1.17.0\n + sseclient==0.0.27\n + syrupy==5.1.0\n + testfixtures==7.2.2\n + typing-extensions==4.15.0\n + tzdata==2025.3\n + urllib3==2.7.0\n + websocket-client==1.9.0\n + xlrd==2.0.2\n + yarl==1.22.0\n\n$ uv pip install --python <work>/feasibility/base-107adcf509a6/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.4` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "deselected": [
+  "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response",
+  "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_soup",
+  "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_text",
+  "electricitymap/contrib/parsers/tests/test_JP_SK.py::test_fetch_nuclear_image",
+  "electricitymap/contrib/parsers/tests/test_SG.py::test_allow_remote_clock_to_be_slightly_ahead",
+  "electricitymap/contrib/parsers/tests/test_SG.py::test_ignore_data_older_than_one_hour",
+  "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_nonzero",
+  "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_zero",
+  "electricitymap/contrib/parsers/tests/test_utils.py::test_TOKEN_WIKI_URL"
+ ],
+ "sample": [
+  {
+   "pull_request": "8589",
+   "run_id": "20921938950",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12 --group dev --extra parsers\nerror: Required uv version `>=0.9, <0.10` does not match the running version `0.13.8`\n"
+  },
+  {
+   "pull_request": "8609",
+   "run_id": "21143283594",
+   "build": 2,
+   "output_tail": "$ uv tool run --from uv==0.13.8 uv sync --frozen --python /usr/bin/python3.12 --group dev --extra parsers\nerror: Required uv version `>=0.9, <0.10` does not match the running version `0.13.8`\n"
+  },
+  {
+   "pull_request": "8660",
+   "run_id": "22449680129",
+   "build": 0,
+   "full_run": {
+    "exit_code": 2,
+    "failed": 0,
+    "output_tail": "it__.py:10\n  <work>/feasibility/head-22449680129/.venv/lib/python3.12/site-packages/pycountry/__init__.py:10: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n    import pkg_resources\n\n.venv/lib/python3.12/site-packages/pytesseract/pytesseract.py:21\n  <work>/feasibility/head-22449680129/.venv/lib/python3.12/site-packages/pytesseract/pytesseract.py:21: DeprecationWarning: 'pkgutil.find_loader' is deprecated and slated for removal in Python 3.14; use importlib.util.find_spec() instead\n    numpy_installed = True if find_loader('numpy') is not None else False\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: <work>/feasibility/head-22449680129-full.xml -\n\u001b[36m\u001b[1m=========================== short test summary info ============================\u001b[0m\n\u001b[31mERROR\u001b[0m tests/test_parser_interface.py - pydantic.error_wrappers.ValidationError: 378 validation errors for ConfigModel\n\u001b[31mERROR\u001b[0m tests/config/test_config_model.py - pydantic.errors.ConfigError: duplicate validator function \"electricitymap.c...\n\u001b[31mERROR\u001b[0m tests/config/test_emission_factors.py - pydantic.errors.ConfigError: duplicate validator function \"electricitymap.c...\n!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!\n\u001b[31m================= \u001b[33m9 deselected\u001b[0m, \u001b[33m2 warnings\u001b[0m, \u001b[31m\u001b[1m3 errors\u001b[0m\u001b[31m in 6.90s\u001b[0m\u001b[31m ==================\u001b[0m\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "8658",
+   "run_id": "23137394103",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 0,
+    "output_tail": "<work>/feasibility/head-23137394103/electricitymap/contrib/parsers/UY.py:226: FutureWarning: DataFrame.groupby with axis=1 is deprecated. Do `frame.T.groupby(...)` without axis instead.\n    data = data.groupby(data.columns, axis=1).sum(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: <work>/feasibility/head-23137394103-full.xml -\n--------------------------- snapshot report summary ----------------------------\n285 snapshots passed. 8 snapshots unused.\n\nRe-run pytest with --snapshot-update to delete unused snapshots.\n============================= slowest 10 durations =============================\n1.82s call     tests/config/test_emission_factors.py::test_all_emission_factors\n1.58s call     electricitymap/contrib/parsers/tests/test_US_SPP.py::test_fetch_dayahead_locational_marginal_price\n1.26s call     tests/test_parser_interface.py::ParserInterfaceTestcase::test_interface\n1.04s call     electricitymap/contrib/parsers/tests/test_OPENNEM.py::test_production[AU-WA]\n1.01s call     tests/config/test_emission_factors.py::test_all_emission_factor_error\n0.44s call     electricitymap/contrib/parsers/tests/test_ENTSOE.py::test_fetch_exchange_forecast_15_min\n0.43s call     electricitymap/contrib/parsers/tests/test_US_SPP.py::test_fetch_realtime_locational_marginal_price\n0.36s call     electricitymap/contrib/parsers/tests/test_OPENNEM.py::test_production[AU-QLD]\n0.35s call     electricitymap/contrib/parsers/tests/test_UY.py::test_fetch_exchange[BR-S]\n0.33s call     electricitymap/contrib/parsers/tests/test_ENTSOE.py::test_production_with_snapshot[LU]\n\u001b[33m=============== \u001b[32m594 passed\u001b[0m, \u001b[33m\u001b[1m9 deselected\u001b[0m, \u001b[33m\u001b[1m41 warnings\u001b[0m\u001b[33m in 36.11s\u001b[0m\u001b[33m ================\u001b[0m\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "8695",
+   "run_id": "24557578348",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/config/test_config_model.py::ConfigModelTestcase::test_parser_model_contains_all_parser_data_types"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8719",
+   "run_id": "25497108743",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 5
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 5
+   },
+   "failed_twice": [
+    "electricitymap/contrib/parsers/tests/test_ENTSOE.py::test_fetch_scheduled_exchanges_day_ahead",
+    "electricitymap/contrib/parsers/tests/test_ENTSOE.py::test_get_scheduled_exchanges_total",
+    "electricitymap/contrib/parsers/tests/test_JAO.py::test_fetch_core_scheduled_exchanges_day_ahead_de_fr",
+    "electricitymap/contrib/parsers/tests/test_JP_KN.py::test_snapshot_get_image_text_on_real_kepco_gifs",
+    "electricitymap/contrib/parsers/tests/test_JP_KN.py::test_snapshot_reactor_rows_capacity_and_operation_percentage"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8698",
+   "run_id": "27294969108",
+   "build": 0,
+   "full_run": {
+    "exit_code": 0,
+    "failed": 0
+   },
+   "red": false
+  },
+  {
+   "pull_request": "8799",
+   "run_id": "29945898462",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_parser_interface.py::ParserInterfaceTestcase::test_interface"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8856",
+   "run_id": "35218637928",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/config/test_emission_factors.py::test_all_emission_factors"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "8897",
+   "run_id": "40842769724",
+   "build": 2,
+   "output_tail": "\n + aiohttp==3.14.3\n + aiosignal==1.4.0\n + asyncio==4.0.0\n + attrs==25.4.0\n + beautifulsoup4==4.6.3\n + certifi==2026.10.23\n + cffi==2.1.1\n + charset-normalizer==3.4.4\n + click==8.3.1\n + cryptography==50.0.2\n + defusedxml==0.7.1\n + demjson3==3.0.6\n + electricitymap-contrib==2.14.2 (from file://<work>/feasibility/head-40842769724)\n + electricitymap-contrib-types==1.9.0 (from file://<work>/feasibility/head-40842769724/libs/types)\n + et-xmlfile==2.0.0\n + freezegun==0.3.15\n + frozenlist==1.8.0\n + idna==3.15\n + iniconfig==2.3.0\n + lxml==6.1.0\n + multidict==6.7.0\n + nest-asyncio==1.6.0\n + numpy==2.4.4\n + odfpy==1.4.1\n + openpyxl==3.1.5\n + packaging==25.0\n + pandas==2.3.3\n + pdfminer-six==20260107\n + pdfplumber==0.11.10\n + pillow==12.3.0\n + pluggy==1.6.0\n + propcache==0.4.1\n + pycountry==22.3.5\n + pycparser==3.11\n + pydantic==1.10.26\n + pydataxm==0.3.16\n + pygments==2.20.0\n + pypdfium2==5.14.0\n + pytesseract==0.2.0\n + pytest==9.0.3\n + python-dateutil==2.9.0.post0\n + pytz==2025.2\n + pyyaml==6.0.3\n + requests==2.33.0\n + requests-mock==1.12.1\n + ruamel-yaml==0.17.40\n + ruamel-yaml-clib==0.2.15\n + ruff==0.16.8\n + setuptools==83.0.0\n + signalr-client-threads==0.0.12\n + six==1.17.0\n + sseclient==0.0.27\n + syrupy==5.1.0\n + testfixtures==7.2.2\n + typing-extensions==4.15.0\n + tzdata==2025.3\n + urllib3==2.7.0\n + websocket-client==1.9.0\n + xlrd==2.0.2\n + yarl==1.22.0\n\n$ uv pip install --python <work>/feasibility/head-40842769724/.venv/bin/python pytest-timeout==2.4.0\nerror: Required uv version `>=0.13.4` does not match the running version `0.11.23`. Update `uv` by running `uv self update`.\n"
+  }
+ ],
+ "red_in_sample": 4
+}

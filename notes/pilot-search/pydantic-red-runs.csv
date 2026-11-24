@@ -1,0 +1,164 @@
+project,pull_request,run_id,run_started,head,job,failed_steps
+pydantic,12660,20539496553,2025-12-27T13:13:39Z,c67993b9c0ac48f47e138770e736c5f47284114a,"failed, steps no longer given",
+pydantic,12662,20557461614,2025-12-28T17:54:23Z,a47f22fb7a5060d6ecaa0ac48fb9943f696cce13,"failed, steps no longer given",
+pydantic,12593,20577292456,2025-12-29T16:12:19Z,e4f708524caf702b3dd3e8fbb9b75b7e225c2809,"failed, steps no longer given",
+pydantic,12635,20780005185,2026-01-07T11:29:32Z,c73663e42d164a091a6f2aa4deeb4baf18eedd48,"failed, steps no longer given",
+pydantic,12692,20894754585,2026-01-11T11:59:23Z,adcddf9ee80037fa785c50d218906c113ae78422,"failed, steps no longer given",
+pydantic,12693,20897905237,2026-01-11T15:57:58Z,07e9d6a42018b6302777b3ad10e03bb7d6b58330,"failed, steps no longer given",
+pydantic,12679,20900408695,2026-01-11T19:10:00Z,f942b5701aa23ae82b0ae3f61b800f86aa835b6f,"failed, steps no longer given",
+pydantic,12680,20901248919,2026-01-11T20:17:19Z,6d82d41e43f4966e2f3eb2eedceee3621830fe0f,"failed, steps no longer given",
+pydantic,12689,20998366059,2026-01-14T14:49:34Z,0b1ee47051df1be1c2bc8ac04b3b43b730998abe,"failed, steps no longer given",
+pydantic,12711,21063352295,2026-01-16T10:19:59Z,c0811c5ffd1f0e92992923ee6dbf1d06a8294404,"failed, steps no longer given",
+pydantic,12712,21065080451,2026-01-16T11:25:51Z,a102f954a8252aabbd7bf45361ef26febeaa9453,"failed, steps no longer given",
+pydantic,12731,21199162244,2026-01-21T06:05:52Z,e8a47ff1b429d2b6d52ebf6f7fff19043cf4a78c,"failed, steps no longer given",
+pydantic,12738,21295017142,2026-01-23T17:26:00Z,203a2dcad39aae3bfbb96ac34e1954adeaa2d900,"failed, steps no longer given",
+pydantic,12744,21357532634,2026-01-26T12:23:40Z,7e579f17b1a1cd0cbfd9ac09a86f1a7b9549599b,"failed, steps no longer given",
+pydantic,12741,21380596296,2026-01-27T01:13:51Z,a9397d70566f700b7d114697b7c6bd4985fbaec3,"failed, steps no longer given",
+pydantic,12760,21550421423,2026-01-31T20:26:13Z,ce0a52e8b3bd592e4cc7bdfe68e4e57aa3bac6f4,"failed, steps no longer given",
+pydantic,12740,21600335653,2026-02-02T17:25:22Z,76965b2a09c9f28395bb984e845b78e5d765f938,"failed, steps no longer given",
+pydantic,12770,21692687505,2026-02-04T23:39:52Z,93bc865c6395edbb79051aa051654c5da561ebbd,"failed, steps no longer given",
+pydantic,12758,21710530072,2026-02-05T11:56:28Z,93e4050c182b374d6372f11deb3bdbcef828259e,"failed, steps no longer given",
+pydantic,12776,21725565150,2026-02-05T19:32:26Z,7ccbbefaa8eade38abade121b95ec4ae197bde7c,"failed, steps no longer given",
+pydantic,12786,21798721549,2026-02-08T13:11:11Z,e6dc28a5597eecf65a668d137ed064beb3eb01d0,"failed, steps no longer given",
+pydantic,12657,21800863080,2026-02-08T15:45:30Z,a1c3b3ccd290c234f86693149f23b45329cde596,"failed, steps no longer given",
+pydantic,12831,22212866771,2026-02-20T05:41:03Z,339bee3b1fc73d0d777ab316048669c368f0ac8e,"failed, steps no longer given",
+pydantic,12518,22243632994,2026-02-20T22:26:50Z,ca84f7daa4653694022880b212957f0465705c4b,"failed, steps no longer given",
+pydantic,12840,22252756085,2026-02-21T07:25:43Z,89317f810bbb5f5d9f278cc261f95d76d2fd2744,"failed, steps no longer given",
+pydantic,12841,22256437397,2026-02-21T12:01:05Z,d24c8abd429474bc8883c408cfc8628195c90c23,"failed, steps no longer given",
+pydantic,12871,22503488914,2026-02-27T20:56:26Z,230ee1777d89c102008aaf3dd0e0c3b5bb228d9b,"failed, steps no longer given",
+pydantic,12873,22532846438,2026-03-01T01:03:44Z,cc66fd9dde22c9086089ab1c4a155f9ec098b8c3,"failed, steps no longer given",
+pydantic,12883,22553501137,2026-03-01T21:48:43Z,23b108a716dc5c2eec5d00a27506cc89391fc364,"failed, steps no longer given",
+pydantic,12816,22577699855,2026-03-02T13:16:53Z,e15926d81587fe9ab2a0c8060bc122325c0897f1,"failed, steps no longer given",
+pydantic,10834,22627359383,2026-03-03T14:24:44Z,ed662dbc26528f6dea6f69b2c90e7afa1253d410,"failed, steps no longer given",
+pydantic,12891,22657300826,2026-03-04T06:04:04Z,81c930353ba03d13d97befb6400f8b1fec5c65cf,"failed, steps no longer given",
+pydantic,12908,22901022932,2026-03-10T11:48:50Z,94b53e1cbaa1488b3cf0cee83845b5ad8e0746bb,"failed, steps no longer given",
+pydantic,12914,23022122579,2026-03-12T20:21:59Z,3fa538f618beb61ae862a50fd1e27ee4a2c5c5eb,"failed, steps no longer given",
+pydantic,12923,23118215765,2026-03-15T20:04:04Z,7ccc92d7ef90a9cd77c1d2fabb5a0f5a5867c6b2,"failed, steps no longer given",
+pydantic,12949,23410271680,2026-03-22T19:04:46Z,a81bf2d9fe12a19f3fe6fc8cd07fd706ec94da3b,"failed, steps no longer given",
+pydantic,12950,23410293503,2026-03-22T19:05:51Z,c7bd5eb45dee485dfcef62b710fb6b7a8316f77c,"failed, steps no longer given",
+pydantic,12944,23479201192,2026-03-24T08:04:10Z,ae368a88fc2e6a3b1a9fc9e0083d2e7ba6d77254,"failed, steps no longer given",
+pydantic,12977,23635755320,2026-03-27T07:23:32Z,4a079f7b6eeadeb97cf627f6138d7482629f9080,"failed, steps no longer given",
+pydantic,12989,23712127328,2026-03-29T15:14:10Z,e2f60fe90eeb99816a3631a7b63d5de60e540635,"failed, steps no longer given",
+pydantic,13013,23852807009,2026-04-01T14:06:50Z,e7107a892d6c0027c6a3658fb0b78f9fba8edcb5,"failed, steps no longer given",
+pydantic,13020,23880482344,2026-04-02T02:17:40Z,42feb2634abda141f4a23a41018f5905d0d8df7c,"failed, steps no longer given",
+pydantic,13032,23997756447,2026-04-05T08:27:57Z,0ddec1d15eff7310592e3b60831cfabe2406d943,"failed, steps no longer given",
+pydantic,13041,24042372788,2026-04-06T17:26:48Z,9bee0b4feb6b7b45ce3956bd6b3c8cdc568468b1,"failed, steps no longer given",
+pydantic,13043,24052957460,2026-04-06T21:49:35Z,46efac7eccdb67544ec29155b7cdcd894553a26c,"failed, steps no longer given",
+pydantic,13010,24343075011,2026-04-13T12:22:13Z,371b6a06bbc490295ac658dc3d35aed9e5ceb51e,"failed, steps no longer given",
+pydantic,13070,24363438834,2026-04-13T19:47:20Z,960ba6393aa1269bf2f281b4a80d447efc0a3ab4,"failed, steps no longer given",
+pydantic,13079,24455991719,2026-04-15T13:01:58Z,b8b22a2d39919b1e5b85772ea626004ef716c0be,"failed, steps no longer given",
+pydantic,13102,24733192913,2026-04-21T16:10:19Z,e760593c04dc284b035bd172b60239723d17050b,"failed, steps no longer given",
+pydantic,13116,24931270954,2026-04-25T12:48:45Z,f24e076731c417a9b96d89e1d99e0ca8a1d6e4f8,"failed, steps no longer given",
+pydantic,13117,24944260993,2026-04-26T00:29:31Z,f0dbbe608ce8d71fdb0645dd1c97cd8f4f745f07,"failed, steps no longer given",
+pydantic,13122,25012932335,2026-04-27T18:39:17Z,ce839572d45896baa0e1b9938cc19ca9bb89561e,"failed, steps no longer given",
+pydantic,13129,25155199754,2026-04-30T08:22:20Z,d381ecf489b063a401c71cb560b4e3899cd0b63c,"failed, steps no longer given",
+pydantic,13087,25158269392,2026-04-30T09:35:00Z,bf24e45eeaff3aa6a6919cd50dfca7fa6ff9f9f1,"failed, steps no longer given",
+pydantic,13110,25167153486,2026-04-30T13:08:21Z,5078d039036b7332f49f337691751f573a7ca3c5,"failed, steps no longer given",
+pydantic,13145,25240077770,2026-05-02T01:14:40Z,90827120e7eecc4fa6a55e1f24c4d20bf346786d,"failed, steps no longer given",
+pydantic,13153,25365506210,2026-05-05T08:18:53Z,3de45c64561496af25cf68864945309bebce4335,"failed, steps no longer given",
+pydantic,13154,25373586539,2026-05-05T11:26:44Z,3de45c64561496af25cf68864945309bebce4335,"failed, steps no longer given",
+pydantic,12724,25578448494,2026-05-08T20:40:31Z,9cddaee35cb709a7a0665a158449e1c3682d9270,"failed, steps no longer given",
+pydantic,13162,25605508758,2026-05-09T16:05:33Z,06ccfe8d7159fa683fdcc0d0b69b0a429b287948,"failed, steps no longer given",
+pydantic,13190,25934146039,2026-05-15T18:19:43Z,48973d08bb0451b7450d62d296eb49068050616b,"failed, steps no longer given",
+pydantic,13191,25956337038,2026-05-16T07:37:30Z,a4828dbd52463fea25c42916970ee32fa8fbd5a7,"failed, steps no longer given",
+pydantic,13200,25989244374,2026-05-17T11:13:01Z,baab3bcccbbf4e61ec46a8fe525c84870d029c67,"failed, steps no longer given",
+pydantic,13205,26041545085,2026-05-18T14:58:42Z,47ab508cb5a562a1b736663be58c8ac68c3e82df,"failed, steps no longer given",
+pydantic,13213,26128336707,2026-05-19T22:09:34Z,2a99d9e85e5a5cc49b65d7b2363e8cbc987ae35d,"failed, steps no longer given",
+pydantic,13223,26263217945,2026-05-22T01:33:07Z,5307710541bad6a13d19c1ce961266719b9a15a8,"failed, steps no longer given",
+pydantic,13231,26450960134,2026-05-26T13:28:27Z,ddec733f5c9cd9b183516194f0f7fefa6cf004f8,"failed, steps no longer given",
+pydantic,13256,26820572489,2026-06-02T12:45:31Z,7d83a837143ead5f30e102106d0ad6525f88423a,failed in a test step,Run pytest
+pydantic,13258,26859991178,2026-06-03T02:26:59Z,2dd667cbc3a9eebd44a1fd0b0a2cffc47f5fd6c0,failed in a test step,Run pytest
+pydantic,13264,26879538413,2026-06-03T10:41:26Z,1345c0df0e7c836e9227c272fbf2107d7bda593d,failed in another step,Install dependencies
+pydantic,13265,26885100050,2026-06-03T12:35:37Z,1778a11bee06cf15b65e7f3d48bb8fc4af3dbecc,failed in a test step,Run pytest
+pydantic,13268,26925223954,2026-06-04T01:55:46Z,96503e87d7879d46d983a8afb7225941b79ad49e,failed in a test step,Run pytest
+pydantic,13274,26949983316,2026-06-04T11:52:00Z,25aafb913b22ff5f5a1afc8e8495ac1acc6cdc6f,failed in a test step,Run pytest
+pydantic,13282,27012427463,2026-06-05T11:33:23Z,24a05a9a242537334cce15b2635d0aa97ff23758,failed in another step,Install dependencies
+pydantic,13289,27110438063,2026-06-08T01:06:37Z,fd0ae6da37b443ede8e8eaf1a9dc8073be27b8fe,failed in a test step,Run pytest
+pydantic,13290,27121435640,2026-06-08T07:03:58Z,4db8e0a091cdf9afa83217ecc9eb19698836150e,failed in a test step,Run pytest
+pydantic,13298,27314097396,2026-06-10T23:54:32Z,b7c574cdb62b13034cae4b45405f0b66fa5c63a4,failed in a test step,Run pytest
+pydantic,13304,27474098578,2026-06-13T17:37:54Z,9bef14e8fe846e4f9bd30f8ccc4a6929e517ad3d,failed in a test step,Run pytest
+pydantic,13312,27510330270,2026-06-14T19:58:51Z,ad87782ca0bb3230b035feda2de1d525c2dce436,failed in a test step,Run pytest
+pydantic,12294,27846495863,2026-06-19T20:15:18Z,cd4e21cb72cc75619d044db2b841694f54b7146b,failed in a test step,Run pytest
+pydantic,13337,28074851056,2026-06-24T04:18:58Z,569d538e58a9a04d9310a3a5188ec30a6df71d21,failed in a test step,Run pytest
+pydantic,13338,28079169635,2026-06-24T06:14:41Z,cc1cb8e70be6206384462aef044bc4a3dbcd5ac5,failed in a test step,Run pytest
+pydantic,13339,28090653409,2026-06-24T10:00:45Z,ddd5a4acf8ed535d9ed1f0c6e375a82d1e4034d0,failed in a test step,Run pytest
+pydantic,13344,28203356016,2026-06-25T22:03:22Z,7eb2b47bfc900714a75591ab87aaa94d348cd78e,failed in a test step,Run pytest
+pydantic,13345,28205637890,2026-06-25T22:55:10Z,e75500892f78c4c67daff062b5f5697db3729873,failed in a test step,Run pytest
+pydantic,13346,28205802564,2026-06-25T22:59:17Z,e75500892f78c4c67daff062b5f5697db3729873,failed in a test step,Run pytest
+pydantic,13348,28210237153,2026-06-26T00:57:53Z,87f62ed0b0d9e00c0e415ca885dbe2c201af0210,failed in a test step,Run pytest
+pydantic,13372,28433471434,2026-06-30T09:13:18Z,c0461ed040c2ea8545b0d8d07764ea9fe8053d06,failed in another step,Install dependencies
+pydantic,13388,28549881825,2026-07-01T21:46:54Z,5e6a1fe87da261a0afdce5c24330d4528c0f5640,failed in another step,Install dependencies
+pydantic,13389,28561238023,2026-07-02T02:32:02Z,f5a0f46500fd9fe5f3f95e2c2939b76ef72d57a7,failed in a test step,Run pytest
+pydantic,13397,28645749458,2026-07-03T07:34:11Z,c3790f8ea72e046325f6101b5aed003b6f044b79,failed in a test step,Run pytest
+pydantic,13400,28697209639,2026-07-04T06:07:25Z,e1bd7e7f13359a88d4b1242ebd176d8deff27904,failed in a test step,Run pytest
+pydantic,13411,28775706569,2026-07-06T07:40:08Z,d06bc57df1a5639e7fbb8720913965820959aec1,failed in another step,Install dependencies
+pydantic,13436,29236258246,2026-07-13T08:40:25Z,bbd852315a7096e638a646a36bdfe062ed42f7f8,"failed, steps no longer given",
+pydantic,13500,30128076333,2026-07-24T21:32:27Z,824cdc738b20ea9e48663b56013e9e908b6348f3,"failed, steps no longer given",
+pydantic,13502,30155047750,2026-07-25T10:45:53Z,76a864be17c163f1fc4c9c032b081e564936c331,"failed, steps no longer given",
+pydantic,13505,30215077063,2026-07-26T18:36:29Z,7d585e538d4af305f1037207d041b3300cd535dd,failed in a test step,Run pytest
+pydantic,13506,30216803342,2026-07-26T19:25:05Z,08e699549e98e1e0477dace85db555fb8aeb792c,failed in a test step,Run pytest
+pydantic,13513,30238929469,2026-07-27T05:08:48Z,539018a86795794972e12ac9c1a0f3caffb8fd2c,failed in a test step,Run pytest
+pydantic,13518,30256585722,2026-07-27T10:04:31Z,b05256339ef94c024049af4ebf5e6ce30a671d45,failed in a test step,Run pytest
+pydantic,13525,30305308282,2026-07-27T21:04:34Z,948910b6fa6326bcee9ac45624e9657e1851184b,failed in a test step,Run pytest
+pydantic,13526,30305323954,2026-07-27T21:04:48Z,3eafadb202a1f07cb44948946f9a84e3627d51b3,failed in a test step,Run pytest
+pydantic,13527,30305339064,2026-07-27T21:05:00Z,7a9a4cacf7de8931254103db8b7b2ee99e3bc3ea,failed in a test step,Run pytest
+pydantic,13533,30337404122,2026-07-28T07:10:23Z,054172faaa3a9eee57bc6a6d20a2ff2e8510f829,failed in a test step,Run pytest
+pydantic,13571,30719824671,2026-08-01T21:45:53Z,97b1bb220056e783459001b0b3830b795ac3aa78,failed in another step,Install dependencies
+pydantic,13573,30815301454,2026-08-03T12:51:14Z,db6782a6f2363963aa5d9b1a5677b953017bf5a0,failed in a test step,Run pytest
+pydantic,13587,30951047224,2026-08-04T21:08:26Z,c34228613d052c049210a175799c891071d5dcb4,failed in another step,Install dependencies
+pydantic,13590,30994985483,2026-08-05T09:51:12Z,1b826d95ebded6e6a6bf99e12ca77c2a9e328ae1,failed in a test step,Run pytest
+pydantic,13591,30995648364,2026-08-05T10:00:36Z,96d73553d498bd5dc7d8df459470c3c138de562b,failed in a test step,Run pytest
+pydantic,13583,31026453005,2026-08-05T16:41:17Z,fc649e933a99074f6cb35103cf86efc1a4b9269d,failed in a test step,Run pytest
+pydantic,13598,31363587756,2026-08-10T06:51:57Z,ff6647033dd2f2fa036410070f63e881582ee099,failed in a test step,Run pytest
+pydantic,13623,31471631158,2026-08-11T08:04:45Z,7f4fd560f37eb99b845c48e55fff089be5567fd8,failed in a test step,Run pytest
+pydantic,13627,31482234781,2026-08-11T10:26:48Z,7d99abb684447bbd354c7696d74bb6ecaaf7b34d,failed in a test step,Run pytest
+pydantic,13626,31483344354,2026-08-11T10:41:44Z,68d18e95bb50dc292b5a192bfdb715a00cdbe8b0,failed in a test step,Run pytest
+pydantic,13633,31495385176,2026-08-11T13:17:07Z,05f3c32e03e66b8bdaa7e98159727e24bf1f9f36,failed in a test step,Run pytest
+pydantic,13636,31571718396,2026-08-12T06:53:13Z,547a1355369f6b446ff49efc4a47accbad582fb9,failed in a test step,Run pytest
+pydantic,13638,31571933825,2026-08-12T06:56:28Z,547a1355369f6b446ff49efc4a47accbad582fb9,failed in a test step,Run pytest
+pydantic,13662,31861024661,2026-08-15T03:08:15Z,cf620da1d7e69b197e4213fdb8f91c2549da361a,failed in a test step,Run pytest
+pydantic,13663,31861119220,2026-08-15T03:10:26Z,a0c7cccb416385d33595cd76dce18056796f1b2f,failed in a test step,Run pytest
+pydantic,13668,31971326489,2026-08-16T20:42:22Z,bd52078116da2b2f0a2b7a8a395408134775775d,failed in a test step,Run pytest
+pydantic,13670,31982033878,2026-08-17T00:26:27Z,21d00d6bc61aeee61171994ecc266b3253ee9a70,failed in a test step,Run pytest
+pydantic,13680,32126854624,2026-08-18T10:27:35Z,a4ed554e9c8b3fb16fcb224011ded9fa91a584d3,failed in a test step,Run pytest
+pydantic,13682,32177198176,2026-08-18T19:32:43Z,5b7be048f9ba65883cac3c2d3c71b116f4122a03,failed in a test step,Run pytest
+pydantic,13697,32695937088,2026-08-24T06:06:15Z,02b6105115392f1c7f818a725518acdc29ec9ae8,failed in a test step,Run pytest
+pydantic,13699,32714586546,2026-08-24T10:01:01Z,c1a259263c26973c0e0679b1bbf0767b89215666,failed in a test step,Run pytest
+pydantic,12798,32874606196,2026-08-25T16:53:06Z,ec16b3cd7b366f0fec12903b5d85b50ce40b0930,failed in a test step,Run pytest
+pydantic,13710,32913728600,2026-08-26T00:07:01Z,e2fe987168566e16bd91cb13cca6c43cd06f15f7,failed in a test step,Run pytest
+pydantic,13711,32959966756,2026-08-26T10:46:48Z,6a3840f379d7bd7d420bb6e209a565194c2d4b94,failed in another step,Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+pydantic,13723,33058898812,2026-08-27T09:30:43Z,0657412e5a3a68c68feea7ac1585c76538e49762,failed in a test step,Run pytest
+pydantic,13744,33550838538,2026-09-01T19:40:05Z,1879f5b4157d0867ca9c295e449d29d2b3329159,failed in a test step,Run pytest
+pydantic,13750,33563022109,2026-09-01T21:48:13Z,5c2879ceed922a45a89da2e1b8737b82e7eebfc5,failed in another step,Install dependencies
+pydantic,13751,33598135371,2026-09-02T06:16:35Z,14d4500beba093ce73d521afafac72aef029d5b6,failed in a test step,Run pytest
+pydantic,13757,33743521849,2026-09-03T10:17:43Z,012012131a6aec4eb1e331947809b818154b0827,failed in a test step,Run pytest
+pydantic,13794,34503495031,2026-09-10T16:40:10Z,bce129803fef1ee84a8ee1e69ba359f508edfdc0,failed in a test step,Run pytest
+pydantic,13797,34585893774,2026-09-11T09:46:23Z,c0f9a6561834357bd1ef53bbb3c9e45092876e93,failed in a test step,Run pytest
+pydantic,13801,34761420348,2026-09-13T14:00:41Z,77fa130c05996f4383820ad7856959cd3c592975,failed in a test step,Run pytest
+pydantic,13807,34886244565,2026-09-14T19:20:02Z,1892b0dc88a298b9d39a095241f81c9c17df2a99,failed in a test step,Run pytest
+pydantic,13836,35411255497,2026-09-19T01:00:32Z,e78b82f0dd20622a18a9fa439b5ca3ca5514d87d,failed in a test step,Run pytest
+pydantic,13844,35711246512,2026-09-22T09:35:27Z,47384a04cc893a567b8348bcca0cb7120f90d0cd,failed in a test step,Run pytest
+pydantic,13852,35821980644,2026-09-23T05:20:10Z,9df457dcc0a0618749271ea331da0cac0bb4a397,failed in a test step,Run pytest
+pydantic,13861,36042778136,2026-09-24T18:39:41Z,8d77234520df0cc3ada0c4ea8fdc673d4b3bef3d,failed in a test step,Run pytest
+pydantic,13877,36231249004,2026-09-26T08:55:51Z,62a2430a836a8854c150fada5db85d0691b9cca7,failed in a test step,Run pytest
+pydantic,13885,36388836197,2026-09-28T06:54:49Z,325c33ed09e6899f88bfe17d73f6335ab751b54b,failed in a test step,Run pytest
+pydantic,13895,36623931143,2026-09-29T20:06:03Z,5060f3f1e35cf2e068e025aca30cdd70c8ff5df3,failed in a test step,Run pytest
+pydantic,13918,36930909008,2026-10-01T21:46:46Z,e5b9427b5a1c97e20d80de49e950c7df5dc47a75,failed in another step,Install dependencies
+pydantic,14002,38700111460,2026-10-15T07:38:29Z,ef2fd7a2b5af828cfba2bd3895cc909b6c75c895,failed in a test step,Run pytest
+pydantic,14003,38710278464,2026-10-15T09:04:43Z,28d32fa9fe9ac0c3a2ea5ab3bb1657be6cae37b8,failed in another step,Install dependencies
+pydantic,14009,38877423989,2026-10-16T08:59:56Z,4ffb4ae6e168e77e5064247a9bb05b358139af91,failed in a test step,Run pytest
+pydantic,14011,38976499239,2026-10-16T22:33:51Z,f43fbc3ddca2efbef3c262c4678b86c423d04670,failed in a test step,Run pytest
+pydantic,14015,39142652182,2026-10-18T15:55:20Z,be2993138f03c107c299a1b697005fb0f48655cb,failed in a test step,Run pytest
+pydantic,14016,39148761520,2026-10-18T17:15:49Z,be2993138f03c107c299a1b697005fb0f48655cb,failed in a test step,Run pytest
+pydantic,14080,40300501934,2026-10-26T09:33:39Z,2c6853ac1d8356c2d109f1e1aeeca609c6c21db5,failed in a test step,Run pytest
+pydantic,13275,40492970912,2026-10-27T11:01:16Z,ac9417bbda3762afe2341aa918e74f7d30ced257,failed in a test step,Run pytest
+pydantic,12924,40948312121,2026-10-29T20:21:36Z,8ad8a9663e1055fc0c537843bce80153293e6484,failed in a test step,Run pytest
+pydantic,14153,41176549178,2026-10-31T06:25:34Z,c3ee826ff2656deed238d10385e7eac6d4f2a42f,failed in a test step,Run pytest
+pydantic,14164,41241288657,2026-10-31T20:57:18Z,9efbb11402cc961b57ba2851e52dbd1992e55619,failed in a test step,Run pytest
+pydantic,14182,41353649962,2026-11-01T21:45:40Z,91e65450bd602da26e1885ab4267d4a66919b90f,failed in another step,Install dependencies
+pydantic,14189,41432004177,2026-11-02T10:50:31Z,70678b276d90da3d28d335d4d8faf33b19f08239,failed in a test step,Run pytest
+pydantic,14185,41747152141,2026-11-04T00:29:05Z,2d69367564056feb7ec44fa8effa40cf74f94857,failed in a test step,Run pytest
+pydantic,14222,41930786166,2026-11-04T23:04:57Z,04a9d44555621bce5bc51eb032db817c5c24a2e1,failed in a test step,Run pytest
+pydantic,14246,42290683973,2026-11-06T20:43:00Z,e862eada6980bd4f385979aa0000228dd0e00b70,failed in a test step,Run pytest
+pydantic,14253,42375781272,2026-11-07T13:10:59Z,d74d2912450e5d98ed9bd8e78fa0fd269eebff83,failed in a test step,Run pytest
+pydantic,14290,43757410037,2026-11-15T20:19:23Z,fe5c2e511f1d04d3f80d93ff428b79d245dc0585,failed in a test step,Run pytest

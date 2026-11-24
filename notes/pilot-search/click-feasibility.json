@@ -1,0 +1,427 @@
+{
+ "project": "click",
+ "heads_not_in_clone": [],
+ "environments": [
+  {
+   "commit": "2497ddec81ed49b11c235dc46fefd45fe7cf7d33",
+   "exit_code": 0,
+   "seconds": 0.44991861598100513
+  },
+  {
+   "commit": "86851b5691d3c14f7db41f259496808483632236",
+   "exit_code": 0,
+   "seconds": 0.3661347319721244
+  }
+ ],
+ "bases": [
+  {
+   "run_id": "20639714913",
+   "base": "1f0e6a2ecd3dd95c22290836981a38922c192596",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "26061411203",
+   "base": "4e869f3a172a58df077932dc80b130cdf4ba9774",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  },
+  {
+   "run_id": "35101002079",
+   "base": "6aabf099bfdd4c1e75fe8d0e0d4241372b988ab1",
+   "build": 0,
+   "runs": [
+    {
+     "exit_code": 0,
+     "failed": []
+    },
+    {
+     "exit_code": 0,
+     "failed": []
+    }
+   ]
+  }
+ ],
+ "deselected": [],
+ "sample": [
+  {
+   "pull_request": "3180",
+   "run_id": "20639714913",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 4
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 4
+   },
+   "failed_twice": [
+    "tests/test_info_dict.py::test_command[Command]",
+    "tests/test_info_dict.py::test_command[Group]",
+    "tests/test_info_dict.py::test_command[Nested Group]",
+    "tests/test_info_dict.py::test_context"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3240",
+   "run_id": "22576027023",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_defaults.py::test_unset_in_default_map"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3324",
+   "run_id": "24089000659",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_types.py::test_file_error_surrogates"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3381",
+   "run_id": "24974880795",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_imports.py::test_light_imports"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3412",
+   "run_id": "25609563743",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_arguments.py::test_file_atomics"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3520",
+   "run_id": "26545698232",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 14
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 14
+   },
+   "failed_twice": [
+    "tests/test_arguments.py::test_file_args",
+    "tests/test_arguments.py::test_file_atomics",
+    "tests/test_basic.py::test_file_lazy_mode",
+    "tests/test_basic.py::test_file_option",
+    "tests/test_basic.py::test_path_option",
+    "tests/test_utils.py::test_open_file",
+    "tests/test_utils.py::test_open_file_atomic_permissions_existing_file[256]",
+    "tests/test_utils.py::test_open_file_atomic_permissions_existing_file[292]",
+    "tests/test_utils.py::test_open_file_atomic_permissions_existing_file[384]",
+    "tests/test_utils.py::test_open_file_atomic_permissions_existing_file[420]",
+    "tests/test_utils.py::test_open_file_atomic_permissions_new_file",
+    "tests/test_utils.py::test_open_file_ignore_invalid_utf8",
+    "tests/test_utils.py::test_open_file_ignore_no_encoding",
+    "tests/test_utils.py::test_open_file_respects_ignore"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3661",
+   "run_id": "28606852783",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 98
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 98
+   },
+   "failed_twice": [
+    "tests/test_options.py::test_callback_validates_prompt",
+    "tests/test_options.py::test_string_show_default_shows_custom_string_in_prompt",
+    "tests/test_stream_lifecycle.py::test_invoke_with_logger_and_prompt",
+    "tests/test_termui.py::test_choices_list_in_prompt",
+    "tests/test_termui.py::test_confirmation_prompt[Confirm Password-password\\npassword\\n-None-password]",
+    "tests/test_termui.py::test_confirmation_prompt[True-\\n\\n--]",
+    "tests/test_termui.py::test_confirmation_prompt[True-password\\npassword-None-password]",
+    "tests/test_termui.py::test_file_prompt_default_format[file_kwargs0]",
+    "tests/test_termui.py::test_file_prompt_default_format[file_kwargs1]",
+    "tests/test_termui.py::test_file_prompt_default_format[file_kwargs2]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params41-args41---expected41]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params42-args42--y-y]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params43-args43--n-n]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params44-args44--foo-foo]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params45-args45-[y/N]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params46-args46-[y/N]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params47-args47-[y/N]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params48-args48-[y/N]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params49-args49-[y/N]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params50-args50-[y/N]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params51-args51---expected51]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params52-args52--y-y]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params53-args53--n-n]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params54-args54---expected54]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params55-args55--y-y]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params56-args56--n-n]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params57-args57-[Y/n]--True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params58-args58-[Y/n]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params59-args59-[Y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params60-args60-[Y/n]--True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params61-args61-[Y/n]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params62-args62-[Y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params63-args63-[y/N]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params64-args64-[y/N]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params65-args65-[y/N]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params66-args66-[y/N]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params67-args67-[y/N]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params68-args68-[y/N]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params69-args69-[y/n]--expected69]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params70-args70-[y/n]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params71-args71-[y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params72-args72-[y/n]--expected72]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params73-args73-[y/n]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params74-args74-[y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params75-args75---expected75]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params76-args76--y-y]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params77-args77--n-n]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params78-args78-[False]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params79-args79-[False]-y-y]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params80-args80-[False]-n-n]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params81-args81---expected81]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params82-args82--y-y]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag-opt_params83-args83--n-n]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params0-args0-[y/N]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params1-args1-[y/N]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params10-args10-[y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params11-args11-[Y/n]--True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params12-args12-[Y/n]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params13-args13-[Y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params2-args2-[y/N]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params3-args3-[Y/n]--True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params4-args4-[Y/n]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params5-args5-[Y/n]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params6-args6-[y/N]--False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params7-args7-[y/N]-y-True]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params8-args8-[y/N]-n-False]",
+    "tests/test_termui.py::test_flag_value_prompt[--flag/--no-flag-opt_params9-args9-[y/n]-y-True]",
+    "tests/test_termui.py::test_hide_input_confirmation_prompt_mismatch_unaffected",
+    "tests/test_termui.py::test_hide_input_error_message[apostrophe-in-value-uses-double-quote-repr]",
+    "tests/test_termui.py::test_hide_input_error_message[builtin-int-masks-repr-value]",
+    "tests/test_termui.py::test_hide_input_error_message[custom-no-value-shows-message]",
+    "tests/test_termui.py::test_hide_input_error_message[custom-raw-value-masked]",
+    "tests/test_termui.py::test_hide_input_error_message[intrange-numeric-substring-falls-back-to-generic]",
+    "tests/test_termui.py::test_hide_input_error_message[mixed-quoted-and-raw-both-masked-at-source]",
+    "tests/test_termui.py::test_hide_input_error_message[mixed-quoted-and-raw-mask-both]",
+    "tests/test_termui.py::test_hide_input_error_message[multi-occurrence-raw-mask-all]",
+    "tests/test_termui.py::test_hide_input_error_message[multi-occurrence-repr-mask-all]",
+    "tests/test_termui.py::test_hide_input_error_message[partial-word-match-falls-back-to-generic]",
+    "tests/test_termui.py::test_hide_input_error_message[raw-value-should-be-masked-not-fallback]",
+    "tests/test_termui.py::test_hide_input_error_message[regex-special-chars-must-be-escaped]",
+    "tests/test_termui.py::test_hide_input_error_message[unicode-value-masked]",
+    "tests/test_termui.py::test_hide_input_error_message[unquoted-custom-message-should-mask-not-fallback]",
+    "tests/test_termui.py::test_prompt_required_false[long no value]",
+    "tests/test_termui.py::test_prompt_required_false[no value opt]",
+    "tests/test_termui.py::test_prompt_required_false[short no value]",
+    "tests/test_termui.py::test_prompt_required_with_required[False-True-None-prompt]",
+    "tests/test_termui.py::test_prompt_required_with_required[False-True-args3-prompt]",
+    "tests/test_termui.py::test_prompt_required_with_required[True-False-None-prompt]",
+    "tests/test_termui.py::test_string_show_default_in_prompt[default-is-none]",
+    "tests/test_termui.py::test_string_show_default_in_prompt[default-is-unset]",
+    "tests/test_termui.py::test_string_show_default_in_prompt[numeric-default]",
+    "tests/test_termui.py::test_string_show_default_in_prompt[simple-string]",
+    "tests/test_termui.py::test_string_show_default_in_prompt[string-with-spaces]",
+    "tests/test_termui.py::test_string_show_default_in_prompt[unicode]",
+    "tests/test_testing.py::test_echo_stdin_prompts",
+    "tests/test_testing.py::test_prompts",
+    "tests/test_utils.py::test_confirm_repeat",
+    "tests/test_utils.py::test_prompts"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3717",
+   "run_id": "29983263065",
+   "build": 0,
+   "full_run": {
+    "exit_code": 2,
+    "failed": 0,
+    "output_tail": "2ee2-48e6-4704-8fa7-fd752c605d4c/scratchpad/pilot-search/feasibility/click/head-29983263065-full.xml.failed --tb=short --timeout=120 --junitxml=<work>/feasibility/head-29983263065-full.xml\n============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0\nrootdir: <work>/feasibility/head-29983263065\nconfigfile: pyproject.toml\ntestpaths: tests\nplugins: timeout-2.4.0\ntimeout: 120.0s\ntimeout method: signal\ntimeout func_only: False\ncollected 32965 items / 1 error / 31000 deselected / 1965 selected\n\n==================================== ERRORS ====================================\n_____________________ ERROR collecting tests/test_utils.py _____________________\nimport file mismatch:\nimported module 'test_utils' has this __file__ attribute:\n  <work>/feasibility/head-29983263065/tests/test_utils\nwhich is not the same as the test file we want to collect:\n  <work>/feasibility/head-29983263065/tests/test_utils.py\nHINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules\n- generated xml file: <work>/feasibility/head-29983263065-full.xml -\n=========================== short test summary info ============================\nERROR tests/test_utils.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n====================== 31000 deselected, 1 error in 1.54s ======================\n"
+   },
+   "red": false
+  },
+  {
+   "pull_request": "3834",
+   "run_id": "33760631267",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 1
+   },
+   "failed_twice": [
+    "tests/test_imports.py::test_light_imports"
+   ],
+   "red": true
+  },
+  {
+   "pull_request": "3873",
+   "run_id": "35101002079",
+   "build": 0,
+   "full_run": {
+    "exit_code": 1,
+    "failed": 84
+   },
+   "rerun": {
+    "exit_code": 1,
+    "failed": 84
+   },
+   "failed_twice": [
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params0-args0-expected0]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params1-args1-expected1]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params10-args10-expected10]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params12-args12-expected12]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params2-args2-expected2]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params4-args4-expected4]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params5-args5-expected5]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params6-args6-expected6]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params7-args7-expected7]",
+    "tests/test_arguments.py::test_good_defaults_for_nargs[argument_params9-args9-expected9]",
+    "tests/test_arguments.py::test_nargs_tup",
+    "tests/test_arguments.py::test_nargs_tup_composite[opts0]",
+    "tests/test_arguments.py::test_nargs_tup_composite[opts1]",
+    "tests/test_arguments.py::test_nargs_tup_composite[opts2]",
+    "tests/test_arguments.py::test_nargs_tup_composite[opts3]",
+    "tests/test_basic.py::test_int_option[args0-I:[84]]",
+    "tests/test_basic.py::test_int_option[args1-I:[46]]",
+    "tests/test_basic.py::test_int_option[args2-Error: Invalid value for '--i': 'x' is not a valid integer.]",
+    "tests/test_commands.py::test_other_command_forward",
+    "tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params0-42]",
+    "tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params1-15]",
+    "tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params15-0]",
+    "tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params8-expected8]",
+    "tests/test_commands.py::test_unprocessed_options",
+    "tests/test_context.py::test_parameter_source[commandline long]",
+    "tests/test_context.py::test_parameter_source[commandline short]",
+    "tests/test_context.py::test_parameter_source[default]",
+    "tests/test_context.py::test_parameter_source[default_map]",
+    "tests/test_context.py::test_parameter_source[environment auto]",
+    "tests/test_context.py::test_parameter_source[environment manual]",
+    "tests/test_defaults.py::test_basic_defaults[42-type1-42-int]",
+    "tests/test_defaults.py::test_default_map_nargs[default_map0-option_kwargs0-cli_args0-expected0]",
+    "tests/test_defaults.py::test_default_map_nargs[default_map3-option_kwargs3-cli_args3-expected3]",
+    "tests/test_defaults.py::test_default_map_nargs[default_map4-option_kwargs4-cli_args4-expected4]",
+    "tests/test_defaults.py::test_multiple_flag_default",
+    "tests/test_defaults.py::test_nargs_plus_multiple",
+    "tests/test_defaults.py::test_unset_in_default_map",
+    "tests/test_formatting.py::test_formatting_usage_error_metavar_bad_arg",
+    "tests/test_options.py::test_bad_defaults_for_multiple[True-2-default13-None-Error: Invalid value for '-a': 2 values are required, but 0 were given.]",
+    "tests/test_options.py::test_callback_validates_prompt",
+    "tests/test_options.py::test_counting",
+    "tests/test_options.py::test_custom_type_flag_value_dual_options[opt1_params15-opt2_params15-args15-1]",
+    "tests/test_options.py::test_custom_type_flag_value_dual_options[opt1_params16-opt2_params16-args16-1]",
+    "tests/test_options.py::test_custom_type_flag_value_standalone_option[opt_params24-args24-1]",
+    "tests/test_options.py::test_custom_type_flag_value_standalone_option[opt_params25-args25-42]",
+    "tests/test_options.py::test_custom_type_flag_value_standalone_option[opt_params26-args26-1]",
+    "tests/test_options.py::test_custom_type_flag_value_standalone_option[opt_params27-args27-42]",
+    "tests/test_options.py::test_custom_type_flag_value_standalone_option[opt_params28-args28-1]",
+    "tests/test_options.py::test_custom_type_flag_value_standalone_option[opt_params29-args29-42]",
+    "tests/test_options.py::test_custom_validation",
+    "tests/test_options.py::test_flag_value_on_option_with_zero_or_one_args[int-args3-0\\n]",
+    "tests/test_options.py::test_flag_value_on_option_with_zero_or_one_args[int-args4-1\\n]",
+    "tests/test_options.py::test_flag_value_on_option_with_zero_or_one_args[int-args5-2\\n]",
+    "tests/test_options.py::test_good_defaults_for_multiple[False-2-default33-expected33]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-1-default10-expected10]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-1-default8-expected8]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-1-default9-expected9]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-2-default25-expected25]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-2-default26-expected26]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-2-default27-expected27]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-2-default31-expected31]",
+    "tests/test_options.py::test_good_defaults_for_multiple[True-2-default32-expected32]",
+    "tests/test_options.py::test_multiple_default_composite_type",
+    "tests/test_options.py::test_nargs_tup_composite_mult",
+    "tests/test_options.py::test_parse_multiple_default_composite_type",
+    "tests/test_stream_lifecycle.py::test_sequential_threaded_invokes",
+    "tests/test_termui.py::test_hide_input_error_message[builtin-int-masks-repr-value]",
+    "tests/test_termui.py::test_hide_input_error_message[intrange-numeric-substring-falls-back-to-generic]",
+    "tests/test_types/test_IntRange.py::test_range[type0-3-3]",
+    "tests/test_types/test_IntRange.py::test_range[type1-5-5]",
+    "tests/test_types/test_IntRange.py::test_range[type2-100-100]",
+    "tests/test_types/test_IntRange.py::test_range[type3-5-5]",
+    "tests/test_types/test_IntRange.py::test_range[type4--100--100]",
+    "tests/test_types/test_IntRange.py::test_range[type5--1-0]",
+    "tests/test_types/test_IntRange.py::test_range[type6-6-5]",
+    "tests/test_types/test_IntRange.py::test_range[type7-0-1]",
+    "tests/test_types/test_IntRange.py::test_range[type8-5-4]",
+    "tests/test_types/test_IntRange.py::test_range_fail[type0-6-6 is not in the range 0<=x<=5.]",
+    "tests/test_types/test_IntRange.py::test_range_fail[type1-4-4 is not in the range x>=5.]",
+    "tests/test_types/test_IntRange.py::test_range_fail[type2-6-6 is not in the range x<=5.]",
+    "tests/test_types/test_IntRange.py::test_range_fail[type3-0-0<x<=5]",
+    "tests/test_types/test_IntRange.py::test_range_fail[type4-5-0<=x<5]",
+    "tests/test_utils/test_prompt.py::test_prompt_cast_default",
+    "tests/test_utils/test_prompt.py::test_prompt_default_validated_by_type"
+   ],
+   "red": true
+  }
+ ],
+ "red_in_sample": 9
+}
