@@ -162,3 +162,39 @@ pilot, nothing of the kind was found.
 - pytest-testmon: https://testmon.net/
 - coverage.py: https://coverage.readthedocs.io/en/latest/config.html
 - Codecov: https://github.com/codecov/codecov-cli/pull/662
+
+## Checked again, 2026-11-22
+
+As note 102 of `TASKS.md` asks before the next bet is written, the agent read
+again what GitHub and GitLab had published, through a web search and two
+fetches of the pages that decide it (FACT, 2026-11-22):
+
+- GitHub: the changelog's archive for November 2026, all five pages, 70 entries
+  from 2026-11-02 to 2026-11-20 and none after: no title or excerpt announces,
+  previews or mentions Actions, GitHub or Copilot selecting, skipping or
+  ordering tests by what a pull request changed. The nearest, "Copilot code
+  review: Adaptive effort, secret detection, and more" (2026-11-17), matches
+  "review depth to each pull request", which is code review, not tests. Only the
+  index's excerpts were read, not each entry's whole text.
+- GitLab: the release notes of 19.5, of 2026-10-15, and 19.6, of 2026-11-19, the
+  two of October and November, hold no feature that selects, skips or orders
+  tests by a merge request's change; the nearest, in 19.5, lets a child
+  pipeline's job wait on a parent job that may not run. Fail fast testing is
+  unchanged: "A Ruby on Rails project that uses RSpec", in Premium and Ultimate.
+  The last fifth of each release page reached the agent through a model's
+  summary, not verbatim.
+- The search found open-source GitHub Actions that select pytest tests by a
+  change: one that the search called DiffCI Core, whose repositories describe it
+  as "Open-source test-impact analysis for faster CI, with conservative
+  fallbacks and reproducible evidence", and blastradius, which keeps its map in
+  the Actions cache. They are tools that a team adds, not selection that the CI
+  gives away [VERIFY: what each measures, and which repository is DiffCI's own].
+
+So nothing changed since 2026-11-21: on GitHub Actions and GitLab, neither gives
+affected-test selection away, and C6's fatal objection 1 does not hold.
+
+Sources: https://github.blog/changelog/month/11-2026/ and its pages 2 to 5;
+https://docs.gitlab.com/releases/19/gitlab-19-5-released/;
+https://docs.gitlab.com/releases/19/gitlab-19-6-released/;
+https://docs.gitlab.com/ci/testing/fail_fast_testing/;
+https://github.com/sarankumar1325/core.
