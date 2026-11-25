@@ -26,7 +26,7 @@
 - Never modify, delete or skip tests unless the task says so.
 - If a test looks wrong, if the only way to pass it is special-casing its values, or if the same failure survives two attempts, stop: write the test name, the SPEC example and your reason to `.claude/blocked`. Never work around a test in the implementation.
 - Never mix structural changes (renames, moves, refactors) and behaviour changes in one commit.
-- Never commit on `main` (D-026). Each task goes on a branch of its own, made from an up-to-date `origin/main`. Push the branch only when I ask, with `git push -u origin <branch>` alone; I open the pull request, from the app or on GitHub, and merge it with a merge commit once `check` has passed. Never merge a pull request, never push to `main` and never turn auto-merge on unless I ask. After the merge, update `main` and delete the branch.
+- Never commit on `main` (D-026). Each task goes on a branch of its own, made from an up-to-date `origin/main`. Push the branch and open its pull request only when I ask: `git push -u origin <branch>` alone, then `gh pr create`. I merge it with a merge commit once `check` has passed. Never merge a pull request, never push to `main` and never turn auto-merge on unless I ask. After the merge, update `main` and delete the branch.
 - Prefer the standard library unless a well-known library makes the code clearer. Ask before adding a dependency: give the exact package name and why.
 - Mark any API, flag or version you have not verified with [VERIFY].
 - Stay inside the task. Log anything else in `TASKS.md` instead of fixing it.
