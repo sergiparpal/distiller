@@ -2,6 +2,7 @@ name: check
 
 on:
   push:
+    branches: [main]  # a pull request's branch runs it as a pull request (D-026)
   pull_request:
 
 permissions:
