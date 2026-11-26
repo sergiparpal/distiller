@@ -8,6 +8,8 @@ settle, each with the facts that bear on it and the agent's view. Nothing is
 decided here, and no figure of the Distiller exists for any new pilot: every
 fact below comes from CI outcomes and from the pilots' own suites
 (`2026-11-21-new-pilot-search.md`), so D-007 still lets each choice be made.
+The user made the eight decisions on 2026-11-26, one by one: D-031 records
+them.
 
 Labels: **FACT**; **INFERENCE**; **OPINION**, the agent's view.
 
