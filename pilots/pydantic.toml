@@ -1,0 +1,31 @@
+# pydantic/pydantic's job "Test ubuntu-latest / 3.12", replayed with no
+# network by Slice 3's harness (D-031). The job runs `uv sync --all-packages
+# --group testing-extra --all-extras`, here with `--frozen`, which builds the
+# workspace's pydantic-core from its Rust source, then `make test`, `coverage
+# run -m pytest --durations=10 --parallel-threads 1`: one thread is pytest's
+# own way, so that option is left out. pytest-timeout is in the lock of 162 of
+# its 163 red heads, and the harness adds it.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every uv
+# command here, with the system's Python 3.12: an interpreter that uv installs
+# lives under the home, which the suite's sandbox hides (2026-11-22).
+# D-024's rule deselected 1 test, which failed in at least one of six suite
+# runs, two at each of three base commits, so whatever a pull request changes
+# (notes/pilot-search/pydantic-feasibility.json): it is a --deselect option of
+# pytest, fixed before the first record (D-031). No floor configuration: the
+# default patterns alone, as for Slice 2's pilots (D-015).
+project = "pydantic"
+repository = "pydantic/pydantic"
+base_branch = "main"
+job = "Test ubuntu-latest / 3.12"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--all-packages", "--group", "testing-extra", "--all-extras"],
+]
+pytest = [
+    "--durations=10",
+    "--deselect",
+    "tests/test_version.py::test_version_info",
+]
+coverage_source = "pydantic"
+seconds_per_test = 120
+adds_timeout_plugin = true
