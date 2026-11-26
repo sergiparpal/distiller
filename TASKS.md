@@ -777,3 +777,37 @@ Each line has the one task that covers it. "Constrains" lists the earlier tasks 
 | Invariants 3 | 2 | |
 | Summary 1, 2 | 7 | |
 | Command line | 8 | |
+
+## Slice 3
+
+A task 0 outside the cycle, one task of one cycle, as in Slices 1 and 2 (a tests session, which cannot read `src/`, then an implement session, with the tests frozen), and a task 2 outside the cycle, for the Next bet of `docs/SPEC.md`, whose choices D-031 fixed. The fields read as Slice 2's. Written on 2026-11-26, from the SPEC of 8e55bc8, before the user wrote K18's then.
+
+K18's given names pydantic's real head, which no test of the suite can hold with no network and no clone: its test uses a fixture project of the same shape, whose `pyproject.toml` asks for a `required-version` that the fake `uv` of `tests/replay/test_environment.py` refuses when it runs inside the project. Task 2 runs K18 itself on the user's machine, as the slice's acceptance, before the nine pilots' replays.
+
+The appetite ends on 2026-12-10: tasks 0 and 1 by 2026-11-28 leave the replays, some 7 hours of steps, the report and the note for the days after (OPINION).
+
+### 0. The nine pilot configurations (outside the cycle)
+- **Does**: `pilots/<project>.toml` for each of the nine, from `notes/pilot-search/pilots/<project>.toml`, with the tests that D-024's rule deselected, from `notes/pilot-search/<project>-feasibility.json`, added to its `pytest` options as `--deselect` pairs, 148 in all; each file read with `read_pilot`, and its deselections compared with the JSON's, before the commit, and before any record (D-031).
+- **By**: the agent. No tests phase: the files are configuration, which no test reads, and Slice 2's task 9 wrote `pilots/urllib3.toml` and `pilots/poetry.toml` the same way.
+
+### 1. Installing the plugins from outside the worktree
+- **Closes**: Rule 4's install of the plugins, run from the folder that holds the worktree, so that the commit's own `required-version` does not refuse the uv that installs them.
+- **Covers**: K18, in a fixture project of its shape; Installing the plugins 2; Rule 4's install.
+- **Constrained by**: none.
+- **Modules**: `environment`.
+- **Stubs**: none: `environment` is there, and its signatures do not change. A signature that the tests need and the module lacks is the user's to write before the phase.
+- **Contract**: none new.
+
+### 2. The nine pilots replayed (outside the cycle)
+- **Does**: K18 itself, pydantic's #14290 replayed with `--only 14290` into pydantic's record file, as the slice's acceptance; then the nine pilots' replays, each from its CSV into its record file under `~/code/distiller-replay/slice-3/`; Slice 1's report over the nine record files, which gives the Next bet's bound for its outcome on 2026-12-10; and a note with the summary, the report and copies of the record files, as `notes/2026-11-19-window-replay.md` has the window's.
+- **By**: the agent runs K18; the user runs the nine from a terminal, or asks the agent to; the agent reads their logs, the summary and the report.
+
+### Coverage of Slice 3
+Each line has the one task that covers it.
+
+| Item | Task | Constrains |
+|---|---|---|
+| K18 | 1 | |
+| Installing the plugins 2 | 1 | |
+| The nine configurations | 0 | |
+| Summary 1 | 2 | |
