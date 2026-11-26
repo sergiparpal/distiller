@@ -290,7 +290,7 @@ Inputs for one pilot's replay, as in Slice 2, with:
 Terms: Slice 2's, but for the window: each pilot's window is what its CSV holds, every red pull request that GitHub listed on 2026-11-21 (D-031).
 
 #### Installing the plugins
-- [core] Given pydantic's #14290 at its tested head, fe5c2e511f1d, whose `pyproject.toml` asks for `required-version = '>=0.13.0'`, when it is replayed with a uv older than 0.13.0 on the `PATH`, then <the user writes this>.
+- [core] Given pydantic's #14290 at its tested head, fe5c2e511f1d, whose `pyproject.toml` asks for `required-version = '>=0.13.0'`, when it is replayed with a uv older than 0.13.0 on the `PATH`, then both of its environments are built, the plugins' install among their steps, and one record is appended to pydantic's record file.
 - Given a worktree whose `pyproject.toml` asks for a `required-version` that the uv on the `PATH` does not meet, when its environment is built, then that uv installs the plugins from the folder that holds the worktree, `<work>/<project>/<number>/`, and the environment is built.
 
 #### Summary
