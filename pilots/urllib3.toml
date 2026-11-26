@@ -6,7 +6,10 @@
 # urllib3's lock only from 2026-10-15; and without --memray, --cov and -v.
 # Its PYTHONWARNINGS=always::FutureWarning stays out too: Rule 5 lets no
 # variable reach a run but HOME, PATH, LANG and coverage's. No floor
-# configuration: the default patterns alone (D-015).
+# configuration: the default patterns alone (D-015). uv is given the system's
+# Python 3.12 by its path, the one that built every environment of the window
+# and of #3758: asked for "3.12", uv would take a Python that it installed
+# itself, under the home, which the suite's sandbox hides (note 105, D-030).
 project = "urllib3"
 repository = "urllib3/urllib3"
 base_branch = "main"
@@ -14,7 +17,7 @@ job = "Ubuntu 3.12"
 python = "3.12"
 environment = [
     [
-        "uv", "sync", "--frozen", "--python", "3.12", "--group", "dev",
+        "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--group", "dev",
         "--extra", "socks", "--extra", "brotli", "--extra", "zstd", "--extra", "h2",
     ],
 ]
