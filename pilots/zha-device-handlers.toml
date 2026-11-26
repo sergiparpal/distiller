@@ -1,0 +1,26 @@
+# zigpy/zha-device-handlers' job "shared-ci / Run tests Python 3.12", replayed
+# with no network by Slice 3's harness (D-031). zigpy/workflows' ci.yml runs
+# `uv sync --group ci`, here with `--frozen`, then `pytest -n auto -qq
+# --timeout=20 --durations=10 --cov zhaquirks ... -p no:sugar tests`: the
+# options that only print or measure are left out, the path is given as
+# testpaths so that a rerun runs only its tests, and each test gets the
+# harness's 120 s rather than the job's 20. pytest-xdist and pytest-timeout
+# are in the lock of every red head.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every uv
+# command here, with the system's Python 3.12: an interpreter that uv installs
+# lives under the home, which the suite's sandbox hides (2026-11-22).
+# D-024's rule deselected no test of zha-device-handlers
+# (notes/pilot-search/zha-device-handlers-feasibility.json). No floor
+# configuration: the default patterns alone, as for Slice 2's pilots (D-015).
+project = "zha-device-handlers"
+repository = "zigpy/zha-device-handlers"
+base_branch = "dev"
+job = "shared-ci / Run tests Python 3.12"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--group", "ci"],
+]
+pytest = ["-n", "auto", "-p", "no:sugar", "-o", "testpaths=tests"]
+coverage_source = "zhaquirks"
+seconds_per_test = 120
+adds_timeout_plugin = false

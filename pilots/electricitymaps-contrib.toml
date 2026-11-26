@@ -1,0 +1,45 @@
+# electricitymaps/electricitymaps-contrib's job "Python / Tests (3.12)",
+# replayed with no network by Slice 3's harness (D-031). The job runs `uv sync
+# --group dev --extra parsers`, here with `--frozen`, then `uv run test`,
+# which runs `pytest` with no option (scripts/tooling.py). Its lock holds no
+# pytest-timeout, which the harness adds.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every uv
+# command here, with the system's Python 3.12: an interpreter that uv installs
+# lives under the home, which the suite's sandbox hides (2026-11-22).
+# D-024's rule deselected 9 tests, each of which failed in at least one of six
+# suite runs, two at each of three base commits, so whatever a pull request
+# changes (notes/pilot-search/electricitymaps-contrib-feasibility.json): they
+# are --deselect options of pytest, fixed before the first record (D-031). No
+# floor configuration: the default patterns alone, as for Slice 2's pilots
+# (D-015).
+project = "electricitymaps-contrib"
+repository = "electricitymaps/electricitymaps-contrib"
+base_branch = "master"
+job = "Python / Tests (3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--group", "dev", "--extra", "parsers"],
+]
+pytest = [
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_soup",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/lib/test_web.py::test_get_response_text",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/test_JP_SK.py::test_fetch_nuclear_image",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/test_SG.py::test_allow_remote_clock_to_be_slightly_ahead",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/test_SG.py::test_ignore_data_older_than_one_hour",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_nonzero",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/test_SG.py::test_works_when_zero",
+    "--deselect",
+    "electricitymap/contrib/parsers/tests/test_utils.py::test_TOKEN_WIKI_URL",
+]
+coverage_source = "electricitymap"
+seconds_per_test = 120
+adds_timeout_plugin = true

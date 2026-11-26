@@ -1,0 +1,36 @@
+# mitmproxy/mitmproxy's job "test (ubuntu-latest, 3.12)", replayed with no
+# network by Slice 3's harness (D-031). The job runs tox's py312, whose
+# runner, tox-uv's uv-venv-lock-runner, syncs the lock file with the
+# dependency group dev and installs mitmproxy editable, here `uv sync
+# --frozen` with that group; then `pytest -vv --cov-report xml
+# --continue-on-collection-errors --cov=mitmproxy --cov=release --timeout 60`,
+# whose options that only print or measure are left out, and each test gets
+# the harness's 120 s. pytest-timeout is in the lock of every red head.
+# uv 0.13.8, the newest uv that a finalist's lock files ask for, runs every uv
+# command here, with the system's Python 3.12: an interpreter that uv installs
+# lives under the home, which the suite's sandbox hides (2026-11-22).
+# D-024's rule deselected 3 tests, each of which failed in at least one of six
+# suite runs, two at each of three base commits, so whatever a pull request
+# changes (notes/pilot-search/mitmproxy-feasibility.json): they are --deselect
+# options of pytest, fixed before the first record (D-031). No floor
+# configuration: the default patterns alone, as for Slice 2's pilots (D-015).
+project = "mitmproxy"
+repository = "mitmproxy/mitmproxy"
+base_branch = "main"
+job = "test (ubuntu-latest, 3.12)"
+python = "3.12"
+environment = [
+    ["uv", "tool", "run", "--from", "uv==0.13.8", "uv", "sync", "--frozen", "--python", "/usr/bin/python3.12", "--group", "dev"],
+]
+pytest = [
+    "--continue-on-collection-errors",
+    "--deselect",
+    "test/mitmproxy/addons/test_dns_resolver.py::test_name_servers",
+    "--deselect",
+    "test/mitmproxy/addons/test_proxyserver.py::test_dns",
+    "--deselect",
+    "test/mitmproxy/proxy/test_mode_servers.py::test_tun_mode",
+]
+coverage_source = "mitmproxy"
+seconds_per_test = 120
+adds_timeout_plugin = false
