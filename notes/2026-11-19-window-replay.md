@@ -7,6 +7,12 @@ bound. The records are copied here, `2026-11-19-window-records-urllib3.jsonl`
 and `2026-11-19-window-records-poetry.jsonl`, and the report over those copies is
 `2026-11-19-window-report.txt`.
 
+Errata, 2026-11-25 (note 104, D-029): the manifest's row for run 25715213323,
+and so its record, names #5047, but the run is #5007's; and the manifest lacks
+#3758, whose job failed in the window. #3758, replayed apart, was rejected for
+a collection error, so neither changes the miss rate or its bound
+(`2026-11-25-manifest-errors.md`).
+
 ## How it ran
 
 - The harness: this repository at 2301238, whose `src/` e32c73d left as it
