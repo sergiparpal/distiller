@@ -484,3 +484,78 @@ def test_each_process_runs_from_an_argument_list_with_a_time_limit(
         assert is_argument_list(run.command), run
         assert not run.shell, run
         assert is_positive_number(run.timeout), run
+
+
+# Slice 3 (D-031): a uv that, as uv itself does, refuses to run in a project
+# whose pyproject.toml asks for a required-version that it does not meet, here
+# any: it looks for one in its working folder and in each folder above it.
+# Elsewhere it notes its arguments and its working folder in the log, installs
+# nothing, and exits with 0. uv 0.11.23 refused the plugins' install so in
+# worktrees of pydantic's, whose pyproject.toml asks for >=0.13.0.
+REFUSING_UV = """\
+#!{python} -I
+import json
+import os
+import sys
+from pathlib import Path
+
+here = Path.cwd()
+for folder in (here, *here.parents):
+    project = folder / "pyproject.toml"
+    if project.is_file():
+        if "required-version" in project.read_text(encoding="utf-8"):
+            print("error: Required uv version", file=sys.stderr)
+            raise SystemExit(2)
+entry = {{"name": "uv", "argv": sys.argv[1:], "cwd": os.getcwd()}}
+with open({log!r}, "a", encoding="utf-8") as file:
+    file.write(json.dumps(entry) + "\\n")
+raise SystemExit(0)
+"""
+
+REQUIRED_VERSION = '[project]\nname = "shop"\n\n[tool.uv]\nrequired-version = ">=99"\n'
+
+
+def use_refusing_uv(setup: Setup) -> None:
+    """Put REFUSING_UV where the fake uv is, writing to the same log."""
+    fake_uv = setup.log.parent / "fake-bin" / "uv"
+    fake_uv.write_text(
+        REFUSING_UV.format(python=sys.executable, log=str(setup.log)), encoding="utf-8"
+    )
+
+
+@pytest.mark.parametrize(
+    ("for_coverage", "adds_timeout_plugin"),
+    [(True, False), (False, True), (True, True)],
+    ids=["coverage", "timeout", "both"],
+)
+def test_the_plugins_are_installed_from_the_folder_that_holds_the_worktree(
+    setup: Setup, *, for_coverage: bool, adds_timeout_plugin: bool
+) -> None:
+    # Rule 4, since Slice 3: the plugins' install runs from the folder that
+    # holds the worktree, <work>/<project>/<number>/, and not from the worktree.
+    use_refusing_uv(setup)
+    pilot = pilot_with(setup.record("sync"), adds_timeout_plugin=adds_timeout_plugin)
+
+    environment.build(pilot, str(setup.worktree), for_coverage=for_coverage)
+
+    calls = [entry for entry in entries(setup.log) if entry["name"] == "uv"]
+    assert calls
+    assert all(Path(entry["cwd"]) == setup.worktree.parent for entry in calls)
+
+
+def test_a_required_version_that_uv_does_not_meet_does_not_stop_the_build(
+    setup: Setup,
+) -> None:
+    # Installing the plugins 2: a worktree whose pyproject.toml asks for a
+    # required-version that the uv on the PATH does not meet.
+    use_refusing_uv(setup)
+    (setup.worktree / "pyproject.toml").write_text(REQUIRED_VERSION, encoding="utf-8")
+    pilot = pilot_with(setup.record("sync"), adds_timeout_plugin=True)
+
+    result = environment.build(pilot, str(setup.worktree), for_coverage=True)
+
+    assert result.exit_code == 0
+    requirements = requirements_installed(setup.log)
+    assert "coverage==7.16.2" in requirements
+    assert named(requirements, "pytest-cov")
+    assert named(requirements, "pytest-timeout")

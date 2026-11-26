@@ -723,3 +723,123 @@ def test_a_pull_request_that_the_pilots_lines_lack_stops_the_replay(
     assert code == 1
     assert not (work / "shop.log").exists()
     assert capsys.readouterr().err != ""
+
+
+# K18's shape (Slice 3, D-031): a pull request of a pilot whose pyproject.toml
+# asks for a required-version that the uv on the PATH does not meet, as
+# pydantic's #14290 asks uv 0.11.23 for >=0.13.0. The pilot adds pytest-timeout,
+# as pydantic's does, so that both of its environments get a plugin; and its
+# uv, as uv itself does, refuses to run in such a project, which it looks for in
+# its working folder and in each folder above it.
+K18_RUN = 1009
+K18_PYPROJECT = PYPROJECT + '\n[tool.uv]\nrequired-version = ">=99"\n'
+K18_PILOT = replace(PILOT, adds_timeout_plugin=True)
+REFUSING_UV = """\
+#!{python} -I
+import sys
+from pathlib import Path
+
+here = Path.cwd()
+for folder in (here, *here.parents):
+    project = folder / "pyproject.toml"
+    if project.is_file():
+        if "required-version" in project.read_text(encoding="utf-8"):
+            print("error: Required uv version", file=sys.stderr)
+            sys.exit(2)
+sys.exit(0)
+"""
+
+
+@dataclass(frozen=True)
+class ReplayedK18:
+    """What the replay of K18's shape left."""
+
+    work: Path
+    records: Path
+    exit_code: int
+
+
+@pytest.fixture(scope="module")
+def replayed_k18(tmp_path_factory: pytest.TempPathFactory) -> Iterator[ReplayedK18]:
+    root = tmp_path_factory.mktemp("harness-k18")
+    with pytest.MonkeyPatch.context() as patch:
+        isolate(patch, root)
+        refusing_uv = root / "fake-bin" / "uv"
+        refusing_uv.write_text(
+            REFUSING_UV.format(python=sys.executable), encoding="utf-8"
+        )
+        clone = root / "clone"
+        head = build_k18_clone(clone)
+        row = {
+            "project": "shop",
+            "pull_request": "14290",
+            "run_id": str(K18_RUN),
+            "run_started": RUN_STARTED,
+            "head": head,
+            "job": "failed in a test step",
+            "failed_steps": "",
+        }
+        manifest = write_manifest(root / "manifest.csv", [row])
+        work = root / "work"
+        work.mkdir()
+        records = root / "records" / "shop.jsonl"
+        records.parent.mkdir()
+        code = harness.replay(
+            K18_PILOT,
+            manifest=str(manifest),
+            clone=str(clone),
+            work=str(work),
+            records=str(records),
+            tool=str(REPOSITORY),
+            only=None,
+        )
+        yield ReplayedK18(work=work, records=records, exit_code=code)
+
+
+def build_k18_clone(clone: Path) -> str:
+    """A clone whose pyproject.toml asks for a required-version, with the head of
+    one pull request, K16's change, kept by its run's ref; return that head."""
+    clone.mkdir()
+    run_git(clone, "init", "--quiet", "--initial-branch=main")
+    main = commit_at(
+        clone,
+        "2026-03-01T10:00:00+00:00",
+        {
+            "pyproject.toml": K18_PYPROJECT,
+            "uv.lock": BASE_LOCK,
+            "shop/__init__.py": "",
+            "shop/response.py": RESPONSE,
+            "shop/tax.py": TAX,
+            "test/test_response.py": RESPONSE_TESTS,
+            "test/test_tax.py": TAX_TESTS,
+        },
+    )
+    run_git(clone, "switch", "--quiet", "--detach", main)
+    head = commit_at(
+        clone, "2026-03-03T10:00:00+00:00", {"shop/response.py": RESPONSE_BROKEN}
+    )
+    run_git(clone, "update-ref", f"refs/window/{K18_RUN}", head)
+    run_git(clone, "switch", "--quiet", "main")
+    return head
+
+
+def test_k18s_environments_are_built_with_their_plugins_and_one_record_appended(
+    replayed_k18: ReplayedK18,
+) -> None:
+    # K18's shape: both of its environments are built, the plugins' install
+    # among their steps, and one record is appended to the pilot's record file.
+    built = [
+        entry
+        for entry in log_of(replayed_k18.work)
+        if entry["event"] == "step"
+        and entry["step"] in ("environment at M", "environment at the head")
+    ]
+
+    assert replayed_k18.exit_code == 0
+    assert [entry["step"] for entry in built] == [
+        "environment at M",
+        "environment at the head",
+    ]
+    assert all(entry["exit_code"] == 0 for entry in built)
+    assert all("pip install" in entry["output"] for entry in built)
+    assert [record["pr"] for record in records_of(replayed_k18.records)] == [14290]
