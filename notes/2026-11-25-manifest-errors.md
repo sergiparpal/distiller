@@ -110,4 +110,56 @@ D-029, as the user chose on 2026-11-25:
 
 ## The replay of #3758
 
-To be written once it has run.
+Run by the agent on 2026-11-25, as D-029 says, once #6, the pull request of
+the rule, was open: `refs/pull/3758/head`, fetched into urllib3's clone as
+`refs/window/21097199737`, gave 0904e7a8f5bd, and the harness ran from this
+repository at 2b816d8, the rule's commit, whose `src/` is bccf738's (FACT):
+
+```
+UV_PYTHON_PREFERENCE=only-system PYTHONPATH=src .venv/bin/python -P -m replay run
+  --pilot pilots/urllib3.toml --manifest notes/2026-11-25-pr-3758-manifest.csv
+  --clone ~/code/distiller-pilots/urllib3 --work ~/code/distiller-replay/pr-3758
+  --records ~/code/distiller-replay/pr-3758/records/urllib3.jsonl
+  --tool ~/code/distiller-tool
+```
+
+- Its steps took 67 s, and it ended at 22:58:06Z; #6 merged 2 s later, at
+  22:58:08Z (FACT).
+- Both environments, at M and at the head, were built from the same `uv.lock`,
+  SHA-256 48f298e0ae45, and for each uv said
+  `Using CPython 3.12.3 interpreter at: /usr/bin/python3.12` (FACT): the
+  variable reached `uv sync`, and the replay counts.
+- M is the base commit, bd37a23af455 (FACT, the tool's `--base` and
+  `--coverage-commit`).
+- The coverage at M: 1921 passed, 2 failed, 335 skipped and 4 xfailed. The two
+  failures are `test_http2_probe_blocked_per_thread` of `TestHTTPS_TLSv1_2` and
+  of `TestHTTPS_TLSv1_3`, in `test/with_dummyserver/test_https.py`, the flaky
+  test of D-017 (FACT).
+- The full run at the head stopped in collection, with 8 errors and 1 test
+  skipped, exit 2: each of the 8 test modules that #3758 adds,
+  `test/test_hypothesis_*.py`, imports `hypothesis`, which the environment
+  built from its lock file lacks, and raised `ModuleNotFoundError` (FACT). No
+  test ran, and no rerun followed (FACT).
+- The tool rejected the run, exit 3, with `collection-error` and `junit`, and
+  appended one record, copied here as
+  `2026-11-25-pr-3758-records-urllib3.jsonl`. The summary:
+  `urllib3: replayed 1, not replayed 0, red 0, inherited failures 0` (FACT).
+- The clone was left as it was: `main` checked out at d9f9b0ad, a clean work
+  tree and no worktree but its own (FACT).
+- CI's run 21097199737 likely failed the same way, since urllib3's nox session
+  builds its environment from the same lock file (INFERENCE; GitHub no longer
+  gives that job's steps or log).
+
+What it gives, by the rule written before it:
+
+- #3758 is not red: its record says `rejected`, neither `caught` nor `missed`.
+- The report over the window's two copies and this record,
+  `2026-11-25-report-with-pr-3758.txt`, gives the window's first line, 3 missed
+  PRs out of 52 with a red run and a bound of 14.2%, and differs from
+  `2026-11-19-window-report.txt` in one line alone: 4 runs rejected for
+  `collection-error` with `junit` instead of 3 (FACT, by `diff`).
+- So the Bet's figure, over the manifest's pull requests, is the same over them
+  and #3758 (FACT). The funnel's recount of 2026-11-21, the only check of the
+  manifest, could not see the runs that GitHub had dropped by then, #3720's of
+  2025-12-03 and #3729's of 2025-12-05 among them; whether the manifest lacks a
+  pull request of the window's first days is not known.
