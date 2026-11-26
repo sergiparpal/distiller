@@ -13,6 +13,12 @@ examples. -->
 - Kill signal: at the end of the appetite, the bound is 15% or more; or the two projects' replays together hold fewer than 30 pull requests with a red run; or the harness cannot rebuild the environment of more than 20% of the replayed pull requests.
 - Outcome: pending, decided on 2026-12-09. <!-- draft: passed on 2026-12-09 (D-020). At the end of the appetite, the window's replay gave a one-sided 95% Clopper–Pearson upper bound of 14.2% on the miss rate, 3 missed pull requests out of 52 with a red run, below 15% and over more than 30; the environments of 2 of the 90 pull requests could not be built, 2.2%, below 20%. The figure keeps the records as replayed (D-017, D-019): one more miss among the 52 would make it 16.7%, and without poetry's three pull requests red from a hung test alone it would be 15.1%. -->
 
+## Next bet
+- Hypothesis: on nine Python projects, zigpy/zha-device-handlers, pydantic/pydantic, pallets/click, elastic/rally, mitmproxy/mitmproxy, electricitymaps/electricitymaps-contrib, PrimeIntellect-ai/verifiers, feyninc/chonkie and pydantic/pydantic-settings, each in the job that `notes/pilot-search/pilots/<project>.toml` names, over the pull requests of `notes/pilot-search/<project>-red-runs.csv`, those whose job failed in a CI run that GitHub listed on 2026-11-21, each replayed offline at the head of its latest such run, in an environment rebuilt from that head's own lock file, an all-affected, file-level selector would leave out every failed test in so few of the pull requests with a red run that the one-sided 95% Clopper–Pearson upper bound of its miss rate is below 10%, over at least 200 such pull requests of the nine together.
+- Appetite: 2 weeks, from 2026-11-26.
+- Kill signal: at the end of the appetite, the bound is 10% or more; or the nine projects' replays together hold fewer than 200 pull requests with a red run; or the harness cannot rebuild the environment of more than 20% of the replayed pull requests.
+- Outcome: pending, decided on 2026-12-10.
+
 ## Previous bet
 - Hypothesis: on sergiparpal/adaptive-policy-compilation, an all-affected, file-level selector would cut at least 25% of the full suite's test time across its PRs.
 - Appetite: 3 weeks, ended 2026-10-31; renewed once, on 2026-10-31, with no scope cut, to 2026-11-14, after the agent subscription lapsed on 2026-10-26.
@@ -38,6 +44,11 @@ The whole product is described in `docs/C6-destilador-revisada.md` (in Spanish);
 - Slice 2 gives no savings figure: only the pull requests whose job failed in the CI are replayed, as the Bet says.
 - Slice 2 does not explain a red run of the CI that replays green: the record holds what the replay saw.
 - In Slice 2 no suite run reaches the network but the loopback: the network is for fetching and installing, before the runs.
+- In Slice 3 no pull request, window, run, pilot, floor pattern or deselected test is chosen once a record exists (D-007): the bet's pull requests are those of the nine CSVs, and each pilot's deselected tests those of D-024's rule, both fixed before the first record (D-031).
+- In Slice 3 the harness changes in one thing alone, the plugins installed from outside the worktree, and nothing in `distiller` changes.
+- Slice 3 replays nine pilots and one job of each, on Linux with Python 3.12 alone.
+- Slice 3 gives no savings figure: only the pull requests whose job failed in the CI are replayed.
+- Slice 3 does not explain a red run of the CI that replays green, and no suite run reaches the network but the loopback, as in Slice 2.
 
 ## Constraints
 - Stack: Python 3.12+, as a command-line tool run as a CI step; `git` is called as a local binary.
