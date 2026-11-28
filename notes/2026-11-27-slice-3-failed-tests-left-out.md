@@ -480,8 +480,8 @@ undecided otherwise. By `clopper_pearson_upper` (FACT, 2026-11-27):
 Between, the share is undecided. As D-021 says of the window's, these are not
 independent draws: #13346's 6 are #13345's, 9 of #12731's 21 are
 parametrizations of one test, and other node ids recur across records, so the
-bound is narrower than they warrant. Which of the two counts the share takes is
-the user's to decide, with the classification.
+bound is narrower than they warrant. On 2026-11-28, before any of the 70 was
+classified, the user chose the second count, the 84 (D-032).
 
 ## Where each fact comes from
 
