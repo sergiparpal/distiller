@@ -1,0 +1,883 @@
+# The lines of 21 CI job logs that note 110's rule reads
+
+Read on 2026-11-28 from GitHub, through `gh`, for the 21 runs of
+`2026-11-28-rejected-junit-check.md` whose job log GitHub still gave, before
+GitHub drops them. Each log was cleaned of its timestamps, ANSI codes and
+control characters, and only the lines that the rule reads are kept: for a run
+whose pytest wrote a short test summary, its ERROR lines, and otherwise its
+ERROR collecting sections and the error lines under them; the lines collected,
+Interrupted and pytest's last summary line; an ImportError while loading
+conftest and the error under it; pytest's usage error; and the runner's
+##[error] line. A line that a log repeats is kept once, after the number of
+times it appears, as "4x"; a line longer than 300 characters is cut there,
+with " [cut]" after it.
+
+## electricitymaps-contrib #8897, run 40842769724, job 123342894616, started 2026-10-29T08:31:40Z, failed step "Run tests"
+
+1x collected 62 items / 89 errors
+1x ERROR tests/config/test_config.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/config/test_config_model.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/config/test_config_zones.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/config/test_emission_factors.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/test_capacity.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/test_co2eq_parameters.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/test_exchanges_json.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/test_parser_interface.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/test_update_capacity_configuration.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR tests/test_zones_json.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_AEMO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_AU_TAS_FI.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_AU_TAS_KI.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_AU_WA_RI.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_AW.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_BE.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CAMMESA.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CA_AB.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CA_CQ.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CA_ON.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CEB.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CENACE.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CL.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CNDC.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CR.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CY.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_CZ.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_DK.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_DO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_EIA.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ENTE.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ENTSOE.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ENTSOE_price_overrides.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ERCOT.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ERP_PGCB.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ES.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ESIOS.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ESKOM.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ESTADISTICO_UT.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_FO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_FR.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_FR_O.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_GB.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_GT.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_HN.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_IEMOP.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_IL.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_IN.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_IN_EA.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_JAO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_JAO_Auctions.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_JP.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_JP_area.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_KPX.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_MD.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_NORDPOOL.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_NTESMO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_NZ.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_ONS.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_OPENNEM.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_PA.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_PE.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_PF.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_RU.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_SEMO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_SEMOxSMARTGRID.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_SG.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_SMARTGRIDDASHBOARD.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_TAIPOWER.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_TH.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_TR.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_CA.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_ERCOT.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_MISO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_NEISO.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_NY.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_PJM.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_US_SPP.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_UY.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_amper_landsnet.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_config.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_nordpool_intraday.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/parsers/tests/test_quality.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/capacity_parsers/tests/test_CEA.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/capacity_parsers/tests/test_ONS.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/capacity_parsers/tests/test_OPENELECTRICITY.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/lib/tests/test_event_lists.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x ERROR electricitymap/contrib/lib/tests/test_events.py - pydantic.error_wrappers.ValidationError: 4 validation errors for DataCenters
+1x !!!!!!!!!!!!!!!!!!! Interrupted: 89 errors during collection !!!!!!!!!!!!!!!!!!!
+1x ======================== 89 errors in 195.91s (0:03:15) ========================
+1x ##[error]Process completed with exit code 2.
+
+## mitmproxy #8598, run 43512433510, job 132185783519, started 2026-11-13T21:38:06Z, failed step "Run tox -e py3.12"
+
+1x ERROR: /home/runner/work/mitmproxy/mitmproxy/pyproject.toml: Cannot use both [tool.pytest] (native TOML types) and [tool.pytest.ini_options] (string-based INI format) simultaneously. Please use [tool.pytest] with native TOML types (recommended) or [tool.pytest.ini_options] for backwards compatibilit [cut]
+1x ##[error]Process completed with exit code 4.
+
+## pydantic #14189, run 41432004177, job 125232596128, started 2026-11-02T10:50:31Z, failed step "Run pytest"
+
+1x collected 13817 items / 1 error / 3 skipped
+1x ____________________________________________ ERROR collecting tests/pydantic_core/test_streaming_json.py _____________________________________________
+1x Duplicate parametrization IDs detected, but strict_parametrization_ids is set.
+1x !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+1x ##[error]Process completed with exit code 2.
+
+## zha-device-handlers #5324, run 34648636986, job 103425400056, started 2026-09-11T21:17:31Z, failed step "Run pytest"
+
+4x ERROR tests/test_bituo.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_bosch.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_candeo.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_ctrl_neutral1.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_danfoss.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_develco.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_heiman.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_ikea.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_innr.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_inovelli.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_inovelli_blue.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_kof.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_konke.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_legrand.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_leviton.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_linkind.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_linxura.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_nimly.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_orvibo.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_philips.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_quirks.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_quirks_v2.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_schneiderelectric.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_shelly.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_sinope.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_smarthjemmet.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_sonoff.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_sonoff_s60zbtpf.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_thirdreality.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_air.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_builder.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_cover.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_dimmer.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_gas.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_mcu.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_motion.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_power.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_rain.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_rcbo.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_sensor.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_siren.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_smoke.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_spells.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_thermostat.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_trv.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_tuya_valve.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_ubisys.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_xbee.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_xiaomi.py - NameError: name 'zha' is not defined
+4x ERROR tests/test_zunzunbee_slateswitch.py - NameError: name 'zha' is not defined
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5331, run 34927566906, job 104248804487, started 2026-09-15T04:07:05Z, failed step "Run pytest"
+
+1x ImportError while loading conftest '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/conftest.py'.
+1x E   AttributeError: 'LegacyDeviceRegistry' object has no attribute 'resolve'. Did you mean: 'remove'?
+1x ##[error]Process completed with exit code 4.
+
+## zha-device-handlers #5456, run 38588393870, job 115936553790, started 2026-10-14T15:20:09Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_child_devices.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_child_devices.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5480, run 39469597911, job 118789985995, started 2026-10-20T17:50:45Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_button_events.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_button_events.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5482, run 39469621022, job 118790047724, started 2026-10-20T17:50:55Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_button_events.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_button_events.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5483, run 39469633210, job 118790075096, started 2026-10-20T17:51:00Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_button_events.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_button_events.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5485, run 39469661770, job 118790246113, started 2026-10-20T17:51:14Z, failed step "Run pytest"
+
+1x ImportError while loading conftest '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/conftest.py'.
+1x E   ImportError: cannot import name 'ATTR_PRESS_COUNT' from 'zha.application.platforms.event.const' (/home/runner/work/zha-device-handlers/zha-device-handlers/.venv/lib/python3.12/site-packages/zha/application/platforms/event/const.py)
+1x ##[error]Process completed with exit code 4.
+
+## zha-device-handlers #5486, run 39469677155, job 118790258678, started 2026-10-20T17:51:20Z, failed step "Run pytest"
+
+1x ImportError while loading conftest '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/conftest.py'.
+1x E   ImportError: cannot import name 'ATTR_PRESS_COUNT' from 'zha.application.platforms.event.const' (/home/runner/work/zha-device-handlers/zha-device-handlers/.venv/lib/python3.12/site-packages/zha/application/platforms/event/const.py)
+1x ##[error]Process completed with exit code 4.
+
+## zha-device-handlers #5488, run 39469700188, job 118790360880, started 2026-10-20T17:51:30Z, failed step "Run pytest"
+
+1x ImportError while loading conftest '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/conftest.py'.
+1x E   ImportError: cannot import name 'ATTR_PRESS_COUNT' from 'zha.application.platforms.event.const' (/home/runner/work/zha-device-handlers/zha-device-handlers/.venv/lib/python3.12/site-packages/zha/application/platforms/event/const.py)
+1x ##[error]Process completed with exit code 4.
+
+## zha-device-handlers #5489, run 39469713320, job 118790434878, started 2026-10-20T17:51:36Z, failed step "Run pytest"
+
+1x ImportError while loading conftest '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/conftest.py'.
+1x E   ImportError: cannot import name 'ATTR_PRESS_COUNT' from 'zha.application.platforms.event.const' (/home/runner/work/zha-device-handlers/zha-device-handlers/.venv/lib/python3.12/site-packages/zha/application/platforms/event/const.py)
+1x ##[error]Process completed with exit code 4.
+
+## zha-device-handlers #5201, run 39888964692, job 120203970811, started 2026-10-23T02:19:45Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_sonoff_tp_wgzba.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_tp_wgzba.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5548, run 40373442127, job 121750167020, started 2026-10-26T17:57:26Z, failed step "Run pytest"
+
+4x ERROR tests/test_xbee.py - NameError: name 'XBeeCommon' is not defined
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5273, run 40399653968, job 121841932601, started 2026-10-26T20:53:36Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_enocean.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_enocean.py'.
+1x ERROR tests/test_green_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_green_power.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5410, run 40584656990, job 122472963869, started 2026-10-27T21:11:26Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_entities.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_entities.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5685, run 42580387356, job 129037485013, started 2026-11-09T07:36:18Z, failed step "Run pytest"
+
+1x ##[error]test_spm01v2_cluster
+1x ##[error]test_spm01v2_datapoints[\x009\x01\x02\x00\x04\x00\x02\x95\x84-energy-169348]
+1x ##[error]test_spm01v2_datapoints[\x00:\x02\x02\x00\x04\x00\x0009-produced_energy-12345]
+1x ##[error]test_spm01v2_datapoints[\x00<\x0f\x02\x00\x04\x00\x00\x00d-power_factor-100]
+1x ##[error]test_spm01v2_datapoints[\x00=e\x02\x00\x04\x00\x00\x13\x88-ac_frequency-5000]
+1x ##[error]test_spm01v2_datapoints[\x00Gf\x02\x00\x04\x00\x00\t%-voltage-2341]
+1x ##[error]test_spm01v2_datapoints[\x00Ih\x02\x00\x04\x00\x00\x00\x00-power-0]
+1x ##[error]test_spm01v2_unknown_dp
+1x ##[error]test_spm01v2_multiple_datapoints
+1x ##[error]test_spm01v2_datapoints[\x00Hg\x02\x00\x04\x00\x00\x00\x00-current-0]
+4x ERROR tests/test_bituo.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_bosch.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_candeo.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_ctm.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_ctrl_neutral1.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_danfoss.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_develco.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_enocean.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_heiman.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_ikea.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_innr.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_inovelli.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_inovelli_blue.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_kof.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_konke.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_legrand.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_leviton.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_linkind.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_linxura.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_namron.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_nimly.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_orvibo.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_philips.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_quirks.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_quirks_v2.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_schneiderelectric.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_shelly.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_sinope.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_smarthjemmet.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_sonoff.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_sonoff_s60zbtpf.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_thirdreality.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_air.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_builder.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_cover.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_dimmer.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_gas.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_mcu.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_motion.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_power.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_rain.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_rcbo.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_sensor.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_siren.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_smoke.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_spells.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_thermostat.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_trv.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_ts0001_switch.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_ts1201.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_valve.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_tuya_water_leak.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_ubisys.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_xbee.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_xiaomi.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+4x ERROR tests/test_zunzunbee_slateswitch.py - TypeError: TuyaQuirkBuilder.tuya_dp() missing 2 required positional arguments: 'ep_attribute' and 'attribute_name'
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5293, run 42840667862, job 129914850837, started 2026-11-10T15:05:04Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_bosch.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_candeo.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_ctm.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_ctrl_neutral1.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_danfoss.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_develco.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_enocean.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_heiman.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_ikea.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_innr.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_inovelli.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_inovelli_blue.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_kof.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_konke.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_legrand.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_leviton.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_linkind.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_linxura.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_namron.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_nimly.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_orvibo.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_philips.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_quirks.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_quirks_v2.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_schneiderelectric.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_shelly.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_sinope.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_smarthjemmet.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_sonoff.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_sonoff_s60zbtpf.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_thirdreality.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_air.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_builder.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_cover.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_dimmer.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_gas.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_mcu.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_motion.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_power.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_rain.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_rcbo.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_sensor.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_siren.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_smoke.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_spells.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_thermostat.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_trv.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_ts0001_switch.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_ts1201.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_valve.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_tuya_water_leak.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_ubisys.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_xbee.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_xiaomi.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ERROR tests/test_zunzunbee_slateswitch.py - .venv/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5734, run 43954971404, job 133607117888, started 2026-11-16T20:56:45Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctm.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctm.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_enocean.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_enocean.py'.
+1x ERROR tests/test_green_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_green_power.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_motion_agl8.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_motion_agl8.py'.
+1x ERROR tests/test_namron.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_namron.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_entities.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_entities.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_device_values.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_device_values.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_ts0001_switch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_ts0001_switch.py'.
+1x ERROR tests/test_tuya_ts1201.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_ts1201.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_tuya_water_leak.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_water_leak.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
+
+## zha-device-handlers #5760, run 44687023899, job 136123769284, started 2026-11-20T06:19:50Z, failed step "Run pytest"
+
+1x ERROR tests/test_bituo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bituo.py'.
+1x ERROR tests/test_bosch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_bosch.py'.
+1x ERROR tests/test_candeo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_candeo.py'.
+1x ERROR tests/test_ctm.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctm.py'.
+1x ERROR tests/test_ctrl_neutral1.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ctrl_neutral1.py'.
+1x ERROR tests/test_danfoss.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_danfoss.py'.
+1x ERROR tests/test_develco.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_develco.py'.
+1x ERROR tests/test_enocean.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_enocean.py'.
+1x ERROR tests/test_green_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_green_power.py'.
+1x ERROR tests/test_heiman.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_heiman.py'.
+1x ERROR tests/test_ikea.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ikea.py'.
+1x ERROR tests/test_innr.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_innr.py'.
+1x ERROR tests/test_inovelli.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli.py'.
+1x ERROR tests/test_inovelli_blue.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_inovelli_blue.py'.
+1x ERROR tests/test_kof.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_kof.py'.
+1x ERROR tests/test_konke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_konke.py'.
+1x ERROR tests/test_legrand.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_legrand.py'.
+1x ERROR tests/test_leviton.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_leviton.py'.
+1x ERROR tests/test_linkind.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linkind.py'.
+1x ERROR tests/test_linxura.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_linxura.py'.
+1x ERROR tests/test_motion_agl8.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_motion_agl8.py'.
+1x ERROR tests/test_namron.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_namron.py'.
+1x ERROR tests/test_nimly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_nimly.py'.
+1x ERROR tests/test_orvibo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_orvibo.py'.
+1x ERROR tests/test_philips.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_philips.py'.
+1x ERROR tests/test_quirks.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks.py'.
+1x ERROR tests/test_quirks_v2.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2.py'.
+1x ERROR tests/test_quirks_v2_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_builder.py'.
+1x ERROR tests/test_quirks_v2_entities.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_entities.py'.
+1x ERROR tests/test_quirks_v2_metadata.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_quirks_v2_metadata.py'.
+1x ERROR tests/test_schneiderelectric.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_schneiderelectric.py'.
+1x ERROR tests/test_shelly.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_shelly.py'.
+1x ERROR tests/test_sinope.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sinope.py'.
+1x ERROR tests/test_smarthjemmet.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_smarthjemmet.py'.
+1x ERROR tests/test_sonoff.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff.py'.
+1x ERROR tests/test_sonoff_s60zbtpf.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_sonoff_s60zbtpf.py'.
+1x ERROR tests/test_thirdreality.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_thirdreality.py'.
+1x ERROR tests/test_tuya.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya.py'.
+1x ERROR tests/test_tuya_air.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_air.py'.
+1x ERROR tests/test_tuya_builder.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_builder.py'.
+1x ERROR tests/test_tuya_cover.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_cover.py'.
+1x ERROR tests/test_tuya_device_values.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_device_values.py'.
+1x ERROR tests/test_tuya_dimmer.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_dimmer.py'.
+1x ERROR tests/test_tuya_gas.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_gas.py'.
+1x ERROR tests/test_tuya_mcu.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_mcu.py'.
+1x ERROR tests/test_tuya_motion.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_motion.py'.
+1x ERROR tests/test_tuya_power.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_power.py'.
+1x ERROR tests/test_tuya_rain.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rain.py'.
+1x ERROR tests/test_tuya_rcbo.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_rcbo.py'.
+1x ERROR tests/test_tuya_sensor.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_sensor.py'.
+1x ERROR tests/test_tuya_siren.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_siren.py'.
+1x ERROR tests/test_tuya_smoke.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_smoke.py'.
+1x ERROR tests/test_tuya_spells.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_spells.py'.
+1x ERROR tests/test_tuya_thermostat.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_thermostat.py'.
+1x ERROR tests/test_tuya_trv.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_trv.py'.
+1x ERROR tests/test_tuya_ts0001_switch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_ts0001_switch.py'.
+1x ERROR tests/test_tuya_ts1201.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_ts1201.py'.
+1x ERROR tests/test_tuya_valve.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_valve.py'.
+1x ERROR tests/test_tuya_water_leak.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_tuya_water_leak.py'.
+1x ERROR tests/test_ubisys.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_ubisys.py'.
+1x ERROR tests/test_xbee.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xbee.py'.
+1x ERROR tests/test_xiaomi.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_xiaomi.py'.
+1x ERROR tests/test_zunzunbee_slateswitch.py - ImportError while importing test module '/home/runner/work/zha-device-handlers/zha-device-handlers/tests/test_zunzunbee_slateswitch.py'.
+1x ##[error]Process completed with exit code 1.
